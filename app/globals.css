@@ -1,0 +1,164 @@
+@import "tailwindcss";
+
+/* Brand palette shared with castler.uz — sampled from the Castler logo
+   files (ink = wordmark, gold = mark, cream = light wordmark). */
+:root {
+  --ink: #1a1d16;
+  --ink-2: #23261e;
+  --ink-soft: #6b6f61;
+  --gold: #9a8550;
+  --gold-light: #c2ab74;
+  --cream: #f2f0e9;
+  --paper: #ffffff;
+  --paper-2: #f6f5f1;
+  --line: #e4e2db;
+  --line-on-ink: #3a3d32;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-soft: var(--ink-soft);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-cream: var(--cream);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-line: var(--line);
+  --color-line-on-ink: var(--line-on-ink);
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-montserrat), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+
+  html,
+  body {
+    background: var(--paper);
+    color: var(--ink);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  button,
+  select {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 2px;
+  }
+}
+
+/* Component classes live in the components layer so Tailwind utilities
+   (hidden, md:inline-flex, font-medium …) on the same element still win. */
+@layer components {
+  /* Headlines — light geometric display face with tight tracking (Montserrat
+     rather than castler.uz's Poppins because this site needs Cyrillic). */
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+  }
+
+  /* Small uppercase technical labels — nav, badges, captions, metadata. */
+  .label-mono {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* Every rounded button on the site shares this base. */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 9999px;
+    padding: 0.8rem 1.4rem;
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,
+      transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .pill:hover {
+    transform: translateY(-1px);
+  }
+  .pill:active {
+    transform: scale(0.97);
+  }
+  .pill:disabled {
+    opacity: 0.6;
+    transform: none;
+    cursor: default;
+  }
+
+  /* Native <select> styled as a field: keeps the phone's own picker on
+     mobile, which beats any custom dropdown for thumb use. */
+  .field-select {
+    appearance: none;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background-color: var(--paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f61' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.9rem center;
+    padding: 0.7rem 2.2rem 0.7rem 0.9rem;
+    font-size: 15px;
+    color: var(--ink);
+    transition: border-color 150ms ease;
+  }
+  .field-select:hover {
+    border-color: var(--ink-soft);
+  }
+  .field-select[data-active="true"] {
+    border-color: var(--ink);
+    font-weight: 500;
+  }
+
+  .field-input {
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    padding: 0.8rem 0.95rem;
+    font-size: 16px;
+    color: var(--ink);
+    transition: border-color 150ms ease;
+  }
+  .field-input::placeholder {
+    color: #a3a698;
+  }
+  .field-input:focus {
+    outline: none;
+    border-color: var(--ink);
+  }
+
+  /* Dotted leader between a room's name and its area. */
+  .leader {
+    flex: 1;
+    margin: 0 0.5rem 0.3rem;
+    border-bottom: 1px dotted var(--line);
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}

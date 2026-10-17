@@ -1,0 +1,155 @@
+{
+  "meta": {
+    "title": "Tayyor uy loyihalari — Castler",
+    "description": "Castler arxitektorlari loyihalagan tayyor uy loyihalari katalogi. Yer maydoni, qavatlar soni va yer eniga qarab o'zingizga mosini tanlang.",
+    "houseTitle": "{name} — tayyor uy loyihasi | Castler",
+    "houseDescription": "{area} m², {floors}, {plot} sotix yer uchun. Narxi {price}."
+  },
+  "nav": {
+    "brand": "Tayyor loyihalar",
+    "catalog": "Katalog",
+    "how": "Qanday ishlaydi",
+    "contact": "Aloqa",
+    "call": "Qo'ng'iroq qilish",
+    "menu": "Menyu",
+    "close": "Yopish",
+    "language": "Til"
+  },
+  "common": {
+    "price": "{amount} so'm",
+    "sample": "Namuna",
+    "projectNo": "Loyiha № {code}",
+    "floors": "{label} qavat",
+    "specPlot": "Sotix",
+    "specArea": "Maydon, m²",
+    "specFloors": "Qavat",
+    "specBedrooms": "Yotoqxona"
+  },
+  "home": {
+    "eyebrow": "{count} ta tayyor loyiha",
+    "title": "Yeringizga mos tayyor uy loyihasi",
+    "subtitle": "Castler arxitektorlari loyihalagan uylar. Yer maydoni va o'lchamiga qarab tanlang — qolganini biz bilan muhokama qilasiz.",
+    "statProjects": "loyiha katalogda",
+    "statSince": "yildan beri loyihalaymiz",
+    "statArea": "m² loyihalangan maydon",
+    "featuredTitle": "Tanlangan loyihalar",
+    "allProjects": "Barcha loyihalar",
+    "howEyebrow": "Jarayon",
+    "howTitle": "Qanday ishlaydi",
+    "steps": [
+      {
+        "title": "Loyihani tanlang",
+        "text": "Katalogdan yer maydoningiz va eniga mos uyni toping."
+      },
+      {
+        "title": "So'rov qoldiring",
+        "text": "Ismingiz va telefon raqamingizni yozing — bir daqiqa ham ketmaydi."
+      },
+      {
+        "title": "Biz bog'lanamiz",
+        "text": "Mutaxassisimiz qo'ng'iroq qilib, loyiha va savollaringizni muhokama qiladi."
+      },
+      {
+        "title": "Hujjatlarni oling",
+        "text": "Kelishuvdan so'ng loyiha hujjatlari sizga topshiriladi."
+      }
+    ],
+    "includedEyebrow": "Tarkibi",
+    "includedTitle": "Har bir loyihaga nimalar kiradi",
+    "customEyebrow": "Individual loyiha",
+    "customTitle": "Mos loyiha topa olmadingizmi?",
+    "customText": "Castler yeringiz, oilangiz va byudjetingiz uchun noldan individual loyiha tayyorlaydi. Raqamingizni qoldiring — bog'lanamiz."
+  },
+  "filters": {
+    "plot": "Yer maydoni",
+    "plotOption": "{value} sotixgacha",
+    "floors": "Qavatlar",
+    "floorsOption": "{label} qavat",
+    "width": "Yer eni",
+    "widthOption": "{value} m gacha",
+    "bedrooms": "Yotoqxonalar",
+    "bedroomsOption": "{value} va undan ko'p",
+    "style": "Uslub",
+    "any": "Farqi yo'q",
+    "sort": "Saralash",
+    "sortNew": "Yangilari",
+    "sortCheap": "Arzonroq",
+    "sortExpensive": "Qimmatroq",
+    "sortSmall": "Kichikroq",
+    "sortLarge": "Kattaroq",
+    "find": "Loyiha topish",
+    "reset": "Tozalash",
+    "found": "{count} ta loyiha"
+  },
+  "catalog": {
+    "eyebrow": "Katalog",
+    "title": "Tayyor uy loyihalari",
+    "emptyTitle": "Bunday loyiha topilmadi",
+    "emptyText": "Filtrlarni o'zgartirib ko'ring — yoki biz sizga individual loyiha tayyorlaymiz.",
+    "noHouses": "Katalog tez orada to'ldiriladi."
+  },
+  "house": {
+    "back": "Katalog",
+    "priceNote": "Narx loyiha hujjatlari uchun. Qurilish ishlari kirmaydi.",
+    "specPlot": "Yer maydoni",
+    "specArea": "Umumiy maydon",
+    "specFloors": "Qavatlar",
+    "specBedrooms": "Yotoqxonalar",
+    "specBathrooms": "Sanuzellar",
+    "specPlotSize": "Yer o'lchami, kamida",
+    "sotix": "{value} sotix",
+    "m2": "{value} m²",
+    "m": "{value} m",
+    "discuss": "Loyihani muhokama qilish",
+    "telegram": "Telegram'da yozish",
+    "call": "Qo'ng'iroq qilish",
+    "sampleNotice": "Namuna sahifa: o'lchamlar va narxlar taxminiy, hali tasdiqlanmagan.",
+    "about": "Loyiha haqida",
+    "plansTitle": "Qavatlar rejasi",
+    "plansTotal": "Xonalar jami: {value} m²",
+    "floorTotal": "Jami",
+    "costTitle": "Qurilish xarajatlari",
+    "costSubtitle": "Karkas («korobka») uchun taxminiy hisob, AQSh dollarida",
+    "costPart": "Qism",
+    "costArea": "Maydon",
+    "costSum": "Narx",
+    "costTotal": "Jami",
+    "costNote": "Taxminiy hisob. Haqiqiy narx materiallar, hudud va bozor narxlariga qarab farq qiladi.",
+    "similar": "O'xshash loyihalar",
+    "photoCount": "{n} / {total}",
+    "prev": "Oldingi rasm",
+    "next": "Keyingi rasm",
+    "enlarge": "Rasmni kattalashtirish",
+    "planAlt": "{level} rejasi",
+    "close": "Yopish"
+  },
+  "lead": {
+    "titleHouse": "Loyihani muhokama qilish",
+    "titleCustom": "Individual loyiha",
+    "subtitleHouse": "{house} bo'yicha so'rov. Raqamingizni qoldiring — o'zimiz qo'ng'iroq qilamiz.",
+    "name": "Ismingiz",
+    "phone": "Telefon raqamingiz",
+    "comment": "Izoh (ixtiyoriy)",
+    "commentPlaceholder": "Masalan: yerim 6 sotix, 2 qavatli uy kerak",
+    "submit": "So'rov yuborish",
+    "sending": "Yuborilmoqda…",
+    "successTitle": "Rahmat, so'rovingiz qabul qilindi!",
+    "successText": "Tez orada siz bilan bog'lanamiz.",
+    "error": "Yuborib bo'lmadi. Qayta urinib ko'ring yoki qo'ng'iroq qiling: {phone}",
+    "invalid": "Ismingiz va to'liq telefon raqamingizni kiriting.",
+    "privacy": "Raqamingiz faqat siz bilan bog'lanish uchun ishlatiladi.",
+    "again": "Yana so'rov yuborish",
+    "close": "Yopish"
+  },
+  "footer": {
+    "tagline": "Castler arxitektura kompaniyasining tayyor uy loyihalari katalogi.",
+    "mainSite": "Castler studiyasi sayti",
+    "contact": "Aloqa",
+    "rights": "© {year} Castler"
+  },
+  "notFound": {
+    "title": "Sahifa topilmadi",
+    "text": "Bunday loyiha yo'q yoki katalogdan olib tashlangan.",
+    "back": "Katalogga qaytish"
+  }
+}
