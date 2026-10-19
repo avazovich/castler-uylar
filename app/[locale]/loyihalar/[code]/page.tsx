@@ -50,8 +50,17 @@ export async function generateMetadata({
       canonical: `/${locale}/loyihalar/${house.code}`,
       languages: Object.fromEntries(routing.locales.map((l) => [l, `/${l}/loyihalar/${house.code}`])),
     },
-    openGraph: { images: [{ url: `${house.cover.url}?w=1200&h=630&fit=crop&auto=format` }] },
+    openGraph: { images: [{ url: ogImage(house.cover.url, house.cover.focus) }] },
   };
+}
+
+/** 1200×630 share image cropped around the photo's focal point. */
+function ogImage(src: string, focus: { x: number; y: number }): string {
+  const url = new URL(src);
+  for (const [k, v] of Object.entries({ w: "1200", h: "630", fit: "crop", crop: "focalpoint", "fp-x": focus.x.toFixed(3), "fp-y": focus.y.toFixed(3), auto: "format" })) {
+    url.searchParams.set(k, v);
+  }
+  return url.toString();
 }
 
 /** Same floors first, then closest in size. */

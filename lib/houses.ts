@@ -19,8 +19,31 @@ export interface Img {
   width: number;
   height: number;
   lqip?: string;
-  /** CSS object-position from the editor's hotspot, so crops keep the subject. */
-  position?: string;
+  /** The subject's centre (0–1 across, 0–1 down) — the editor's hotspot,
+   *  or the middle of the photo when none is set. */
+  focus: { x: number; y: number };
+  /** object-position for the site's 4:3 boxes (cards, gallery, thumbnails). */
+  position: string;
+}
+
+/** Every photo box on the site except the home banner is 4:3. */
+export const CARD_ASPECT = 4 / 3;
+
+/**
+ * CSS object-position that puts the photo's focal point as close to the
+ * centre of a box (width / height = boxAspect) as the photo's edges allow.
+ * A plain "x% y%" from the hotspot would NOT centre it: object-position
+ * aligns the photo's x% point with the box's x% point, so a subject at
+ * 30% would sit at 30% of the box rather than in the middle.
+ */
+export function focusPosition(img: Pick<Img, "width" | "height" | "focus">, boxAspect: number): string {
+  const aspect = img.width / img.height;
+  // visible = fraction of the photo's width (or height) that fits the box.
+  const axis = (focus: number, visible: number) =>
+    visible >= 1 ? 50 : Math.round(Math.min(1, Math.max(0, (focus - visible / 2) / (1 - visible))) * 1000) / 10;
+  const x = aspect > boxAspect ? axis(img.focus.x, boxAspect / aspect) : 50;
+  const y = aspect < boxAspect ? axis(img.focus.y, aspect / boxAspect) : 50;
+  return `${x}% ${y}%`;
 }
 
 /** Everything a catalog card (and its filters) needs. */
@@ -81,7 +104,8 @@ const IMG = /* groq */ `{
   "width": asset->metadata.dimensions.width,
   "height": asset->metadata.dimensions.height,
   "lqip": asset->metadata.lqip,
-  hotspot
+  hotspot,
+  crop
 }`;
 
 const HOUSE = /* groq */ `{
@@ -99,6 +123,7 @@ interface RawImg {
   height?: number;
   lqip?: string;
   hotspot?: { x: number; y: number };
+  crop?: { top: number; bottom: number; left: number; right: number };
 }
 
 interface RawHouse {
@@ -123,10 +148,26 @@ interface RawHouse {
 
 function toImg(raw: RawImg | undefined | null): Img | undefined {
   if (!raw?.url || !raw.width || !raw.height) return undefined;
-  const position = raw.hotspot
-    ? `${Math.round(raw.hotspot.x * 100)}% ${Math.round(raw.hotspot.y * 100)}%`
-    : undefined;
-  return { url: raw.url, width: raw.width, height: raw.height, lqip: raw.lqip, position };
+  let { url, width, height } = raw;
+  let fx = raw.hotspot?.x ?? 0.5;
+  let fy = raw.hotspot?.y ?? 0.5;
+
+  // Honour a crop drawn in the Studio: serve just that rectangle (Sanity's
+  // rect=) and re-express the focal point inside it.
+  const c = raw.crop;
+  if (c && (c.top > 0 || c.bottom > 0 || c.left > 0 || c.right > 0)) {
+    const keepW = 1 - c.left - c.right;
+    const keepH = 1 - c.top - c.bottom;
+    const rect = [c.left * raw.width, c.top * raw.height, keepW * raw.width, keepH * raw.height].map(Math.round);
+    url = `${raw.url}?rect=${rect.join(",")}`;
+    width = rect[2];
+    height = rect[3];
+    fx = Math.min(1, Math.max(0, (fx - c.left) / keepW));
+    fy = Math.min(1, Math.max(0, (fy - c.top) / keepH));
+  }
+
+  const focus = { x: fx, y: fy };
+  return { url, width, height, lqip: raw.lqip, focus, position: focusPosition({ width, height, focus }, CARD_ASPECT) };
 }
 
 function toHouse(raw: RawHouse, locale: Locale): House | undefined {

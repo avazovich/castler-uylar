@@ -8,7 +8,7 @@ import { SectionTitle } from "@/components/PageHeader";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { formatNumber, telHref } from "@/lib/format";
-import { getHouses, getSettings, toSummary } from "@/lib/houses";
+import { focusPosition, getHouses, getSettings, toSummary } from "@/lib/houses";
 import { AREA_REALIZED_M2, DEFAULT_INSTAGRAM_URL, FOUNDING_YEAR } from "@/lib/site";
 
 export const revalidate = 60;
@@ -52,8 +52,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             sizes="100vw"
             placeholder={hero.cover.lqip ? "blur" : "empty"}
             blurDataURL={hero.cover.lqip}
-            style={{ objectPosition: hero.cover.position }}
-            className="object-cover"
+            // The banner is tall on phones and very wide on desktops, so the
+            // focal point is re-centred for each shape (see focusPosition).
+            style={
+              {
+                "--pos-sm": focusPosition(hero.cover, 0.55),
+                "--pos-md": focusPosition(hero.cover, 1.15),
+                "--pos-xl": focusPosition(hero.cover, 2.2),
+              } as React.CSSProperties
+            }
+            className="object-cover [object-position:var(--pos-sm)] md:[object-position:var(--pos-md)] xl:[object-position:var(--pos-xl)]"
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/15" />

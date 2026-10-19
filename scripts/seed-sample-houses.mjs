@@ -9,11 +9,16 @@
  * Safe to re-run: existing documents are left alone (the team may have
  * edited them). Pass --force to overwrite the sample houses.
  *
- *   node --env-file=.env.local scripts/seed-sample-houses.mjs [--force]
+ * Each photo carries a hand-picked focal point (the editor's "hotspot") so
+ * the site's crops centre on the house. --focus-only re-applies just the
+ * photos and focal points to sample houses nobody has edited since.
+ *
+ *   node --env-file=.env.local scripts/seed-sample-houses.mjs [--force | --focus-only]
  */
 import { createClient } from "@sanity/client";
 
 const force = process.argv.includes("--force");
+const focusOnly = process.argv.includes("--focus-only");
 
 const client = createClient({
   projectId: process.env.NEXT_PUBLIC_SANITY_PROJECT_ID,
@@ -23,11 +28,13 @@ const client = createClient({
   useCdn: false,
 });
 
-// [code, castler.uz project slug, cover photo, gallery photos] — "m" is the
-// project's main photo, numbers are its gallery positions.
+// Photos are [pick, focusX, focusY]: pick "m" is the castler.uz project's
+// main photo, a number is its gallery position; focus is the subject's
+// centre (0–1 across, 0–1 down), read off each photo by eye.
 const HOUSES = [
   {
-    code: 110, slug: "afsona-villa", cover: "m", gallery: [0, 1, 6, 7, 8, 4],
+    code: 110, slug: "afsona-villa", cover: ["m", 0.52, 0.7],
+    gallery: [[0, 0.5, 0.52], [1, 0.5, 0.62], [6, 0.48, 0.7], [7, 0.5, 0.6], [8, 0.5, 0.65], [4, 0.5, 0.72]],
     name: { uz: "Afsona", ru: "Афсона" }, style: "modern", featured: true, floors: 2,
     plotSotix: 10, minPlotWidth: 24, minPlotLength: 42, totalArea: 420, priceUzs: 18_500_000, oldPriceUzs: 32_000_000,
     extras: { ground: [["pool", 40], ["sauna", 6], ["shower", 4]] }, pool: true,
@@ -37,7 +44,8 @@ const HOUSES = [
     },
   },
   {
-    code: 109, slug: "chortoq-estate", cover: 2, gallery: ["m", 1, 6, 7, 3, 4],
+    code: 109, slug: "chortoq-estate", cover: [2, 0.5, 0.58],
+    gallery: [["m", 0.5, 0.47], [1, 0.5, 0.5], [6, 0.5, 0.5], [7, 0.5, 0.58], [3, 0.5, 0.6], [4, 0.5, 0.6]],
     name: { uz: "Chortoq", ru: "Чартак" }, style: "neoclassic", featured: true, floors: 1,
     plotSotix: 8, minPlotWidth: 22, minPlotLength: 36, totalArea: 310, priceUzs: 14_000_000, oldPriceUzs: 24_000_000,
     description: {
@@ -46,7 +54,8 @@ const HOUSES = [
     },
   },
   {
-    code: 108, slug: "toraqorgon-recidence", cover: 4, gallery: ["m", 2, 6, 13, 15, 0],
+    code: 108, slug: "toraqorgon-recidence", cover: [4, 0.5, 0.53],
+    gallery: [["m", 0.48, 0.65], [2, 0.5, 0.45], [6, 0.5, 0.5], [13, 0.5, 0.38], [15, 0.5, 0.52], [0, 0.5, 0.56]],
     name: { uz: "To'raqo'rg'on", ru: "Туракурган" }, style: "neoclassic", featured: true, floors: 1,
     plotSotix: 12, minPlotWidth: 30, minPlotLength: 40, totalArea: 450, priceUzs: 17_000_000, oldPriceUzs: 28_000_000,
     extras: { ground: [["garage", 38]] },
@@ -56,7 +65,8 @@ const HOUSES = [
     },
   },
   {
-    code: 107, slug: "margilon-residence", cover: "m", gallery: [11, 0, 3, 4, 6],
+    code: 107, slug: "margilon-residence", cover: ["m", 0.5, 0.55],
+    gallery: [[11, 0.5, 0.52], [0, 0.5, 0.55], [3, 0.5, 0.5], [4, 0.5, 0.55], [6, 0.5, 0.52]],
     name: { uz: "Marg'ilon", ru: "Маргилан" }, style: "modern", featured: true, floors: 1,
     plotSotix: 7, minPlotWidth: 20, minPlotLength: 35, totalArea: 290, priceUzs: 12_000_000, oldPriceUzs: 20_000_000,
     extras: { ground: [["garage", 36]] },
@@ -66,7 +76,8 @@ const HOUSES = [
     },
   },
   {
-    code: 106, slug: "mingchinor-residence", cover: 1, gallery: ["m", 4, 5, 3, 2],
+    code: 106, slug: "mingchinor-residence", cover: [3, 0.5, 0.55],
+    gallery: [["m", 0.5, 0.48], [4, 0.5, 0.6], [5, 0.5, 0.6], [1, 0.5, 0.52], [2, 0.5, 0.55]],
     name: { uz: "Mingchinor", ru: "Мингчинор" }, style: "modern", featured: true, floors: 2,
     plotSotix: 5, minPlotWidth: 16, minPlotLength: 32, totalArea: 360, priceUzs: 13_500_000,
     extras: { ground: [["garage", 36]] },
@@ -76,7 +87,8 @@ const HOUSES = [
     },
   },
   {
-    code: 105, slug: "gozal-recidence", cover: 1, gallery: ["m", 0, 2, 4, 6, 13],
+    code: 105, slug: "gozal-recidence", cover: ["m", 0.5, 0.43],
+    gallery: [[1, 0.5, 0.5], [0, 0.5, 0.47], [2, 0.5, 0.48], [4, 0.5, 0.4], [6, 0.5, 0.5], [13, 0.5, 0.5]],
     name: { uz: "Go'zal", ru: "Гузал" }, style: "classic", featured: true, floors: 2,
     plotSotix: 6, minPlotWidth: 18, minPlotLength: 34, totalArea: 480, priceUzs: 16_500_000, oldPriceUzs: 27_000_000,
     description: {
@@ -85,7 +97,8 @@ const HOUSES = [
     },
   },
   {
-    code: 104, slug: "navoiy", cover: "m", gallery: [2, 3, 4, 7, 8, 0],
+    code: 104, slug: "navoiy", cover: ["m", 0.52, 0.65],
+    gallery: [[2, 0.5, 0.55], [3, 0.5, 0.6], [4, 0.5, 0.58], [7, 0.5, 0.58], [8, 0.5, 0.55], [0, 0.5, 0.62]],
     name: { uz: "Navoiy", ru: "Навои" }, style: "modern", featured: false, floors: 1,
     plotSotix: 9, minPlotWidth: 26, minPlotLength: 35, totalArea: 330, priceUzs: 13_000_000,
     extras: { ground: [["garage", 36]] },
@@ -95,7 +108,8 @@ const HOUSES = [
     },
   },
   {
-    code: 103, slug: "mashad", cover: 14, gallery: [13, 10, 15, 16, 17, 18],
+    code: 103, slug: "mashad", cover: [14, 0.5, 0.6],
+    gallery: [[13, 0.5, 0.6], [10, 0.5, 0.6], [15, 0.5, 0.6], [16, 0.5, 0.6], [17, 0.5, 0.6], [18, 0.5, 0.6]],
     name: { uz: "Mashad", ru: "Машад" }, style: "neoclassic", featured: false, floors: 1,
     plotSotix: 8, minPlotWidth: 24, minPlotLength: 33, totalArea: 380, priceUzs: 14_500_000, oldPriceUzs: 24_000_000,
     description: {
@@ -104,7 +118,8 @@ const HOUSES = [
     },
   },
   {
-    code: 102, slug: "gozal-dacha", cover: 6, gallery: ["m", 0, 2, 1, 5, 7],
+    code: 102, slug: "gozal-dacha", cover: [2, 0.5, 0.48],
+    gallery: [["m", 0.5, 0.43], [0, 0.5, 0.45], [6, 0.5, 0.6], [1, 0.5, 0.42], [5, 0.5, 0.5], [7, 0.5, 0.45]],
     name: { uz: "Go'zal dacha", ru: "Гузал дача" }, style: "neoclassic", featured: false, floors: 2,
     plotSotix: 6, minPlotWidth: 20, minPlotLength: 30, totalArea: 260, priceUzs: 11_000_000,
     description: {
@@ -113,7 +128,8 @@ const HOUSES = [
     },
   },
   {
-    code: 101, slug: "nanay-dacha", cover: "m", gallery: [1, 3, 4, 5],
+    code: 101, slug: "nanay-dacha", cover: ["m", 0.5, 0.62],
+    gallery: [[1, 0.5, 0.52], [3, 0.5, 0.5], [4, 0.5, 0.55], [5, 0.5, 0.42]],
     name: { uz: "Nanay", ru: "Нанай" }, style: "modern", featured: false, floors: 2,
     plotSotix: 4, minPlotWidth: 14, minPlotLength: 28, totalArea: 240, priceUzs: 9_800_000, oldPriceUzs: 16_000_000,
     extras: { ground: [["garage", 30]] },
@@ -179,7 +195,7 @@ const projects = await client.fetch(
 );
 const bySlug = Object.fromEntries(projects.map((p) => [p.slug, p]));
 
-function assetRef(slug, pick) {
+function assetRef(slug, [pick]) {
   const p = bySlug[slug];
   if (!p) throw new Error(`castler.uz project "${slug}" not found in Sanity`);
   const id = pick === "m" ? p.main : p.gallery?.[pick];
@@ -187,7 +203,36 @@ function assetRef(slug, pick) {
   return id;
 }
 
-const image = (id, k) => ({ ...(k ? { _key: k } : {}), _type: "image", asset: { _type: "reference", _ref: id } });
+const image = (id, [, x, y], k) => ({
+  ...(k ? { _key: k } : {}),
+  _type: "image",
+  asset: { _type: "reference", _ref: id },
+  hotspot: { _type: "sanity.imageHotspot", x, y, width: 0.5, height: 0.5 },
+  crop: { _type: "sanity.imageCrop", top: 0, bottom: 0, left: 0, right: 0 },
+});
+
+const photos = (h) => ({
+  cover: image(assetRef(h.slug, h.cover), h.cover),
+  gallery: h.gallery.map((g, i) => image(assetRef(h.slug, g), g, key("g", i))),
+});
+
+if (focusOnly) {
+  for (const h of HOUSES) {
+    const id = `housePlan-sample-${h.code}`;
+    const doc = await client.getDocument(id);
+    const draft = await client.getDocument(`drafts.${id}`);
+    if (!doc) {
+      console.log(`№ ${h.code}: not found, skipped`);
+    } else if (draft || doc._updatedAt !== doc._createdAt) {
+      console.log(`№ ${h.code}: edited in the Studio since seeding — left alone`);
+    } else {
+      // ifRevisionId: refuse if someone saves this house while we run.
+      await client.patch(id).ifRevisionId(doc._rev).set(photos(h)).commit();
+      console.log(`№ ${h.code}: photos + focal points updated`);
+    }
+  }
+  process.exit(0);
+}
 
 const tx = client.transaction();
 for (const h of HOUSES) {
@@ -207,8 +252,7 @@ for (const h of HOUSES) {
     totalArea: h.totalArea,
     floors: h.floors,
     description: { _type: "localizedText", ...h.description },
-    cover: image(assetRef(h.slug, h.cover)),
-    gallery: h.gallery.map((g, i) => image(assetRef(h.slug, g), key("g", i))),
+    ...photos(h),
     floorPlans: floorPlans(h),
     buildEstimate: buildEstimate(h),
   };
