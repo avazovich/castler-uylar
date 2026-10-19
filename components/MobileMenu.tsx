@@ -7,8 +7,9 @@ import { Link } from "@/i18n/navigation";
 import { telHref } from "@/lib/format";
 import { CloseIcon, MenuIcon, PhoneIcon } from "./icons";
 import { LanguageSwitch } from "./LanguageSwitch";
+import type { NavItem } from "./NavLinks";
 
-export function MobileMenu({ phone }: { phone: string }) {
+export function MobileMenu({ items, phone }: { items: NavItem[]; phone: string }) {
   const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -17,39 +18,35 @@ export function MobileMenu({ phone }: { phone: string }) {
     <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger
         aria-label={t("menu")}
-        className="grid h-10 w-10 place-items-center rounded-full bg-paper-2 text-ink md:hidden"
+        className="grid h-11 w-11 place-items-center border border-line text-ink lg:hidden"
       >
         <MenuIcon />
       </Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/40 backdrop-blur-sm" />
-        <Dialog.Content className="fixed inset-x-3 top-3 z-50 rounded-3xl bg-ink p-5 text-cream shadow-2xl">
-          <div className="flex items-center justify-between">
-            <Dialog.Title className="label-mono text-gold-light">{t("menu")}</Dialog.Title>
-            <Dialog.Close aria-label={t("close")} className="grid h-10 w-10 place-items-center rounded-full bg-ink-2">
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/50" />
+        <Dialog.Content className="fixed inset-x-0 top-0 z-50 bg-paper shadow-2xl">
+          <div className="flex h-[72px] items-center justify-between border-b border-line px-4">
+            <Dialog.Title className="label-caps text-ink-soft">{t("menu")}</Dialog.Title>
+            <Dialog.Close aria-label={t("close")} className="grid h-11 w-11 place-items-center border border-line text-ink">
               <CloseIcon />
             </Dialog.Close>
           </div>
-          <nav className="mt-6 flex flex-col">
-            {[
-              { href: "/loyihalar", label: t("catalog") },
-              { href: "/#jarayon", label: t("how") },
-              { href: "/#aloqa", label: t("contact") },
-            ].map((item) => (
+          <nav className="flex flex-col px-4">
+            {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={close}
-                className="font-display border-b border-line-on-ink py-4 text-3xl"
+                className="label-caps border-b border-line py-5 text-[13px] text-ink"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="mt-6 flex items-center justify-between gap-3">
-            <LanguageSwitch tone="dark" />
-            <a href={telHref(phone)} className="pill bg-gold text-paper">
-              <PhoneIcon />
+          <div className="flex items-center justify-between gap-3 p-4">
+            <LanguageSwitch tone="light" />
+            <a href={telHref(phone)} className="btn bg-ink px-5 text-paper">
+              <PhoneIcon className="h-4 w-4" />
               {phone}
             </a>
           </div>

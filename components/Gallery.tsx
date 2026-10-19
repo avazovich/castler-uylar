@@ -34,11 +34,11 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
   }, [open, go]);
 
   const arrowCls =
-    "grid h-11 w-11 place-items-center rounded-full bg-paper/90 text-ink shadow-sm backdrop-blur transition hover:bg-paper";
+    "grid h-12 w-12 place-items-center bg-paper text-ink transition hover:bg-ink hover:text-paper";
 
   return (
     <div>
-      <div className="relative aspect-[4/3] overflow-hidden rounded-3xl bg-paper-2">
+      <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -60,7 +60,7 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
         </button>
         {count > 1 && (
           <>
-            <div className="pointer-events-none absolute inset-x-3 top-1/2 flex -translate-y-1/2 justify-between">
+            <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between">
               <button type="button" onClick={() => go(-1)} aria-label={t("prev")} className={`pointer-events-auto ${arrowCls}`}>
                 <ChevronLeftIcon />
               </button>
@@ -68,12 +68,12 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
                 <ChevronRightIcon />
               </button>
             </div>
-            <span className="label-mono absolute bottom-3 left-3 rounded-full bg-ink/70 px-3 py-1.5 text-paper backdrop-blur">
+            <span className="label-caps absolute bottom-0 left-0 bg-ink px-3 py-2 text-paper">
               {t("photoCount", { n: index + 1, total: count })}
             </span>
           </>
         )}
-        <span className="pointer-events-none absolute bottom-3 right-3 grid h-9 w-9 place-items-center rounded-full bg-ink/70 text-paper backdrop-blur">
+        <span className="pointer-events-none absolute bottom-0 right-0 grid h-10 w-10 place-items-center bg-ink text-paper">
           <ExpandIcon className="h-4 w-4" />
         </span>
       </div>
@@ -87,8 +87,8 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
               onClick={() => setIndex(i)}
               aria-label={`${i + 1}`}
               aria-current={i === index}
-              className={`relative aspect-[4/3] w-24 shrink-0 overflow-hidden rounded-xl transition sm:w-28 ${
-                i === index ? "ring-2 ring-ink ring-offset-2" : "opacity-70 hover:opacity-100"
+              className={`relative aspect-[4/3] w-24 shrink-0 overflow-hidden border-2 transition sm:w-28 ${
+                i === index ? "border-ink" : "border-transparent opacity-65 hover:opacity-100"
               }`}
             >
               <Image src={img.url} alt="" fill sizes="112px" className="object-cover" style={{ objectPosition: img.position }} />
@@ -102,10 +102,10 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
           <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/95" />
           <Dialog.Content className="fixed inset-0 z-50 flex flex-col p-3 sm:p-6">
             <div className="flex items-center justify-between text-cream">
-              <Dialog.Title className="label-mono">
+              <Dialog.Title className="label-caps">
                 {title} · {t("photoCount", { n: index + 1, total: count })}
               </Dialog.Title>
-              <Dialog.Close aria-label={t("close")} className="grid h-11 w-11 place-items-center rounded-full bg-ink-2 text-cream">
+              <Dialog.Close aria-label={t("close")} className="grid h-11 w-11 place-items-center border border-line-on-ink text-cream hover:border-cream">
                 <CloseIcon />
               </Dialog.Close>
             </div>

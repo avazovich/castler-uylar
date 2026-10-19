@@ -57,7 +57,7 @@ export function LeadForm({
   if (status === "sent") {
     return (
       <div className="flex flex-col items-start gap-3 py-4" role="status">
-        <span className="grid h-12 w-12 place-items-center rounded-full bg-gold text-paper">
+        <span className="grid h-12 w-12 place-items-center bg-gold text-paper">
           <CheckIcon className="h-6 w-6" />
         </span>
         <p className={`font-display text-2xl ${dark ? "text-cream" : "text-ink"}`}>{t("successTitle")}</p>
@@ -135,7 +135,7 @@ export function LeadForm({
       />
 
       {(status === "invalid" || status === "error") && (
-        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">
+        <p className="border-l-2 border-red-700 bg-red-50 px-3 py-2 text-sm text-red-800" role="alert">
           {status === "invalid" ? t("invalid") : t("error", { phone: officePhone })}
         </p>
       )}
@@ -143,7 +143,7 @@ export function LeadForm({
       <button
         type="submit"
         disabled={status === "sending"}
-        className={`pill mt-1 w-full ${dark ? "bg-gold text-paper hover:bg-gold-light" : "bg-ink text-paper hover:bg-ink-2"}`}
+        className={`btn mt-1 w-full py-4 ${dark ? "bg-gold text-paper hover:bg-gold-light" : "bg-ink text-paper hover:bg-gold"}`}
       >
         {status === "sending" ? t("sending") : t("submit")}
       </button>

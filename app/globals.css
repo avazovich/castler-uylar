@@ -27,14 +27,13 @@
   --color-line: var(--line);
   --color-line-on-ink: var(--line-on-ink);
   --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-montserrat), system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --font-display: var(--font-cormorant), Georgia, serif;
 }
 
 @layer base {
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    scroll-padding-top: 6rem;
   }
 
   html,
@@ -46,7 +45,7 @@
   body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    line-height: 1.5;
+    line-height: 1.55;
   }
 
   button,
@@ -61,48 +60,42 @@
 }
 
 /* Component classes live in the components layer so Tailwind utilities
-   (hidden, md:inline-flex, font-medium …) on the same element still win. */
+   (hidden, md:inline-flex, font-medium …) on the same element still win.
+   The whole site is deliberately square-cornered: no rounding anywhere. */
 @layer components {
-  /* Headlines — light geometric display face with tight tracking (Montserrat
-     rather than castler.uz's Poppins because this site needs Cyrillic). */
+  /* Headlines — a classic serif (Cormorant Garamond has full Cyrillic). */
   .font-display {
     font-family: var(--font-display);
-    font-weight: 300;
-    letter-spacing: -0.02em;
+    font-weight: 500;
+    letter-spacing: -0.005em;
+    font-variant-numeric: lining-nums;
   }
 
-  /* Small uppercase technical labels — nav, badges, captions, metadata. */
-  .label-mono {
-    font-family: var(--font-mono);
+  /* Small uppercase labels — eyebrows, table headers, badges. */
+  .label-caps {
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
   }
 
-  /* Every rounded button on the site shares this base. */
-  .pill {
+  /* Every button on the site: rectangular, uppercase, tracked. Colors come
+     from utilities on each use (bg-ink text-paper hover:bg-gold, …). */
+  .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    border-radius: 9999px;
-    padding: 0.8rem 1.4rem;
-    font-size: 14px;
-    font-weight: 500;
+    gap: 0.6rem;
+    padding: 0.95rem 1.75rem;
+    font-size: 12.5px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
     white-space: nowrap;
-    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease,
-      transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
   }
-  .pill:hover {
-    transform: translateY(-1px);
-  }
-  .pill:active {
-    transform: scale(0.97);
-  }
-  .pill:disabled {
+  .btn:disabled {
     opacity: 0.6;
-    transform: none;
     cursor: default;
   }
 
@@ -111,13 +104,12 @@
   .field-select {
     appearance: none;
     width: 100%;
-    border-radius: 14px;
     border: 1px solid var(--line);
     background-color: var(--paper);
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f61' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.9rem center;
-    padding: 0.7rem 2.2rem 0.7rem 0.9rem;
+    padding: 0.75rem 2.2rem 0.75rem 0.9rem;
     font-size: 15px;
     color: var(--ink);
     transition: border-color 150ms ease;
@@ -132,10 +124,9 @@
 
   .field-input {
     width: 100%;
-    border-radius: 14px;
     border: 1px solid var(--line);
     background: var(--paper);
-    padding: 0.8rem 0.95rem;
+    padding: 0.85rem 0.95rem;
     font-size: 16px;
     color: var(--ink);
     transition: border-color 150ms ease;
@@ -146,13 +137,6 @@
   .field-input:focus {
     outline: none;
     border-color: var(--ink);
-  }
-
-  /* Dotted leader between a room's name and its area. */
-  .leader {
-    flex: 1;
-    margin: 0 0.5rem 0.3rem;
-    border-bottom: 1px dotted var(--line);
   }
 
   .no-scrollbar {

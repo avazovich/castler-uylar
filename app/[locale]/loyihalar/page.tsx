@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { Catalog } from "@/components/Catalog";
 import { HouseCard } from "@/components/HouseCard";
+import { PageHeader } from "@/components/PageHeader";
 import { ArrowRightIcon } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
@@ -29,38 +30,42 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
   const locale = raw as Locale;
   setRequestLocale(locale);
 
-  const [t, home, houses] = await Promise.all([
+  const [t, home, nav, houses] = await Promise.all([
     getTranslations("catalog"),
     getTranslations("home"),
+    getTranslations("nav"),
     getHouses(locale),
   ]);
   const summaries = houses.map(toSummary);
 
   const customLink = (
-    <Link href="/#aloqa" className="pill bg-ink text-paper hover:bg-ink-2">
+    <Link href="/#aloqa" className="btn bg-ink text-paper hover:bg-gold">
       {home("customEyebrow")} <ArrowRightIcon className="h-4 w-4" />
     </Link>
   );
 
   return (
-    <div className="mx-auto max-w-[1360px] px-4 pb-24 pt-10 md:px-8 md:pt-14">
-      <p className="label-mono text-gold">{t("eyebrow")}</p>
-      <h1 className="font-display mt-3 text-[42px] leading-[1.05] text-ink md:text-7xl">{t("title")}</h1>
-
-      {/* The filters read the URL, which isn't known while the page is
-          pre-built — until the browser takes over, show the full list so
-          the page is never empty (and search engines see every house). */}
-      <Suspense
-        fallback={
-          <div className="mt-[136px] grid gap-x-6 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
-            {summaries.map((h) => (
-              <HouseCard key={h.code} house={h} />
-            ))}
-          </div>
-        }
-      >
-        <Catalog houses={summaries} emptyAction={customLink} />
-      </Suspense>
-    </div>
+    <>
+      <PageHeader crumbs={[{ label: nav("home"), href: "/" }, { label: t("eyebrow") }]} title={t("title")} />
+      <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-10 md:px-8 md:pt-12">
+        {/* The filters read the URL, which isn't known while the page is
+            pre-built — until the browser takes over, show the full list so
+            the page is never empty (and search engines see every house). */}
+        <Suspense
+          fallback={
+            <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
+              <div className="hidden h-[520px] border border-line bg-paper-2 lg:block" />
+              <div className="grid gap-6 pt-[61px] sm:grid-cols-2">
+                {summaries.map((h) => (
+                  <HouseCard key={h.code} house={h} />
+                ))}
+              </div>
+            </div>
+          }
+        >
+          <Catalog houses={summaries} emptyAction={customLink} />
+        </Suspense>
+      </div>
+    </>
   );
 }

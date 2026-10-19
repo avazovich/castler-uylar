@@ -13,7 +13,10 @@
     "call": "Qo'ng'iroq qilish",
     "menu": "Menyu",
     "close": "Yopish",
-    "language": "Til"
+    "language": "Til",
+    "home": "Bosh sahifa",
+    "request": "So'rov qoldirish",
+    "company": "Castler arxitektura kompaniyasi"
   },
   "common": {
     "price": "{amount} so'm",
@@ -58,7 +61,9 @@
     "includedTitle": "Har bir loyihaga nimalar kiradi",
     "customEyebrow": "Individual loyiha",
     "customTitle": "Mos loyiha topa olmadingizmi?",
-    "customText": "Castler yeringiz, oilangiz va byudjetingiz uchun noldan individual loyiha tayyorlaydi. Raqamingizni qoldiring — bog'lanamiz."
+    "customText": "Castler yeringiz, oilangiz va byudjetingiz uchun noldan individual loyiha tayyorlaydi. Raqamingizni qoldiring — bog'lanamiz.",
+    "viewCatalog": "Katalogni ko'rish",
+    "finderTitle": "Loyiha qidirish"
   },
   "filters": {
     "plot": "Yer maydoni",
@@ -79,7 +84,8 @@
     "sortLarge": "Kattaroq",
     "find": "Loyiha topish",
     "reset": "Tozalash",
-    "found": "{count} ta loyiha"
+    "found": "{count} ta loyiha",
+    "title": "Filtrlar"
   },
   "catalog": {
     "eyebrow": "Katalog",
@@ -121,7 +127,8 @@
     "next": "Keyingi rasm",
     "enlarge": "Rasmni kattalashtirish",
     "planAlt": "{level} rejasi",
-    "close": "Yopish"
+    "close": "Yopish",
+    "details": "Batafsil"
   },
   "lead": {
     "titleHouse": "Loyihani muhokama qilish",
@@ -145,7 +152,8 @@
     "tagline": "Castler arxitektura kompaniyasining tayyor uy loyihalari katalogi.",
     "mainSite": "Castler studiyasi sayti",
     "contact": "Aloqa",
-    "rights": "© {year} Castler"
+    "rights": "© {year} Castler",
+    "byFloors": "Katalog"
   },
   "notFound": {
     "title": "Sahifa topilmadi",

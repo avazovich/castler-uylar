@@ -1,24 +1,20 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono, Montserrat } from "next/font/google";
+import { Cormorant_Garamond, Inter } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { TopBar } from "@/components/TopBar";
 import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site";
 import "../globals.css";
 
 // Cyrillic subsets matter here: the site is fully bilingual (uz / ru).
 const inter = Inter({ variable: "--font-inter", subsets: ["latin", "latin-ext", "cyrillic"] });
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["300", "400", "500"],
-});
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
-  subsets: ["latin", "cyrillic"],
   weight: ["500", "600"],
 });
 
@@ -54,9 +50,10 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className={`${inter.variable} ${montserrat.variable} ${jetbrains.variable}`}>
+    <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider messages={messages}>
+          <TopBar />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
