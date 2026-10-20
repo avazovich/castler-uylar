@@ -10,15 +10,22 @@ Sanity project/dataset so house photos can reuse images already uploaded there.
 
 ## Adding and editing houses
 
-Open `/studio` (log in with the same Sanity account as castler.uz):
+**Admin page — `/admin`** (Uzbek, one shared password): list of houses, add /
+edit / delete a house (details, prices, sizes, photos, floor plans with rooms,
+build-cost table) and the site settings (phone, Telegram, Instagram, address,
+"what's included"). Photos are shrunk in the browser to ≤2560px before upload;
+click a photo to mark the house's centre and the site crops around it.
+Saving refreshes the public pages straight away.
 
-- **House plans** — one entry per house. Rooms and floors are picked from
-  lists, so Russian labels come for free. Untick **Sample data** once a
-  house has real numbers, or it keeps its "Namuna" badge.
-- **Site settings** — phone, Telegram username, Instagram, address, and the
-  "what every house plan includes" list.
+- Password: `ADMIN_PASSWORD` in `.env.local`. Changing it signs everyone out
+  (it is part of the key that signs the 14-day session cookie,
+  `ADMIN_SESSION_SECRET`).
+- Every admin page, server action (`app/admin/actions.ts`) and the upload
+  route checks the session itself (`lib/admin/session.ts`).
+- Untick **Namuna** once a house has real numbers, or it keeps its badge.
 
-Published changes show on the live site within a minute.
+`/studio` (Sanity Studio, English, needs a Sanity account) edits the same
+data and stays available as a backup.
 
 ## Running locally
 
@@ -29,8 +36,10 @@ npm run dev -- -p 3333
 Port 3333 is already allowed in Sanity's CORS settings, so `/studio` works locally.
 
 `.env.local` needs: `NEXT_PUBLIC_SANITY_PROJECT_ID`, `NEXT_PUBLIC_SANITY_DATASET`,
-`SANITY_API_TOKEN` (only for the seed script), `TELEGRAM_BOT_TOKEN`,
-`TELEGRAM_CHAT_ID`, and on the host `NEXT_PUBLIC_SITE_URL` (the final domain).
+`SANITY_API_TOKEN` (write access — used by /admin and the seed script),
+`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `ADMIN_PASSWORD`,
+`ADMIN_SESSION_SECRET`, and on the host `NEXT_PUBLIC_SITE_URL` (the final
+domain). Use a new, strong `ADMIN_PASSWORD` on the live site.
 
 ## Sample content
 

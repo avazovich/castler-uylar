@@ -20,7 +20,8 @@
     "next-sanity": "^13.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "sanity": "^6.15.0"
+    "sanity": "^6.15.0",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
