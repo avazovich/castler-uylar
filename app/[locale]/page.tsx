@@ -1,29 +1,55 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { FinderForm } from "@/components/FinderForm";
 import { HouseCard } from "@/components/HouseCard";
 import { ArrowRightIcon, CheckIcon, InstagramIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
+import { JsonLd } from "@/components/JsonLd";
 import { LeadForm } from "@/components/LeadForm";
 import { SectionTitle } from "@/components/PageHeader";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { formatNumber, telHref } from "@/lib/format";
 import { focusPosition, getHouses, getSettings, toSummary } from "@/lib/houses";
+import { collectionHref, liveCollections } from "@/lib/collections";
+import { alternates, houseAlt, organizationLd, socialImage, websiteLd } from "@/lib/seo";
 import { AREA_REALIZED_M2, DEFAULT_INSTAGRAM_URL, FOUNDING_YEAR } from "@/lib/site";
 
 export const revalidate = 60;
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale: raw } = await params;
+  const locale = raw as Locale;
+  const [t, houses] = await Promise.all([getTranslations({ locale, namespace: "meta" }), getHouses(locale)]);
+  const hero = [...houses.filter((h) => h.featured), ...houses][0];
+  return {
+    title: t("title"),
+    description: t("description"),
+    alternates: alternates(locale, (l) => `/${l}`),
+    openGraph: {
+      title: t("title"),
+      description: t("description"),
+      url: `/${locale}`,
+      ...(hero ? { images: [{ url: socialImage(hero.cover), width: 1200, height: 630, alt: houseAlt(hero, locale) }] } : {}),
+    },
+  };
+}
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale: raw } = await params;
   const locale = raw as Locale;
   setRequestLocale(locale);
 
-  const [t, nav, houses, settings] = await Promise.all([
+  const [t, nav, meta, coll, houses, settings] = await Promise.all([
     getTranslations("home"),
     getTranslations("nav"),
+    getTranslations("meta"),
+    getTranslations("collection"),
     getHouses(locale),
     getSettings(locale),
   ]);
+  const categories = liveCollections(houses.map(toSummary));
+  const guide = t.raw("guide") as { title: string; text: string }[];
 
   // Featured houses first, topped up with the newest so the grid is never thin.
   const picked = [...houses.filter((h) => h.featured), ...houses.filter((h) => !h.featured)].slice(0, 6);
@@ -41,12 +67,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <>
+      <JsonLd data={[organizationLd(settings, locale), websiteLd(locale, meta("siteName"))]} />
       {/* Hero — full-width banner, text on the left */}
       <section className="relative flex min-h-[600px] items-center overflow-hidden bg-ink md:min-h-[680px]">
         {hero && (
           <Image
             src={hero.cover.url}
-            alt=""
+            alt={houseAlt(hero, locale)}
             fill
             priority
             sizes="100vw"
@@ -122,6 +149,29 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
+      {/* Popular categories — real pages for common searches */}
+      {categories.length > 0 && (
+        <section className={`pt-20 md:pt-28 ${container}`}>
+          <SectionTitle eyebrow={t("categoriesEyebrow")} title={t("categoriesTitle")} />
+          <ul className="mt-10 grid border-l border-t border-line sm:grid-cols-2 lg:grid-cols-4">
+            {categories.map(({ collection: c, houses: list }) => (
+              <li key={c.id} className="border-b border-r border-line">
+                <Link
+                  href={collectionHref(c, locale)}
+                  className="group flex h-full items-center justify-between gap-4 px-5 py-5 hover:bg-paper-2"
+                >
+                  <span>
+                    <span className="block font-medium text-ink">{c.title[locale]}</span>
+                    <span className="mt-0.5 block text-sm text-ink-soft">{coll("count", { count: list.length })}</span>
+                  </span>
+                  <ArrowRightIcon className="h-4 w-4 shrink-0 text-ink-soft transition-colors group-hover:text-gold" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {/* How it works */}
       <section id="jarayon" className={`pt-20 md:pt-28 ${container}`}>
         <SectionTitle eyebrow={t("howEyebrow")} title={t("howTitle")} />
@@ -134,6 +184,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* Buying guide — genuinely useful text for people (and search engines) */}
+      <section className={`pt-20 md:pt-28 ${container}`}>
+        <SectionTitle eyebrow={t("guideEyebrow")} title={t("guideTitle")} />
+        <div className="mt-10 grid gap-10 md:grid-cols-3">
+          {guide.map((g) => (
+            <article key={g.title} className="border-t-2 border-ink pt-5">
+              <h3 className="font-display text-[26px] leading-tight text-ink">{g.title}</h3>
+              <p className="mt-3 leading-relaxed text-ink-soft">{g.text}</p>
+            </article>
+          ))}
+        </div>
       </section>
 
       {/* What's included — editable in Studio → Site settings */}

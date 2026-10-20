@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Img } from "@/lib/houses";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon, ExpandIcon } from "./icons";
 
-export function Gallery({ images, title }: { images: Img[]; title: string }) {
+export function Gallery({ images, title, alts }: { images: Img[]; title: string; alts: string[] }) {
   const t = useTranslations("house");
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
@@ -48,7 +48,7 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
           <Image
             key={current.url}
             src={current.url}
-            alt={`${title} — ${index + 1}`}
+            alt={alts[index] ?? title}
             fill
             priority={index === 0}
             sizes="(min-width: 1024px) 60vw, 100vw"
@@ -91,7 +91,7 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
                 i === index ? "border-ink" : "border-transparent opacity-65 hover:opacity-100"
               }`}
             >
-              <Image src={img.url} alt="" fill sizes="112px" className="object-cover" style={{ objectPosition: img.position }} />
+              <Image src={img.url} alt={alts[i] ?? ""} fill sizes="112px" className="object-cover" style={{ objectPosition: img.position }} />
             </button>
           ))}
         </div>
@@ -112,7 +112,7 @@ export function Gallery({ images, title }: { images: Img[]; title: string }) {
             <div className="relative mt-3 flex-1">
               <Image
                 src={current.url}
-                alt={`${title} — ${index + 1}`}
+                alt={alts[index] ?? title}
                 fill
                 sizes="100vw"
                 quality={85}

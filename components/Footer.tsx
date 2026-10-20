@@ -1,34 +1,27 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { formatNumber, telHref } from "@/lib/format";
-import { getHouses, getSettings } from "@/lib/houses";
+import { collectionHref, liveCollections } from "@/lib/collections";
+import { telHref } from "@/lib/format";
+import { getHouses, getSettings, toSummary } from "@/lib/houses";
 import { DEFAULT_INSTAGRAM_URL, MAIN_SITE_URL } from "@/lib/site";
-import { STYLES, type Style } from "@/lib/vocab";
 import { InstagramIcon, PhoneIcon, TelegramIcon } from "./icons";
 import { Wordmark } from "./Wordmark";
 
 export async function Footer() {
   const locale = (await getLocale()) as Locale;
-  const [t, nav, common, settings, houses] = await Promise.all([
+  const [t, nav, settings, houses] = await Promise.all([
     getTranslations("footer"),
     getTranslations("nav"),
-    getTranslations("common"),
     getSettings(locale),
     getHouses(locale),
   ]);
   const instagram = settings.instagram ?? DEFAULT_INSTAGRAM_URL;
 
-  // Quick catalog links built from what's actually in the catalog.
-  const floors = [...new Set(houses.map((h) => h.floors))].sort((a, b) => a - b);
-  const styles = (Object.keys(STYLES) as Style[]).filter((s) => houses.some((h) => h.style === s));
-  const quick = [
-    ...floors.map((f) => ({
-      href: `/loyihalar?qavat=${f}`,
-      label: common("floors", { count: f, label: formatNumber(f) }),
-    })),
-    ...styles.map((s) => ({ href: `/loyihalar?uslub=${s}`, label: STYLES[s][locale] })),
-  ];
+  // Category pages that currently have houses — real, crawlable links.
+  const quick = liveCollections(houses.map(toSummary))
+    .filter(({ collection: c }) => c.group === "floors" || c.group === "style" || c.group === "feature")
+    .map(({ collection: c }) => ({ href: collectionHref(c, locale), label: c.title[locale] }));
 
   const heading = "label-caps mb-5 text-cream/45";
   const link = "text-cream/80 transition-colors hover:text-gold-light";

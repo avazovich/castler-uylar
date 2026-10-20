@@ -6,10 +6,12 @@ import { Gallery } from "@/components/Gallery";
 import { HouseCard } from "@/components/HouseCard";
 import { CheckIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
 import { LeadDialog } from "@/components/LeadDialog";
+import { JsonLd } from "@/components/JsonLd";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd, telHref } from "@/lib/format";
 import { getHouse, getHouses, getSettings, toSummary, type House } from "@/lib/houses";
+import { alternates, breadcrumbLd, houseAlt, houseDescription, houseKind, houseSummary, houseTitle, productLd, socialImage } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 
 export const revalidate = 60;
@@ -33,34 +35,23 @@ export async function generateMetadata({
   const n = parseCode(code);
   const house = n ? await getHouse(n, locale) : undefined;
   if (!house) return {};
-  const [t, common] = await Promise.all([
-    getTranslations({ locale, namespace: "meta" }),
-    getTranslations({ locale, namespace: "common" }),
-  ]);
-  const name = house.name ?? common("projectNo", { code: house.code });
+  const summary = toSummary(house);
+  const title = `${houseTitle(summary, locale)} | Castler`;
+  const description = houseDescription(summary, locale);
   return {
-    title: t("houseTitle", { name }),
-    description: t("houseDescription", {
-      area: formatNumber(house.totalArea),
-      floors: common("floors", { count: house.floors, label: formatNumber(house.floors) }),
-      plot: formatNumber(house.plotSotix),
-      price: common("price", { amount: formatNumber(house.priceUzs) }),
-    }),
-    alternates: {
-      canonical: `/${locale}/loyihalar/${house.code}`,
-      languages: Object.fromEntries(routing.locales.map((l) => [l, `/${l}/loyihalar/${house.code}`])),
+    title,
+    description,
+    alternates: alternates(locale, (l) => `/${l}/loyihalar/${house.code}`),
+    // Sample houses carry placeholder sizes and prices — keep them out of
+    // search results until the real figures are entered (untick "Namuna").
+    ...(house.isSample ? { robots: { index: false, follow: true } } : {}),
+    openGraph: {
+      title,
+      description,
+      url: `/${locale}/loyihalar/${house.code}`,
+      images: [{ url: socialImage(house.cover), width: 1200, height: 630, alt: houseAlt(house, locale) }],
     },
-    openGraph: { images: [{ url: ogImage(house.cover.url, house.cover.focus) }] },
   };
-}
-
-/** 1200×630 share image cropped around the photo's focal point. */
-function ogImage(src: string, focus: { x: number; y: number }): string {
-  const url = new URL(src);
-  for (const [k, v] of Object.entries({ w: "1200", h: "630", fit: "crop", crop: "focalpoint", "fp-x": focus.x.toFixed(3), "fp-y": focus.y.toFixed(3), auto: "format" })) {
-    url.searchParams.set(k, v);
-  }
-  return url.toString();
 }
 
 /** Same floors first, then closest in size. */
@@ -94,7 +85,10 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
   ]);
   const fmt = formatNumber;
   const title = house.name ?? common("projectNo", { code: house.code });
+  const summary = toSummary(house);
   const images = [house.cover, ...house.gallery];
+  const alts = images.map((_, i) => houseAlt(house, locale, i + 1));
+  const kind = `${house.style ? `${STYLES[house.style][locale]} · ` : ""}${t("kindLine", { kind: houseKind(house.floors, locale, "gen") })}`;
   const similar = similarTo(house, all);
   const roomsTotal = Math.round(house.floorPlans.reduce((s, f) => s + f.total, 0) * 10) / 10;
   const costTotal = house.buildEstimate.reduce((s, c) => s + c.costUsd, 0);
@@ -119,6 +113,17 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
 
   return (
     <>
+      <JsonLd
+        data={[
+          breadcrumbLd([
+            { name: nav("home"), path: `/${locale}` },
+            { name: nav("catalog"), path: `/${locale}/loyihalar` },
+            { name: houseTitle(summary, locale), path: `/${locale}/loyihalar/${house.code}` },
+          ]),
+          // No product data for sample houses: their prices aren't real.
+          ...(house.isSample ? [] : [productLd(summary, locale, images, house.description ?? houseDescription(summary, locale))]),
+        ]}
+      />
       <PageHeader
         crumbs={[
           { label: nav("home"), href: "/" },
@@ -129,7 +134,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
 
       <div className={`pb-24 pt-8 md:pt-10 ${container}`}>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
-          <Gallery images={images} title={title} />
+          <Gallery images={images} title={title} alts={alts} />
 
           <aside className="self-start border border-line lg:sticky lg:top-28">
             {house.isSample && (
@@ -139,11 +144,13 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
               </p>
             )}
             <div className="p-6 md:p-7">
-              <p className="label-caps text-ink-soft">
-                № {house.code}
-                {house.style ? ` · ${STYLES[house.style][locale]}` : ""}
-              </p>
-              <h1 className="font-display mt-2 text-[46px] leading-[1.02] text-ink md:text-[54px]">{title}</h1>
+              {/* The heading says what the page is, not just the house's name. */}
+              <h1>
+                <span className="label-caps block text-ink-soft">
+                  № {house.code} · {kind}
+                </span>
+                <span className="font-display mt-2 block text-[46px] leading-[1.02] text-ink md:text-[54px]">{title}</span>
+              </h1>
 
               <div className="mt-6 border-t border-line pt-5">
                 <div className="flex flex-wrap items-baseline gap-x-3">
@@ -198,17 +205,19 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           </aside>
         </div>
 
-        {house.description && (
-          <section className="mt-16 border-t border-line pt-12 md:mt-20">
-            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-              <h2 className="label-caps flex items-center gap-3 text-gold">
-                <span className="h-px w-10 bg-current" />
-                {t("about")}
-              </h2>
-              <p className="max-w-3xl whitespace-pre-line text-lg leading-relaxed text-ink">{house.description}</p>
+        <section className="mt-16 border-t border-line pt-12 md:mt-20">
+          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+            <h2 className="label-caps flex items-center gap-3 text-gold">
+              <span className="h-px w-10 bg-current" />
+              {t("about")}
+            </h2>
+            <div className="max-w-3xl space-y-4 text-lg leading-relaxed text-ink">
+              {house.description && <p className="whitespace-pre-line">{house.description}</p>}
+              {/* Generated from the house's own data, so it's always accurate. */}
+              <p className={house.description ? "text-ink-soft" : ""}>{houseSummary(summary, locale)}</p>
             </div>
-          </section>
-        )}
+          </div>
+        </section>
 
         {house.floorPlans.length > 0 && (
           <section className="mt-16 border-t border-line pt-12 md:mt-20">

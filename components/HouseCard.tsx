@@ -4,6 +4,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/format";
 import type { HouseSummary } from "@/lib/houses";
+import { houseAlt } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 import { ArrowRightIcon } from "./icons";
 
@@ -30,7 +31,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
       <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
         <Image
           src={house.cover.url}
-          alt={title}
+          alt={houseAlt(house, locale)}
           fill
           priority={priority}
           sizes="(min-width: 1280px) 420px, (min-width: 640px) 50vw, 100vw"

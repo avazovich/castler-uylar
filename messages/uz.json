@@ -1,9 +1,12 @@
 {
   "meta": {
-    "title": "Tayyor uy loyihalari — Castler",
-    "description": "Castler arxitektorlari loyihalagan tayyor uy loyihalari katalogi. Yer maydoni, qavatlar soni va yer eniga qarab o'zingizga mosini tanlang.",
-    "houseTitle": "{name} — tayyor uy loyihasi | Castler",
-    "houseDescription": "{area} m², {floors}, {plot} sotix yer uchun. Narxi {price}."
+    "title": "Tayyor uy loyihalari — narxlari, rejalari va rasmlari | Castler",
+    "description": "Castler arxitektorlarining tayyor uy loyihalari: 1 va 2 qavatli, zamonaviy va neoklassik uylar. Rejalar, xonalar maydoni, narxlar va rasmlar.",
+    "siteName": "Castler — tayyor uy loyihalari",
+    "catalogTitle": "Uy loyihalari katalogi — {count} ta tayyor loyiha | Castler",
+    "catalogDescription": "Barcha tayyor uy loyihalari bir joyda: yer maydoni (sotix), qavatlar soni, yer eni va uslub bo'yicha saralang. Har bir loyihada narx, rejalar va rasmlar.",
+    "collectionTitle": "{title} — narxlari va rejalari | Castler",
+    "collectionDescription": "{title}: {count} ta tayyor loyiha, narxi {from} so'mdan. Rejalar, rasmlar va xonalar maydoni — Castler arxitektorlaridan."
   },
   "nav": {
     "brand": "Tayyor loyihalar",
@@ -63,7 +66,25 @@
     "customTitle": "Mos loyiha topa olmadingizmi?",
     "customText": "Castler yeringiz, oilangiz va byudjetingiz uchun noldan individual loyiha tayyorlaydi. Raqamingizni qoldiring — bog'lanamiz.",
     "viewCatalog": "Katalogni ko'rish",
-    "finderTitle": "Loyiha qidirish"
+    "finderTitle": "Loyiha qidirish",
+    "categoriesEyebrow": "Turkumlar",
+    "categoriesTitle": "Ommabop turkumlar",
+    "guideEyebrow": "Maslahat",
+    "guideTitle": "Uy loyihasini qanday tanlash kerak",
+    "guide": [
+      {
+        "title": "Yer maydoni va eni",
+        "text": "1 sotix — 100 m². Har bir loyiha sahifasida uy sig'adigan eng kichik yer maydoni va eni ko'rsatilgan — ularni o'z yeringiz o'lchamlari bilan solishtiring."
+      },
+      {
+        "title": "Qavatlar soni",
+        "text": "Bir qavatli uy kengroq yer talab qiladi, lekin zinapoyasiz qulay. Ikki qavatli uy kichikroq yerda ko'proq yashash maydonini beradi."
+      },
+      {
+        "title": "Xonalar va oila",
+        "text": "Yotoqxona va sanuzellar sonini oilangiz a'zolariga qarab tanlang. Loyiha sahifasida har bir qavatdagi xonalar va ularning maydonini ko'rasiz."
+      }
+    ]
   },
   "filters": {
     "plot": "Yer maydoni",
@@ -92,7 +113,8 @@
     "title": "Tayyor uy loyihalari",
     "emptyTitle": "Bunday loyiha topilmadi",
     "emptyText": "Filtrlarni o'zgartirib ko'ring — yoki biz sizga individual loyiha tayyorlaymiz.",
-    "noHouses": "Katalog tez orada to'ldiriladi."
+    "noHouses": "Katalog tez orada to'ldiriladi.",
+    "categories": "Turkumlar"
   },
   "house": {
     "back": "Katalog",
@@ -128,7 +150,8 @@
     "enlarge": "Rasmni kattalashtirish",
     "planAlt": "{level} rejasi",
     "close": "Yopish",
-    "details": "Batafsil"
+    "details": "Batafsil",
+    "kindLine": "{kind} loyihasi"
   },
   "lead": {
     "titleHouse": "Loyihani muhokama qilish",
@@ -159,5 +182,10 @@
     "title": "Sahifa topilmadi",
     "text": "Bunday loyiha yo'q yoki katalogdan olib tashlangan.",
     "back": "Katalogga qaytish"
+  },
+  "collection": {
+    "count": "{count} ta loyiha",
+    "otherTitle": "Boshqa turkumlar",
+    "allProjects": "Barcha loyihalar"
   }
 }

@@ -47,6 +47,13 @@ export interface HouseSummary {
   bedrooms: number;
   bathrooms: number;
   cover: Img;
+  /** Derived from the room list — used by the "with pool / garage" pages. */
+  features: { pool: boolean; garage: boolean };
+  /** Room types in the plan, for generated page text. */
+  roomTypes: RoomType[];
+  hasCostEstimate: boolean;
+  /** ISO time of the last edit, for the sitemap. */
+  updatedAt?: string;
 }
 
 export interface Floor {
@@ -93,7 +100,7 @@ const IMG = /* groq */ `{
 }`;
 
 const HOUSE = /* groq */ `{
-  code, name, isSample, featured, style, priceUzs, oldPriceUzs,
+  _updatedAt, code, name, isSample, featured, style, priceUzs, oldPriceUzs,
   plotSotix, minPlotWidth, minPlotLength, totalArea, floors, description,
   "cover": cover${IMG},
   "gallery": gallery[]${IMG},
@@ -111,6 +118,7 @@ interface RawImg {
 }
 
 interface RawHouse {
+  _updatedAt?: string;
   code: number;
   name?: L<string>;
   isSample?: boolean;
@@ -195,6 +203,10 @@ function toHouse(raw: RawHouse, locale: Locale): House | undefined {
     bedrooms: allRoomTypes.filter((t) => BEDROOM_TYPES.includes(t)).length,
     bathrooms: allRoomTypes.filter((t) => BATHROOM_TYPES.includes(t)).length,
     cover,
+    features: { pool: allRoomTypes.includes("pool"), garage: allRoomTypes.includes("garage") },
+    roomTypes: [...new Set(allRoomTypes)],
+    hasCostEstimate: (raw.buildEstimate ?? []).length > 0,
+    updatedAt: raw._updatedAt,
     description: pick(raw.description, locale),
     gallery: (raw.gallery ?? []).map(toImg).filter((i): i is Img => Boolean(i)),
     floorPlans,
@@ -223,6 +235,10 @@ export function toSummary(h: House): HouseSummary {
     bedrooms: h.bedrooms,
     bathrooms: h.bathrooms,
     cover: h.cover,
+    features: h.features,
+    roomTypes: h.roomTypes,
+    hasCostEstimate: h.hasCostEstimate,
+    updatedAt: h.updatedAt,
   };
 }
 
