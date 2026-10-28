@@ -19,7 +19,8 @@
     "language": "Til",
     "home": "Bosh sahifa",
     "request": "So'rov qoldirish",
-    "company": "Castler arxitektura kompaniyasi"
+    "company": "Castler arxitektura kompaniyasi",
+    "mainSite": "Castler studiyasi sayti"
   },
   "common": {
     "price": "{amount} so'm",

@@ -5,11 +5,19 @@ import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { telHref } from "@/lib/format";
-import { CloseIcon, MenuIcon, PhoneIcon } from "./icons";
+import { ArrowRightIcon, CloseIcon, MenuIcon, PhoneIcon } from "./icons";
 import { LanguageSwitch } from "./LanguageSwitch";
 import type { NavItem } from "./NavLinks";
 
-export function MobileMenu({ items, phone }: { items: NavItem[]; phone: string }) {
+export function MobileMenu({
+  items,
+  phone,
+  mainSite,
+}: {
+  items: NavItem[];
+  phone: string;
+  mainSite: { href: string; label: string };
+}) {
   const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -42,6 +50,15 @@ export function MobileMenu({ items, phone }: { items: NavItem[]; phone: string }
                 {item.label}
               </Link>
             ))}
+            <a
+              href={mainSite.href}
+              target="_blank"
+              rel="noopener"
+              className="label-caps flex items-center justify-between border-b border-line py-5 text-[13px] text-ink"
+            >
+              {mainSite.label}
+              <ArrowRightIcon className="h-4 w-4 -rotate-45 text-gold" />
+            </a>
           </nav>
           <div className="flex items-center justify-between gap-3 p-4">
             <LanguageSwitch tone="light" />

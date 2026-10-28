@@ -2,6 +2,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { getSettings } from "@/lib/houses";
+import { MAIN_SITE_URL } from "@/lib/site";
 import { MobileMenu } from "./MobileMenu";
 import { NavLinks } from "./NavLinks";
 import { Wordmark } from "./Wordmark";
@@ -30,7 +31,11 @@ export async function Header() {
           <Link href="/#aloqa" className="btn hidden bg-ink text-paper hover:bg-gold md:inline-flex">
             {t("request")}
           </Link>
-          <MobileMenu items={items} phone={settings.phone} />
+          <MobileMenu
+            items={items}
+            phone={settings.phone}
+            mainSite={{ href: `${MAIN_SITE_URL}/${locale}`, label: t("mainSite") }}
+          />
         </div>
       </div>
     </header>

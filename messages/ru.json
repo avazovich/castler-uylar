@@ -19,7 +19,8 @@
     "language": "Язык",
     "home": "Главная",
     "request": "Оставить заявку",
-    "company": "Архитектурная компания Castler"
+    "company": "Архитектурная компания Castler",
+    "mainSite": "Сайт студии Castler"
   },
   "common": {
     "price": "{amount} сум",

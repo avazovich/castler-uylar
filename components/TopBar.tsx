@@ -2,8 +2,8 @@ import { getLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { telHref } from "@/lib/format";
 import { getSettings } from "@/lib/houses";
-import { DEFAULT_INSTAGRAM_URL } from "@/lib/site";
-import { InstagramIcon, PhoneIcon, TelegramIcon } from "./icons";
+import { DEFAULT_INSTAGRAM_URL, MAIN_SITE_URL } from "@/lib/site";
+import { ArrowRightIcon, InstagramIcon, PhoneIcon, TelegramIcon } from "./icons";
 import { LanguageSwitch } from "./LanguageSwitch";
 
 /** Thin dark strip above the header: contacts on the left, language on the right. */
@@ -17,6 +17,16 @@ export async function TopBar() {
         <a href={telHref(settings.phone)} className="inline-flex items-center gap-2 hover:text-cream">
           <PhoneIcon className="h-3.5 w-3.5 text-gold-light" />
           {settings.phone}
+        </a>
+        <a
+          href={`${MAIN_SITE_URL}/${locale}`}
+          target="_blank"
+          rel="noopener"
+          aria-label={t("mainSite")}
+          className="inline-flex items-center gap-1.5 hover:text-cream"
+        >
+          castler.uz
+          <ArrowRightIcon className="h-3 w-3 -rotate-45 text-gold-light" />
         </a>
         {settings.telegram && (
           <a

@@ -5,7 +5,7 @@ import { collectionHref, liveCollections } from "@/lib/collections";
 import { telHref } from "@/lib/format";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
 import { DEFAULT_INSTAGRAM_URL, MAIN_SITE_URL } from "@/lib/site";
-import { InstagramIcon, PhoneIcon, TelegramIcon } from "./icons";
+import { ArrowRightIcon, InstagramIcon, PhoneIcon, TelegramIcon } from "./icons";
 import { Wordmark } from "./Wordmark";
 
 export async function Footer() {
@@ -32,6 +32,15 @@ export async function Footer() {
         <div>
           <Wordmark variant="cream" height={26} />
           <p className="mt-6 max-w-xs text-cream/60">{t("tagline")}</p>
+          <a
+            href={`${MAIN_SITE_URL}/${locale}`}
+            target="_blank"
+            rel="noopener"
+            className="mt-5 inline-flex items-center gap-2 text-gold-light transition-colors hover:text-cream"
+          >
+            {t("mainSite")} — castler.uz
+            <ArrowRightIcon className="h-4 w-4 -rotate-45" />
+          </a>
         </div>
 
         <nav className="flex flex-col gap-3">
