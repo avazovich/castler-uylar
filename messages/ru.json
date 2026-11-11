@@ -152,7 +152,8 @@
     "planAlt": "План: {level}",
     "close": "Закрыть",
     "details": "Подробнее",
-    "kindLine": "Проект {kind}"
+    "kindLine": "Проект {kind}",
+    "faqTitle": "Частые вопросы"
   },
   "lead": {
     "titleHouse": "Обсудить проект",

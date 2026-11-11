@@ -34,6 +34,8 @@ export interface Img {
 export interface HouseSummary {
   code: number;
   name?: string;
+  /** The Uzbek (Latin) name, for the page address in every language. */
+  slugName?: string;
   isSample: boolean;
   featured: boolean;
   style?: Style;
@@ -190,6 +192,7 @@ function toHouse(raw: RawHouse, locale: Locale): House | undefined {
   return {
     code: raw.code,
     name: pick(raw.name, locale),
+    slugName: pick(raw.name, "uz"),
     isSample: Boolean(raw.isSample),
     featured: Boolean(raw.featured),
     style: raw.style,
@@ -222,6 +225,7 @@ export function toSummary(h: House): HouseSummary {
   return {
     code: h.code,
     name: h.name,
+    slugName: h.slugName,
     isSample: h.isSample,
     featured: h.featured,
     style: h.style,

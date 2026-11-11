@@ -4,7 +4,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { formatNumber } from "@/lib/format";
 import type { HouseSummary } from "@/lib/houses";
-import { houseAlt } from "@/lib/seo";
+import { houseAlt, housePath } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 import { ArrowRightIcon } from "./icons";
 
@@ -25,7 +25,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
 
   return (
     <Link
-      href={`/loyihalar/${house.code}`}
+      href={housePath(house, locale)}
       className="group flex flex-col border border-line bg-paper transition-[border-color,box-shadow] duration-300 hover:border-ink/30 hover:shadow-[0_18px_40px_-24px_rgba(26,29,22,0.45)]"
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">

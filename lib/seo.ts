@@ -4,12 +4,57 @@
  * they are always true), and schema.org JSON-LD builders.
  */
 import { routing, type Locale } from "@/i18n/routing";
-import { formatNumber } from "./format";
-import type { HouseSummary, SiteSettings } from "./houses";
+import { formatNumber, formatUsd } from "./format";
+import type { House, HouseSummary, SiteSettings } from "./houses";
 import { MAIN_SITE_URL, SITE_URL } from "./site";
 import { ROOM_TYPES, type RoomType, type Style } from "./vocab";
 
 export const absoluteUrl = (path: string) => `${SITE_URL}${path}`;
+
+// ---------- page addresses ----------
+
+const UZ_STYLE_SLUG: Record<Style, string> = { modern: "zamonaviy", neoclassic: "neoklassik", classic: "klassik" };
+const RU_FLOORS_SLUG: Record<string, string> = {
+  "1": "odnoetazhnogo-doma",
+  "1.5": "doma-s-mansardoy",
+  "2": "dvuhetazhnogo-doma",
+  "3": "trehetazhnogo-doma",
+};
+
+/** "Go'zal" → "gozal": Latin letters and digits only, words joined by "-". */
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[ʻʼ'‘’`]/g, "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+type Addressable = Pick<HouseSummary, "code" | "slugName" | "floors" | "style">;
+
+/** "104-uychi-2-qavatli-klassik-uy-loyihasi" / "104-uychi-proekt-dvuhetazhnogo-doma" — the number keeps it unique,
+ *  the words say what people search for. */
+export function houseSlug(h: Addressable, locale: Locale): string {
+  const name = h.slugName ? slugify(h.slugName) : "";
+  const parts =
+    locale === "ru"
+      ? [String(h.code), name, "proekt", RU_FLOORS_SLUG[String(h.floors)] ?? "doma"]
+      : [
+          String(h.code),
+          name,
+          h.floors === 1.5 ? "mansardali" : `${String(h.floors).replace(".", "-")}-qavatli`,
+          h.style ? UZ_STYLE_SLUG[h.style] : "",
+          "uy-loyihasi",
+        ];
+  return parts.filter(Boolean).join("-");
+}
+
+/** For the locale-aware <Link>: "/loyihalar/104-uychi-…". */
+export const housePath = (h: Addressable, locale: Locale) => `/loyihalar/${houseSlug(h, locale)}`;
+/** With the language in front: "/uz/loyihalar/104-uychi-…". */
+export const houseUrlPath = (h: Addressable, locale: Locale) => `/${locale}${housePath(h, locale)}`;
 
 /**
  * Canonical + hreflang for a page that exists in every locale. `path` gives
@@ -79,16 +124,19 @@ function houseName(h: Pick<HouseSummary, "name">, locale: Locale) {
   return locale === "ru" ? `«${h.name}»` : h.name;
 }
 
-/** "Afsona — 2 qavatli uy loyihasi, 420 m²" / "«Афсона» — проект двухэтажного дома, 420 м²" */
+/** "Afsona — 2 qavatli uy loyihasi, 6 sotix, 420 m²" / "«Афсона» — проект двухэтажного дома на 6 соток, 420 м²":
+ *  what people search for (floors, plot size) up front. */
 export function houseTitle(h: HouseSummary, locale: Locale): string {
   const area = formatNumber(h.totalArea);
+  const plot = formatNumber(h.plotSotix);
   const name = houseName(h, locale);
   if (locale === "ru") {
     const kind = houseKind(h.floors, "ru", "gen");
-    return name ? `${name} — проект ${kind}, ${area} м²` : `Проект ${kind} № ${h.code}, ${area} м²`;
+    const onPlot = `на ${plot} ${ruPlural(h.plotSotix, "сотку", "сотки", "соток")}`;
+    return name ? `${name} — проект ${kind} ${onPlot}, ${area} м²` : `Проект ${kind} № ${h.code} ${onPlot}, ${area} м²`;
   }
   const kind = houseKind(h.floors, "uz");
-  return name ? `${name} — ${kind} loyihasi, ${area} m²` : `${cap(kind)} loyihasi № ${h.code}, ${area} m²`;
+  return name ? `${name} — ${kind} loyihasi, ${plot} sotix, ${area} m²` : `${cap(kind)} loyihasi № ${h.code}, ${plot} sotix, ${area} m²`;
 }
 
 /** Adds the closing phrase only while the description stays within what Google shows (~160 chars). */
@@ -110,7 +158,7 @@ export function houseDescription(h: HouseSummary, locale: Locale): string {
     return fit(`${parts.join(", ")}. Для участка от ${plot} ${plotWord}${h.minPlotWidth ? ` шириной от ${formatNumber(h.minPlotWidth)} м` : ""}. Цена ${price} сум.`, " Планировки и фото.");
   }
   const parts = [
-    `${name ? `${name} — ` : ""}${(name ? (x: string) => x : cap)(`${h.style ? `${STYLE_PHRASE[h.style].uz} ` : ""}${houseKind(h.floors, "uz")} loyihasi`)}: ${area} m²`,
+    `${name ? `${name} — ` : ""}${(name ? (x: string) => x : cap)(`${h.style ? `${STYLE_PHRASE[h.style].uz} ` : ""}${houseKind(h.floors, "uz")} loyihasi (proekti)`)}: ${area} m²`,
     h.bedrooms ? `${h.bedrooms} ta yotoqxona` : null,
     h.bathrooms ? `${h.bathrooms} ta sanuzel` : null,
   ].filter(Boolean);
@@ -217,7 +265,7 @@ export function itemListLd(locale: Locale, houses: HouseSummary[]) {
     itemListElement: houses.map((h, i) => ({
       "@type": "ListItem",
       position: i + 1,
-      url: absoluteUrl(`/${locale}/loyihalar/${h.code}`),
+      url: absoluteUrl(houseUrlPath(h, locale)),
       name: houseTitle(h, locale),
     })),
   };
@@ -249,11 +297,100 @@ export function productLd(
     ],
     offers: {
       "@type": "Offer",
-      url: absoluteUrl(`/${locale}/loyihalar/${h.code}`),
+      url: absoluteUrl(houseUrlPath(h, locale)),
       priceCurrency: "UZS",
       price: h.priceUzs,
       availability: "https://schema.org/InStock",
       seller: { "@id": ORG_ID },
     },
+  };
+}
+
+// ---------- questions people ask ----------
+
+export interface Faq {
+  q: string;
+  a: string;
+}
+
+/** The usual questions about a house, answered only from its own data and the site settings — so always true. */
+/** "Bosh reja; fasadlar; 3D vizualizatsiya" — one sentence from the settings list. */
+const listed = (items: string[]) => items.map((x, i) => (i ? x.charAt(0).toLowerCase() + x.slice(1) : x)).join("; ");
+
+export function houseFaq(h: House, settings: SiteSettings, locale: Locale): Faq[] {
+  const f = formatNumber;
+  const ru = locale === "ru";
+  const named = h.name ? (ru ? `дома «${h.name}»` : `${h.name} uyi`) : ru ? `дома № ${h.code}` : `№ ${h.code} uy`;
+  const basement = h.floorPlans.some((p) => p.level === "basement");
+  const rooms = NOTABLE_ROOMS.filter((r) => h.roomTypes.includes(r)).map((r) => ROOM_TYPES[r][locale].toLowerCase());
+  const list = (xs: string[], and: string) => (xs.length <= 1 ? xs.join("") : `${xs.slice(0, -1).join(", ")} ${and} ${xs[xs.length - 1]}`);
+  const cost = h.buildEstimate.reduce((s, c) => s + c.costUsd, 0);
+  const out: Faq[] = [];
+
+  if (ru) {
+    const plot = `${f(h.plotSotix)} ${ruPlural(h.plotSotix, "сотка", "сотки", "соток")}`;
+    out.push({
+      q: `Какой участок нужен для ${named}?`,
+      a: `Не меньше ${plot} (${f(h.plotSotix * 100)} м²)${h.minPlotWidth ? `: ширина участка — от ${f(h.minPlotWidth)} м${h.minPlotLength ? `, глубина — от ${f(h.minPlotLength)} м` : ""}` : ""}.`,
+    });
+    const counts = [
+      h.bedrooms ? `${h.bedrooms} ${ruPlural(h.bedrooms, "спальня", "спальни", "спален")}` : null,
+      h.bathrooms ? `${h.bathrooms} ${ruPlural(h.bathrooms, "санузел", "санузла", "санузлов")}` : null,
+    ].filter((x): x is string => Boolean(x));
+    out.push({
+      q: `Сколько комнат в проекте ${named}?`,
+      a: `${cap(list(counts, "и") || "Планировка указана ниже")}${rooms.length ? `, а также ${list(rooms, "и")}` : ""}. Общая площадь — ${f(h.totalArea)} м², ${houseKind(h.floors, "ru")}${basement ? " с цокольным этажом" : ""}.`,
+    });
+    if (cost > 0)
+      out.push({
+        q: `Сколько стоит построить коробку ${named}?`,
+        a: `По предварительному расчёту — около ${formatUsd(cost)} (${h.buildEstimate.map((c) => `${c.label.toLowerCase()} — ${formatUsd(c.costUsd)}`).join(", ")}). Это расчёт только для коробки; точная сумма зависит от материалов, региона и цен на рынке.`,
+      });
+    out.push({
+      q: "Сколько стоит проект?",
+      a: `Проектная документация стоит ${f(h.priceUzs)} сум${h.oldPriceUzs ? ` (прежняя цена — ${f(h.oldPriceUzs)} сум)` : ""}. Строительные работы в цену не входят.`,
+    });
+    if (settings.included.length)
+      out.push({ q: "Что входит в проект?", a: `${listed(settings.included)}.` });
+    out.push({
+      q: "Как заказать проект?",
+      a: `Оставьте имя и телефон через кнопку «Обсудить проект» на этой странице или позвоните по номеру ${settings.phone} — специалист Castler свяжется с вами.`,
+    });
+    return out;
+  }
+
+  out.push({
+    q: `${cap(named)}ni qurish uchun qancha yer kerak?`,
+    a: `Kamida ${f(h.plotSotix)} sotix (${f(h.plotSotix * 100)} m²) yer kerak${h.minPlotWidth ? `: yer eni kamida ${f(h.minPlotWidth)} m${h.minPlotLength ? `, chuqurligi kamida ${f(h.minPlotLength)} m` : ""}` : ""}.`,
+  });
+  const counts = [h.bedrooms ? `${h.bedrooms} ta yotoqxona` : null, h.bathrooms ? `${h.bathrooms} ta sanuzel` : null].filter(
+    (x): x is string => Boolean(x),
+  );
+  out.push({
+    q: `${cap(named)}da nechta xona bor?`,
+    a: `${cap(list(counts, "va") || "Xonalar rejada ko'rsatilgan")}${rooms.length ? `, shuningdek ${list(rooms, "va")}` : ""}. Umumiy maydoni — ${f(h.totalArea)} m², ${houseKind(h.floors, "uz")}${basement ? ", yerto'lasi bor" : ""}.`,
+  });
+  if (cost > 0)
+    out.push({
+      q: `${cap(named)}ning karkasini («korobka») qurish qancha turadi?`,
+      a: `Taxminiy hisob — ${formatUsd(cost)} atrofida (${h.buildEstimate.map((c) => `${c.label.toLowerCase()} — ${formatUsd(c.costUsd)}`).join(", ")}). Bu faqat karkas uchun; aniq narx materiallar, hudud va bozor narxlariga bog'liq.`,
+    });
+  out.push({
+    q: "Loyiha narxi qancha?",
+    a: `Loyiha hujjatlari narxi — ${f(h.priceUzs)} so'm${h.oldPriceUzs ? ` (avvalgi narxi ${f(h.oldPriceUzs)} so'm)` : ""}. Qurilish ishlari narxga kirmaydi.`,
+  });
+  if (settings.included.length) out.push({ q: "Loyihaga nimalar kiradi?", a: `${listed(settings.included)}.` });
+  out.push({
+    q: "Loyihani qanday buyurtma qilsa bo'ladi?",
+    a: `Shu sahifadagi «Loyihani muhokama qilish» tugmasi orqali ism va telefon raqamingizni qoldiring yoki ${settings.phone} raqamiga qo'ng'iroq qiling — Castler mutaxassisi siz bilan bog'lanadi.`,
+  });
+  return out;
+}
+
+export function faqLd(items: Faq[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((x) => ({ "@type": "Question", name: x.q, acceptedAnswer: { "@type": "Answer", text: x.a } })),
   };
 }

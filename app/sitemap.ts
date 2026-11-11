@@ -2,9 +2,11 @@ import type { MetadataRoute } from "next";
 import { routing, type Locale } from "@/i18n/routing";
 import { liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
-import { absoluteUrl } from "@/lib/seo";
+import { absoluteUrl, houseUrlPath } from "@/lib/seo";
 
-export const revalidate = 3600;
+// Built on every request: a cached sitemap kept the houses out for weeks after the
+// sample data was replaced (it is a cached route handler by default). Crawlers ask rarely.
+export const dynamic = "force-dynamic";
 
 /**
  * Every page in every language, each listing its translations (and
@@ -46,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...houses
       .filter((h) => !h.isSample)
       .flatMap((h) =>
-        entries((l) => `/${l}/loyihalar/${h.code}`, {
+        entries((l) => houseUrlPath(h, l), {
           lastModified: h.updatedAt,
           images: [h.cover, ...h.gallery].map((img) => photo(img.url)),
         }),

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Gallery } from "@/components/Gallery";
 import { HouseCard } from "@/components/HouseCard";
@@ -11,18 +11,21 @@ import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd, telHref } from "@/lib/format";
 import { getHouse, getHouses, getSettings, toSummary, type House } from "@/lib/houses";
-import { alternates, breadcrumbLd, houseAlt, houseDescription, houseKind, houseSummary, houseTitle, productLd, socialImage } from "@/lib/seo";
+import { alternates, breadcrumbLd, faqLd, houseAlt, houseDescription, houseFaq, houseKind, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd, socialImage } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 
 export const revalidate = 60;
 
+/** "104" or "104-uychi-2-qavatli-…" → 104. Old number-only links still work: the page redirects them to the full address. */
 function parseCode(raw: string): number | undefined {
-  return /^\d{1,6}$/.test(raw) ? Number(raw) : undefined;
+  const m = /^(\d{1,6})(?:-[a-z0-9-]*)?$/.exec(decodeURIComponent(raw));
+  return m ? Number(m[1]) : undefined;
 }
 
-export async function generateStaticParams() {
-  const houses = await getHouses(routing.defaultLocale);
-  return houses.map((h) => ({ code: String(h.code) }));
+export async function generateStaticParams({ params }: { params: { locale: string } }) {
+  const locale = (routing.locales as readonly string[]).includes(params.locale) ? (params.locale as Locale) : routing.defaultLocale;
+  const houses = await getHouses(locale);
+  return houses.map((h) => ({ code: houseSlug(h, locale) }));
 }
 
 export async function generateMetadata({
@@ -41,14 +44,14 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: alternates(locale, (l) => `/${l}/loyihalar/${house.code}`),
+    alternates: alternates(locale, (l) => houseUrlPath(house, l)),
     // Sample houses carry placeholder sizes and prices — keep them out of
     // search results until the real figures are entered (untick "Namuna").
     ...(house.isSample ? { robots: { index: false, follow: true } } : {}),
     openGraph: {
       title,
       description,
-      url: `/${locale}/loyihalar/${house.code}`,
+      url: houseUrlPath(house, locale),
       images: [{ url: socialImage(house.cover), width: 1200, height: 630, alt: houseAlt(house, locale) }],
     },
   };
@@ -74,6 +77,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
   const n = parseCode(code);
   const house = n ? await getHouse(n, locale) : undefined;
   if (!house) notFound();
+  if (decodeURIComponent(code) !== houseSlug(house, locale)) permanentRedirect(houseUrlPath(house, locale));
 
   const [t, common, home, nav, settings, all] = await Promise.all([
     getTranslations("house"),
@@ -92,6 +96,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
   const similar = similarTo(house, all);
   const roomsTotal = Math.round(house.floorPlans.reduce((s, f) => s + f.total, 0) * 10) / 10;
   const costTotal = house.buildEstimate.reduce((s, c) => s + c.costUsd, 0);
+  const faq = houseFaq(house, settings, locale);
 
   const specs = [
     { label: t("specPlot"), value: t("sotix", { value: fmt(house.plotSotix) }) },
@@ -118,8 +123,9 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           breadcrumbLd([
             { name: nav("home"), path: `/${locale}` },
             { name: nav("catalog"), path: `/${locale}/loyihalar` },
-            { name: houseTitle(summary, locale), path: `/${locale}/loyihalar/${house.code}` },
+            { name: houseTitle(summary, locale), path: houseUrlPath(house, locale) },
           ]),
+          faqLd(faq),
           // No product data for sample houses: their prices aren't real.
           ...(house.isSample ? [] : [productLd(summary, locale, images, house.description ?? houseDescription(summary, locale))]),
         ]}
@@ -321,6 +327,23 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
             </ul>
           </section>
         )}
+
+        <section className="mt-16 border-t border-line pt-12 md:mt-20">
+          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+            <h2 className="label-caps flex items-center gap-3 text-gold">
+              <span className="h-px w-10 bg-current" />
+              {t("faqTitle")}
+            </h2>
+            <dl className="max-w-3xl divide-y divide-line border-y border-line">
+              {faq.map((x) => (
+                <div key={x.q} className="py-5">
+                  <dt className="font-display text-[24px] leading-tight text-ink">{x.q}</dt>
+                  <dd className="mt-2 text-[17px] leading-relaxed text-ink-soft">{x.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
 
         {similar.length > 0 && (
           <section className="mt-16 border-t border-line pt-12 md:mt-20">

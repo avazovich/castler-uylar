@@ -152,7 +152,8 @@
     "planAlt": "{level} rejasi",
     "close": "Yopish",
     "details": "Batafsil",
-    "kindLine": "{kind} loyihasi"
+    "kindLine": "{kind} loyihasi",
+    "faqTitle": "Ko'p beriladigan savollar"
   },
   "lead": {
     "titleHouse": "Loyihani muhokama qilish",
