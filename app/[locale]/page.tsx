@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { browsePath } from "@/lib/browse";
 import { collectionHref, liveCollections } from "@/lib/collections";
+import { focusPosition } from "@/lib/focus";
 import { formatNumber } from "@/lib/format";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
 import { houseAlt, housePath, organizationLd, pageMetadata, websiteLd } from "@/lib/seo";
@@ -63,12 +64,12 @@ export default async function HomePage({ params }: Props) {
         <p><strong>{t("help")}</strong> {t("helpText")}</p><Link href={consult}>{t("contact")} →</Link>
       </div></div>
 
-      {tiles.length > 0 && <section className="wrap section" id="uslublar">
+      {tiles.length > 0 && <section className="wrap section reveal" id="uslublar">
         <p className="eyebrow">{t("start")}</p><h2>{t("styleTitle")}</h2><p className="intro">{t("styleIntro")}</p>
-        <div className="collections">
+        <div className="collections stagger">
           {tiles.map(({ collection, houses: [house] }) => (
             <Link key={collection.id} className="collection" href={collectionHref(collection, locale)}>
-              <Image src={house.cover.url} alt="" fill sizes="(min-width: 980px) 210px, 33vw" />
+              <Image src={house.cover.url} alt="" fill sizes="(min-width: 980px) 210px, 33vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: focusPosition(house.cover, 5 / 4) }} />
               <strong>{collection.short[locale]} →</strong>
             </Link>
           ))}
@@ -80,19 +81,19 @@ export default async function HomePage({ params }: Props) {
         </div>
       </section>}
 
-      {settings.included.length > 0 && <section className="band" id="hujjatlar"><div className="wrap section">
+      {settings.included.length > 0 && <section className="band" id="hujjatlar"><div className="wrap section reveal">
         <h2>{t("docsTitle")}</h2>
         <ul className="document-list comparison">{settings.included.map((item) => <li key={item}>{item}</li>)}</ul>
         <Link className="button" href={consult}>{t("docAction")} →</Link>
       </div></section>}
 
-      <section className="wrap section" id="loyihalar">
+      <section className="wrap section reveal" id="loyihalar">
         <p className="eyebrow">{t("picks")}</p><h2>{home("featuredTitle")}</h2><p className="intro">{t("picksIntro")}</p>
-        <div className="cards">
+        <div className="cards stagger">
           {picked.map((house) => (
             <article key={house.code} className="card">
               <Link href={housePath(house, locale)}>
-                <div className="photo-frame"><Image src={house.cover.url} alt={houseAlt(house, locale)} fill sizes="(min-width: 690px) 33vw, 50vw" /></div>
+                <div className="photo-frame"><Image src={house.cover.url} alt={houseAlt(house, locale)} fill sizes="(min-width: 690px) 33vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /></div>
                 <div className="card-body">
                   {house.style && <p className="tag">{STYLES[house.style][locale]}{house.isSample ? ` · ${common("sample")}` : ""}</p>}
                   <h3>№{house.code} · {house.name}</h3><strong>{common("price", { amount: formatNumber(house.priceUzs) })}</strong>
@@ -105,7 +106,7 @@ export default async function HomePage({ params }: Props) {
         <Link className="button more" href="/loyihalar">{home("allProjects")} →</Link>
       </section>
 
-      <section className="band" id="xarajat"><div className="wrap section">
+      <section className="band" id="xarajat"><div className="wrap section reveal">
         <p className="eyebrow">{browse("cost")}</p><h2>{t("costTitle")}</h2><p className="intro">{browse("costIntro")}</p>
         <div className="cost">
           <div><h3>{t("costFactors")}</h3><ul className="consult-list">{(t.raw("factors") as string[]).map((item) => <li key={item}>{item}</li>)}</ul></div>
@@ -113,27 +114,27 @@ export default async function HomePage({ params }: Props) {
         </div>
       </div></section>
 
-      {picked.length > 0 && <section className="wrap section">
+      {picked.length > 0 && <section className="wrap section reveal">
         <p className="eyebrow">{t("portfolio")}</p><h2>{t("portfolioTitle")}</h2><p className="intro">{t("portfolioIntro")}</p>
-        <div className="portfolio">{picked.slice(0, 4).map((house) => (
+        <div className="portfolio stagger">{picked.slice(0, 4).map((house) => (
           <Link key={house.code} href={housePath(house, locale)}>
-            <Image src={house.cover.url} alt="" fill sizes="(min-width: 690px) 25vw, 50vw" /><strong>{house.name} →</strong>
+            <Image src={house.cover.url} alt="" fill sizes="(min-width: 690px) 25vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /><strong>{house.name} →</strong>
           </Link>
         ))}</div>
       </section>}
 
-      <section className="dark" id="jarayon"><div className="wrap section">
+      <section className="dark" id="jarayon"><div className="wrap section reveal">
         <h2>{t("why")}</h2><div className="benefits">{steps.map((step, index) => (
           <article key={step.title}><b aria-hidden="true">{["⌂", "✎", "▤", "↗"][index]}</b><h3>{step.title}</h3><p>{step.text}</p></article>
         ))}</div>
       </div></section>
 
-      <section className="wrap section" id="fikrlar">
+      <section className="wrap section reveal" id="fikrlar">
         <p className="eyebrow">{t("review")}</p><h2>{t("reviewTitle")}</h2>
         <div className="review"><p>{t("reviewIntro")}</p><Link href={consult}>{t("contact")} →</Link></div>
       </section>
 
-      <section className="band" id="aloqa"><div className="wrap section consult">
+      <section className="band" id="aloqa"><div className="wrap section reveal consult">
         <Image src="/brand/home-consult.jpg" alt="" width={1050} height={788} />
         <div><p className="eyebrow">{browse("consult")}</p><h2>{t("consultTitle")}</h2><p className="intro">{browse("consultIntro")}</p>
           <ul className="consult-list">{(t.raw("consultItems") as string[]).map((item) => <li key={item}>{item}</li>)}</ul>
@@ -141,18 +142,18 @@ export default async function HomePage({ params }: Props) {
         </div>
       </div></section>
 
-      <section className="wrap section" id="maqolalar">
+      <section className="wrap section reveal" id="maqolalar">
         <p className="eyebrow">{browse("guides")}</p><h2>{t("guideTitle")}</h2><p className="intro">{browse("guidesIntro")}</p>
         <div className="cards">{guide.map((item, index) => {
           const house = picked[index];
           return <article className="card" key={item.title}>
-            {house && <div className="photo-frame"><Image src={house.cover.url} alt="" fill sizes="(min-width: 690px) 33vw, 50vw" /></div>}
+            {house && <div className="photo-frame"><Image src={house.cover.url} alt="" fill sizes="(min-width: 690px) 33vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /></div>}
             <div className="card-body"><h3>{item.title}</h3><p>{item.text}</p></div>
           </article>;
         })}</div>
       </section>
 
-      <section className="band" id="faq"><div className="wrap section faq">
+      <section className="band" id="faq"><div className="wrap section reveal faq">
         <p className="eyebrow">{browse("faq")}</p><h2>{t("faqTitle")}</h2>
         {faq.map((item, index) => <details key={item.title} open={index === 0}><summary>{item.title}</summary><p>{item.text}</p></details>)}
       </div></section>

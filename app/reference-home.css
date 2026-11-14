@@ -39,22 +39,33 @@ h1{font-size:clamp(40px,4.5vw,65px);max-width:860px;margin-bottom:26px}
 @media(max-width:690px){.mast{min-height:58px;justify-content:space-between}.mast .logo{font-size:19px}.logo img{width:33px;height:33px}.menu{display:block;background:none;border:0;font-size:21px;min-height:44px}.reference-search,.nav{display:none}.nav>.wrap{padding-block:12px}.nav-cta{margin-left:0}.hero{padding:58px 0 35px;background-position:58% center}.filters{grid-template-columns:1fr 1fr;padding:0}.filters fieldset{border-top:1px solid var(--line)}.filters>.button{margin:5px 8px}.strip>.wrap{align-items:flex-start;flex-direction:column;gap:5px}.section{padding-block:42px}.collections,.cards,.portfolio,.benefits,.footer{grid-template-columns:repeat(2,minmax(0,1fr))}.cost,.consult{grid-template-columns:1fr;gap:12px}.footer>div:first-child{grid-column:1/-1}}
 @media(max-width:365px){.wrap{width:calc(100% - 24px)}.cards{grid-template-columns:1fr}}
 
-/* Keep keyboard focus visible using the same accent as the search controls. */
-:focus-visible{outline:2px solid #9a5030;outline-offset:3px}
-.finder input:focus,.finder select:focus,.reference-search input:focus,.catalog-controls input:focus,.catalog-controls select:focus,.cost input:focus{outline:none;box-shadow:inset 0 -2px #a85c37;background:#fcf5ed}
+/* Keyboard focus ring for links and buttons only. Text boxes never get an
+   orange line: the box just gets a slightly darker border and a calm tint. */
+:is(a,button,summary):focus-visible{outline:2px solid #9a5030;outline-offset:3px}
+.finder input:focus,.finder select:focus,.reference-search input:focus,.catalog-controls input:focus,.catalog-controls select:focus,.cost input:focus{outline:none;box-shadow:none;background:transparent}
+.reference-search:focus-within{border-color:#8a847a;background:#fff}
+.finder label:focus-within,.keyword:focus-within,.describe:focus-within{background:#f7f5f0}
 .hero{background-position:center 68%}
+/* Every project photo box is 4:3 and fills its frame (the crop follows each
+   photo's focal point), so every project looks right next to the others. */
 .collection{aspect-ratio:5/4}
-.collection img{object-position:center 62%}
-.photo-frame{display:grid;place-items:center;aspect-ratio:16/10;background:#e9e4da;overflow:hidden}
-.card .photo-frame img{width:100%;height:100%;min-height:0;aspect-ratio:auto;object-fit:contain}
-.portfolio img{object-position:center 63%}
+.photo-frame{display:block;aspect-ratio:4/3;background:#e9e4da;overflow:hidden}
+.card .photo-frame img{width:100%;height:100%;min-height:0;aspect-ratio:auto;object-fit:cover}
 
   .button { cursor: pointer; }
   .filters .range-label { display: block; }
   .filters fieldset .range-label { padding: 0; border: 0; text-transform: uppercase; }
   .language { margin-left: auto; }
-  .announcement .wrap { display: flex; align-items: center; justify-content: center; gap: 16px; }
-  .announcement .wrap > a { margin-inline: auto; }
+  /* Top bar: Castler studio link on the left, the offer in the middle, the
+     language on the right. On phones it is one slim line. */
+  .announcement { padding-block: 9px; }
+  .announcement .wrap { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px; }
+  .announce-site { justify-self: start; display: inline-flex; align-items: center; gap: 5px; font-size: 12px; letter-spacing: .04em; white-space: nowrap; }
+  .announce-site:hover { text-decoration: underline; }
+  .announce-text { text-align: center; }
+  .announce-short { display: none; }
+  .announcement .language { justify-self: end; margin-left: 0; }
+  .mast-call { display: none; }
   .cost form { box-shadow: none; }
   .card .photo-frame img { height: 100%; }
   .consult-list { list-style: disc; padding-left: 1.3rem; margin-bottom: 16px; }
@@ -64,13 +75,20 @@ h1{font-size:clamp(40px,4.5vw,65px);max-width:860px;margin-bottom:26px}
   .review { margin-top: 20px; }
   .reference-search input { font-size: 15px; }
   .reference-search input:focus, .finder input:focus, .finder select:focus {
-    outline: none; box-shadow: inset 0 -2px #a85c37; background: #fcf5ed;
+    outline: none; box-shadow: none; background: transparent;
   }
-  .collection img, .portfolio img { object-position: center 60%; }
 
   @media (max-width: 1023px) { .nav { display: none; } }
   @media (max-width: 690px) {
     .filters select, .filters input, .keyword input, .describe input { font-size: 16px; }
     .logo { gap: 8px; }
+    .announcement { padding-block: 0; }
+    .announcement .wrap { grid-template-columns: minmax(0, 1fr) auto; gap: 8px; min-height: 38px; }
+    .announce-site { display: none; }
+    .announce-text { text-align: left; font-size: 11.5px; letter-spacing: .02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .announce-long { display: none; }
+    .announce-short { display: inline; }
+    .mast-call { display: grid; place-items: center; width: 44px; height: 44px; margin-left: auto; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .mast-call svg { width: 18px; height: 18px; }
   }
 }

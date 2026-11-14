@@ -17,7 +17,7 @@ export function HouseTable({ houses }: { houses: AdminHouseRow[] }) {
 
   if (houses.length === 0) {
     return (
-      <div className="mt-8 border border-line bg-paper px-6 py-16 text-center">
+      <div className="mt-8 rounded-xl border border-line bg-paper px-6 py-16 text-center">
         <p className="font-display text-3xl">Hali loyiha yo&apos;q</p>
         <p className="mt-2 text-ink-soft">Birinchi uy loyihasini qo&apos;shing — u darhol saytda paydo bo&apos;ladi.</p>
       </div>
@@ -25,17 +25,49 @@ export function HouseTable({ houses }: { houses: AdminHouseRow[] }) {
   }
 
   return (
-    <div className="mt-8 border border-line bg-paper">
+    <div className="mt-8 overflow-hidden rounded-xl border border-line bg-paper">
       <div className="border-b border-line p-4">
         <input
           type="search"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Qidirish: raqam yoki nom bo'yicha"
-          className="field-input max-w-sm"
+          className="field-input md:max-w-sm"
         />
       </div>
-      <div className="overflow-x-auto">
+      {/* Phones: one card per project, big targets. */}
+      <ul className="divide-y divide-line md:hidden">
+        {shown.map((h) => (
+          <li key={h.id} className="flex gap-3 p-4">
+            <div className="relative h-[72px] w-[96px] shrink-0 overflow-hidden rounded-lg bg-paper-2">
+              {h.cover && (
+                <Image src={h.cover.url} alt="" fill sizes="96px" className="object-cover" style={{ objectPosition: focusPosition(h.cover, 4 / 3) }} />
+              )}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="font-black">№ {h.code}{h.name ? ` · ${h.name}` : ""}</p>
+              <p className="mt-0.5 text-sm text-ink-soft">
+                {h.priceUzs != null ? `${formatNumber(h.priceUzs)} so'm` : "—"} · {h.totalArea != null ? `${formatNumber(h.totalArea)} m²` : "—"}
+              </p>
+              <div className="mt-1.5 flex flex-wrap gap-1.5">
+                {h.isSample && <span className="rounded bg-accent px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-[#21150e]">Namuna</span>}
+                {h.featured && <span className="rounded bg-ink px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-paper">Bosh sahifada</span>}
+              </div>
+              <div className="mt-3 flex items-center gap-4">
+                <Link href={`/admin/uylar/${h.id}`} className="btn min-h-11 border border-ink px-5 text-ink hover:bg-ink hover:text-paper">
+                  Tahrirlash
+                </Link>
+                <a href={`/uz/loyihalar/${h.code}`} target="_blank" rel="noopener" className="text-sm font-bold text-ink-soft hover:text-ink">
+                  Saytda ↗
+                </a>
+              </div>
+            </div>
+          </li>
+        ))}
+        {shown.length === 0 && <li className="px-4 py-10 text-center text-ink-soft">Hech narsa topilmadi</li>}
+      </ul>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[720px] text-left text-[15px]">
           <thead className="border-b border-line bg-paper-2">
             <tr>
@@ -50,7 +82,7 @@ export function HouseTable({ houses }: { houses: AdminHouseRow[] }) {
             {shown.map((h) => (
               <tr key={h.id} className="border-b border-line last:border-b-0 hover:bg-paper-2/60">
                 <td className="px-4 py-3">
-                  <div className="relative h-[60px] w-[80px] overflow-hidden bg-paper-2">
+                  <div className="relative h-[60px] w-[80px] overflow-hidden rounded-md bg-paper-2">
                     {h.cover && (
                       <Image
                         src={h.cover.url}
@@ -70,8 +102,8 @@ export function HouseTable({ houses }: { houses: AdminHouseRow[] }) {
                 <td className="px-4 py-3">{h.floors != null ? formatNumber(h.floors) : "—"}</td>
                 <td className="px-4 py-3">
                   <div className="flex flex-wrap gap-1.5">
-                    {h.isSample && <span className="label-caps bg-gold px-2 py-1 text-paper">Namuna</span>}
-                    {h.featured && <span className="label-caps bg-ink px-2 py-1 text-paper">Bosh sahifada</span>}
+                    {h.isSample && <span className="label-caps rounded bg-accent px-2 py-1 text-[#21150e]">Namuna</span>}
+                    {h.featured && <span className="label-caps rounded bg-ink px-2 py-1 text-paper">Bosh sahifada</span>}
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-right">

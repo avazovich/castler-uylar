@@ -16,7 +16,7 @@ export function LoginForm() {
           {state.error}
         </p>
       )}
-      <button type="submit" disabled={pending} className="btn bg-ink py-4 text-paper hover:bg-gold">
+      <button type="submit" disabled={pending} className="btn bg-accent py-4 text-[#21150e] hover:bg-accent-hover">
         {pending ? "Tekshirilmoqda…" : "Kirish"}
       </button>
     </form>

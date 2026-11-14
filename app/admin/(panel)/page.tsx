@@ -20,7 +20,7 @@ export default async function AdminHome() {
             {samples > 0 && <> · shundan {samples} tasi namuna (raqamlari hali haqiqiy emas)</>}
           </p>
         </div>
-        <Link href="/admin/uylar/yangi" className="btn bg-ink text-paper hover:bg-gold">
+        <Link href="/admin/uylar/yangi" className="btn bg-accent text-[#21150e] hover:bg-accent-hover">
           + Yangi loyiha qo&apos;shish
         </Link>
       </div>

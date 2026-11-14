@@ -75,7 +75,7 @@ export function SettingsForm({ initial }: { initial: AdminSettingsInput }) {
           <p className={`text-sm ${notice?.tone === "error" ? "text-red-700" : notice ? "text-green-800" : "text-ink-soft"}`} role="status">
             {notice?.text ?? (dirty ? "Saqlanmagan o'zgarishlar bor" : "Hammasi saqlangan")}
           </p>
-          <button type="button" onClick={save} disabled={pending} className="btn ml-auto bg-ink text-paper hover:bg-gold">
+          <button type="button" onClick={save} disabled={pending} className="btn ml-auto min-h-12 bg-accent text-[#21150e] hover:bg-accent-hover">
             {pending ? "Saqlanmoqda…" : "Saqlash"}
           </button>
         </div>

@@ -11,6 +11,8 @@
   --cream: #f2f0e9;
   --paper: #ffffff;
   --paper-2: #f1efe9;
+  --accent: #c87d54;
+  --accent-hover: #da956b;
   --line: #e4e2db;
   --line-on-ink: #3a3d32;
 }
@@ -24,6 +26,8 @@
   --color-cream: var(--cream);
   --color-paper: var(--paper);
   --color-paper-2: var(--paper-2);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
   --color-line: var(--line);
   --color-line-on-ink: var(--line-on-ink);
   --font-sans: var(--font-lato, var(--font-inter)), system-ui, sans-serif;
@@ -53,9 +57,15 @@
     cursor: pointer;
   }
 
-  :focus-visible {
+  /* Keyboard focus ring for links and buttons. Text fields get a quiet
+     neutral highlight instead (see below) — never an orange line. */
+  :is(a, button, summary, [role="button"], [tabindex]):focus-visible {
     outline: 2px solid var(--gold);
     outline-offset: 2px;
+  }
+  :is(input, textarea, select):focus,
+  :is(input, textarea, select):focus-visible {
+    outline: none;
   }
 }
 
@@ -110,6 +120,7 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b6f61' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.9rem center;
+    border-radius: 0.5rem;
     padding: 0.75rem 2.2rem 0.75rem 0.9rem;
     font-size: 15px;
     color: var(--ink);
@@ -127,6 +138,7 @@
     width: 100%;
     border: 1px solid var(--line);
     background: var(--paper);
+    border-radius: 0.5rem;
     padding: 0.85rem 0.95rem;
     font-size: 16px;
     color: var(--ink);
@@ -149,19 +161,108 @@
 }
 
 
+/* Focused field: the border turns dark ink — no orange outline or underline. */
 .field-input:focus, .field-select:focus, input[type="search"]:focus {
-  outline: 2px solid var(--gold);
-  outline-offset: -2px;
+  outline: none;
   box-shadow: none;
+  border-color: var(--ink);
 }
 
-@keyframes page-enter {
-  from { opacity: .9; translate: 0 4px; }
-  to { opacity: 1; translate: none; }
+/* NOTE on every animation below: fill-mode is "backwards", never "both" or
+   "forwards". A finished animation must leave NOTHING behind: a leftover
+   transform turns the animated box into a containing block and breaks
+   position:fixed / sticky inside it (the phone action bar, the plan toolbar),
+   and it would also override the hover lift. */
+/* ───────────── Motion ─────────────
+   Everything here is switched off for visitors who ask their device for
+   reduced motion. Pages rise in on every page change (not on the first load,
+   which arrives ready-made — see PageEntrance), card grids pop in one after
+   another, sections ease in as they scroll into view, and pop-ups slide. */
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(22px); }
+  to { opacity: 1; transform: none; }
 }
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(18px) scale(.955); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheet-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes sheet-down {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(32px); }
+}
+@keyframes menu-drop {
+  from { opacity: 0; transform: translateY(-14px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes menu-lift {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-14px); }
+}
+@keyframes fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
 @media (prefers-reduced-motion: no-preference) {
-  .page-entrance { animation: page-enter 150ms cubic-bezier(.2,.7,.3,1); }
-  .gallery-photo { animation: page-enter 170ms ease-out; }
+  .page-entrance[data-motion="on"] {
+    animation: rise-in 560ms cubic-bezier(.22, .8, .3, 1) backwards;
+  }
+
+  /* Card grids: each card pops up a beat after the one before it. On a page
+     change the whole grid staggers; when a filter adds cards, those pop in. */
+  .page-entrance[data-motion="on"] .stagger > *,
+  .stagger-always > * {
+    animation: pop-in 620ms cubic-bezier(.22, .8, .3, 1) backwards;
+  }
+  .stagger > :nth-child(1) { animation-delay: 80ms; }
+  .stagger > :nth-child(2) { animation-delay: 150ms; }
+  .stagger > :nth-child(3) { animation-delay: 220ms; }
+  .stagger > :nth-child(4) { animation-delay: 290ms; }
+  .stagger > :nth-child(5) { animation-delay: 360ms; }
+  .stagger > :nth-child(6) { animation-delay: 430ms; }
+  .stagger > :nth-child(n + 7) { animation-delay: 480ms; }
+
+  /* The big home-page headline and search box ease in on the very first
+     visit too (they are plain server HTML, so nothing flashes). */
+  .page-entrance[data-motion="off"] .reference-home .hero .wrap > * {
+    animation: rise-in 800ms cubic-bezier(.22, .8, .3, 1) backwards;
+  }
+  .page-entrance[data-motion="off"] .reference-home .hero .wrap > :nth-child(2) { animation-delay: 90ms; }
+  .page-entrance[data-motion="off"] .reference-home .hero .wrap > :nth-child(3) { animation-delay: 190ms; }
+  .page-entrance[data-motion="off"] .reference-home .hero .wrap > :nth-child(4) { animation-delay: 300ms; }
+
+  /* Sections ease in as they scroll into view. Browsers without scroll-driven
+     animations simply show them (nothing is ever hidden). */
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: rise-in linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 38%;
+    }
+  }
+
+  .gallery-photo { animation: fade-in 320ms ease-out; }
+
+  /* Pop-ups: the dark backdrop fades, the panel slides up from the bottom. */
+  .anim-overlay[data-state="open"] { animation: fade-in 220ms ease-out; }
+  .anim-overlay[data-state="closed"] { animation: fade-out 160ms ease-in forwards; }
+  .anim-sheet[data-state="open"] { animation: sheet-up 340ms cubic-bezier(.22, .8, .3, 1); }
+  .anim-sheet[data-state="closed"] { animation: sheet-down 200ms ease-in forwards; }
+  .anim-menu[data-state="open"] { animation: menu-drop 300ms cubic-bezier(.22, .8, .3, 1); }
+  .anim-menu[data-state="closed"] { animation: menu-lift 180ms ease-in forwards; }
+
+  /* Small touches: cards lift on hover, buttons press in. */
+  .lift { transition: transform 280ms cubic-bezier(.22, .8, .3, 1), box-shadow 280ms ease, border-color 200ms ease; }
+  .lift:hover { transform: translateY(-4px); }
+  .button:active, .btn:active { transform: scale(.975); }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -193,3 +294,24 @@
   .catalog-select.field-select { max-width: 100%; }
   #extra-filters .field-select { width: 100%; }
 }
+
+/* ───────────── Phones ─────────────
+   The top bar scrolls away but the logo/menu bar stays, so the menu and the
+   call button are always one tap away. */
+@media (max-width: 690px) {
+  .reference-header { display: contents; }
+  .reference-header > header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    border-bottom: 1px solid var(--line);
+  }
+  .plan-toolbar { top: 59px; }
+  /* Comfortable thumb targets for every filter control. */
+  .catalog-select.field-select,
+  .catalog-toggle,
+  .catalog-chip { min-height: 44px; }
+  .catalog-chip { display: inline-flex; align-items: center; padding-inline: 14px; }
+}
+body:has(.action-bar) { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
+@media (min-width: 1024px) { body:has(.action-bar) { padding-bottom: 0; } }

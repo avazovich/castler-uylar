@@ -27,6 +27,29 @@ Saving refreshes the public pages straight away.
 `/studio` (Sanity Studio, English, needs a Sanity account) edits the same
 data and stays available as a backup.
 
+## Pictures, speed and motion (how the site is built to behave)
+
+- **One shape for every project photo: 4:3.** Catalog cards, home-page cards,
+  tiles and thumbnails are all 4:3 and fill their frame; the crop follows the
+  photo's focal point (the "center of the picture" set in /admin, `lib/focus.ts`).
+  The big gallery on a house page is also 4:3, but a photo that is not close to
+  that shape (most renders are tall) is shown whole over a soft blur of itself,
+  so no house is ever cut in half.
+- **Few picture sizes on purpose** (`images` in `next.config.ts`): Sanity makes
+  each size the first time it is asked for. Saving a house in /admin asks for
+  those sizes right away (`lib/warmImages.ts`), so the first visitor never waits.
+  If you change the sizes there, change the list in `lib/warmImages.ts` too.
+- **Page changes:** `<html data-scroll-behavior="smooth">` makes Next jump to the
+  top of the new page (Next 16 no longer does this by itself when smooth
+  scrolling is on). Pages and card grids animate in (`globals.css`, "Motion");
+  every animation uses fill-mode `backwards` so nothing lingers and breaks
+  fixed/sticky elements. All of it is off for visitors who prefer reduced motion.
+- **Phones:** sticky logo/menu bar with a call button, a full-screen menu, and a
+  bottom bar on house pages (price, call, request) — `MobileMenu.tsx`,
+  `MobileActionBar.tsx`.
+- **Titles and descriptions** for house pages are built in `lib/seo.ts` and are
+  trimmed to what Google shows (about 60 / 155 characters).
+
 ## Running locally
 
 ```bash

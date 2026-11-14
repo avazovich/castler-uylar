@@ -170,9 +170,9 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
 
       <div className="min-w-0">
         {results.length > 0 ? (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="stagger mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((h, i) => (
-              <HouseCard key={h.code} house={h} priority={i === 0} />
+              <HouseCard key={h.code} house={h} priority={i < 3} />
             ))}
           </div>
         ) : (

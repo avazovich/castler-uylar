@@ -39,8 +39,8 @@ export function FocusPicker({
   return (
     <Dialog.Root open onOpenChange={(o) => !o && onClose()}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/70" />
-        <Dialog.Content className="fixed inset-2 z-50 flex flex-col overflow-y-auto border-t-4 border-gold bg-paper p-5 shadow-2xl md:inset-8 md:p-7">
+        <Dialog.Overlay className="anim-overlay fixed inset-0 z-50 bg-ink/70" />
+        <Dialog.Content className="anim-sheet fixed inset-2 z-50 flex flex-col overflow-y-auto rounded-2xl border-t-4 border-accent bg-paper p-5 shadow-2xl md:inset-8 md:p-7">
           <div className="flex items-start justify-between gap-4">
             <div>
               <Dialog.Title className="font-display text-[30px] leading-tight">Rasm markazini belgilash</Dialog.Title>
@@ -48,13 +48,13 @@ export function FocusPicker({
                 Rasmda uyning (yoki eng muhim joyning) o&apos;rtasiga bosing. O&apos;ngda saytda qanday ko&apos;rinishi.
               </Dialog.Description>
             </div>
-            <Dialog.Close aria-label="Yopish" className="grid h-10 w-10 shrink-0 place-items-center border border-line hover:border-ink">
+            <Dialog.Close aria-label="Yopish" className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line hover:border-ink">
               <CloseIcon />
             </Dialog.Close>
           </div>
 
           <div className="mt-5 grid flex-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-            <div className="grid min-h-0 place-items-center bg-paper-2 p-3">
+            <div className="grid min-h-0 place-items-center rounded-xl bg-paper-2 p-3">
               <div
                 onClick={pick}
                 className="relative max-h-[70dvh] w-full cursor-crosshair"
@@ -62,7 +62,7 @@ export function FocusPicker({
               >
                 <Image src={photo.url} alt="" fill sizes="70vw" className="select-none object-contain" draggable={false} />
                 <span
-                  className="pointer-events-none absolute h-9 w-9 -translate-x-1/2 -translate-y-1/2 border-2 border-paper bg-gold/40 shadow-[0_0_0_2px_rgba(26,29,22,0.6)]"
+                  className="pointer-events-none absolute h-9 w-9 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-paper bg-accent/50 shadow-[0_0_0_2px_rgba(26,29,22,0.6)]"
                   style={{ left: `${focus.x * 100}%`, top: `${focus.y * 100}%`, borderRadius: "9999px" }}
                 />
               </div>
@@ -71,7 +71,7 @@ export function FocusPicker({
             <div className="flex flex-col gap-5">
               <div>
                 <p className="label-caps mb-2 text-ink-soft">Katalog kartasi va galereya</p>
-                <div className="relative aspect-[4/3] overflow-hidden border border-line bg-paper-2">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-lg border border-line bg-paper-2">
                   <Image
                     src={photo.url}
                     alt=""
@@ -85,7 +85,7 @@ export function FocusPicker({
               {isCover && (
                 <div>
                   <p className="label-caps mb-2 text-ink-soft">Telefondagi bosh banner</p>
-                  <div className="relative mx-auto aspect-[9/16] w-1/2 overflow-hidden border border-line bg-paper-2">
+                  <div className="relative mx-auto aspect-[9/16] w-1/2 overflow-hidden rounded-lg border border-line bg-paper-2">
                     <Image
                       src={photo.url}
                       alt=""
@@ -98,7 +98,7 @@ export function FocusPicker({
                 </div>
               )}
               <div className="mt-auto flex gap-3">
-                <button type="button" onClick={() => onSave(focus)} className="btn flex-1 bg-ink text-paper hover:bg-gold">
+                <button type="button" onClick={() => onSave(focus)} className="btn flex-1 bg-accent text-[#21150e] hover:bg-accent-hover">
                   Saqlash
                 </button>
                 <button type="button" onClick={onClose} className="btn border border-line text-ink hover:border-ink">

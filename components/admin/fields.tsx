@@ -14,7 +14,7 @@ export function Section({
   id?: string;
 }) {
   return (
-    <section id={id} className="scroll-mt-24 border border-line bg-paper">
+    <section id={id} className="scroll-mt-24 overflow-hidden rounded-xl border border-line bg-paper">
       <header className="border-b border-line px-5 py-4 md:px-6">
         <h2 className="font-display text-[26px] leading-tight">{title}</h2>
         {hint && <p className="mt-1 text-sm text-ink-soft">{hint}</p>}
@@ -178,7 +178,7 @@ export function Checkbox({
   hint?: string;
 }) {
   return (
-    <label className="flex cursor-pointer items-start gap-3 border border-line p-4 hover:border-ink-soft">
+    <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-line p-4 hover:border-ink-soft">
       <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-1 h-4 w-4 accent-[var(--ink)]" />
       <span>
         <span className="block font-medium">{label}</span>

@@ -24,8 +24,8 @@ export function LeadDialog({
     <Dialog.Root>
       <Dialog.Trigger className={className}>{children}</Dialog.Trigger>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-ink/60" />
-        <Dialog.Content className="fixed inset-x-3 bottom-3 z-50 max-h-[calc(100dvh-24px)] overflow-y-auto border-t-4 border-gold bg-paper p-6 shadow-2xl sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[460px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:p-8">
+        <Dialog.Overlay className="anim-overlay fixed inset-0 z-50 bg-ink/60" />
+        <Dialog.Content className="anim-sheet fixed inset-x-3 bottom-3 z-50 max-h-[calc(100dvh-24px)] overflow-y-auto rounded-2xl border-t-4 border-accent bg-paper p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[460px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:p-8">
           <div className="mb-6 flex items-start justify-between gap-4">
             <div>
               <Dialog.Title className="font-display text-[34px] leading-tight text-ink">{t("titleHouse")}</Dialog.Title>
@@ -35,7 +35,7 @@ export function LeadDialog({
             </div>
             <Dialog.Close
               aria-label={t("close")}
-              className="grid h-10 w-10 shrink-0 place-items-center border border-line text-ink hover:border-ink"
+              className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-line text-ink hover:border-ink"
             >
               <CloseIcon />
             </Dialog.Close>

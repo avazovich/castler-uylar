@@ -60,12 +60,12 @@ export default async function BrowsePage({ params }: Props) {
         {(section === "styles" || section === "collections") && categories.length === 0 &&
           <Link href="/loyihalar" className="btn bg-ink text-paper">{nav("catalog")}</Link>}
         {section === "size" && (
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="stagger grid gap-4 sm:grid-cols-3">
             {sizes.map(({ label, query, min, max }) => {
               const matching = houses.filter((house) => house.totalArea >= min && house.totalArea <= max);
               const cover = matching[0]?.cover;
               return (
-                <Link key={query} className="group relative isolate flex min-h-52 items-end overflow-hidden rounded-xl bg-ink p-5 text-white md:min-h-72" href={`/loyihalar?${query}`}>
+                <Link key={query} className="group relative isolate flex aspect-[4/3] items-end overflow-hidden rounded-xl bg-ink p-5 text-white" href={`/loyihalar?${query}`}>
                   {cover && <Image src={cover.url} alt="" fill sizes="(min-width: 640px) 33vw, 100vw" className="-z-20 object-cover" style={{ objectPosition: cover.position }} />}
                   <div className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 to-black/15" />
                   <h2 className="font-display text-2xl md:text-3xl">{label} →</h2>
@@ -79,8 +79,8 @@ export default async function BrowsePage({ params }: Props) {
           <div className={section === "guides" ? "grid gap-4 md:grid-cols-3" : "max-w-3xl space-y-3"}>
             {(guide as { title: string; text: string }[]).map((item, index) => (
               <details key={item.title} className="overflow-hidden rounded-xl border border-line bg-paper p-4">
-                {section === "guides" && houses[index] && <div className="relative mb-4 aspect-video rounded-lg bg-paper-2">
-                  <Image src={houses[index].cover.url} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" className="rounded-lg object-contain" />
+                {section === "guides" && houses[index] && <div className="relative mb-4 aspect-[4/3] overflow-hidden rounded-lg bg-paper-2">
+                  <Image src={houses[index].cover.url} alt="" fill sizes="(min-width: 768px) 33vw, 100vw" style={{ objectPosition: houses[index].cover.position }} className="object-cover" />
                 </div>}
                 <summary className="cursor-pointer font-semibold">{item.title}</summary>
                 <p className="mt-3 text-ink-soft">{item.text}</p>

@@ -167,30 +167,85 @@ export function houseTitle(h: HouseSummary, locale: Locale): string {
   return name ? `${name} — ${kind} loyihasi, ${plot} sotix, ${area} m²` : `${cap(kind)} loyihasi № ${h.code}, ${plot} sotix, ${area} m²`;
 }
 
-/** Adds the closing phrase only while the description stays within what Google shows (~160 chars). */
-const fit = (text: string, tail: string) => (text.length + tail.length <= 160 ? text + tail : text);
+/** What Google shows of a result: about 60 characters of title, 155 of description. */
+const META_DESCRIPTION_MAX = 155;
+const META_TITLE_MAX = 56; // before the " | Castler" that every page title ends with
 
-/** Meta description (≈150 characters) assembled from the house's data. */
+/** The richest wording that still fits; the last (shortest) one if none does. */
+function firstFit(candidates: string[], max: number): string {
+  return candidates.find((c) => c.length <= max) ?? candidates[candidates.length - 1];
+}
+
+/** <title> text for a house page. The H1 keeps the full houseTitle(); this one is trimmed to fit a search result. */
+export function houseMetaTitle(h: HouseSummary, locale: Locale): string {
+  const area = formatNumber(h.totalArea);
+  const plot = formatNumber(h.plotSotix);
+  const name = houseName(h, locale);
+  if (locale === "ru") {
+    const kind = houseKind(h.floors, "ru", "gen");
+    const onPlot = `на ${plot} ${ruPlural(h.plotSotix, "сотку", "сотки", "соток")}`;
+    return firstFit(
+      name
+        ? [`${name} — проект ${kind} ${onPlot}, ${area} м²`, `${name} — проект ${kind}, ${area} м²`, `Проект ${name}, ${area} м²`, `Проект ${name}`]
+        : [`Проект ${kind} № ${h.code} ${onPlot}, ${area} м²`, `Проект ${kind} № ${h.code}, ${area} м²`, `Проект № ${h.code}, ${area} м²`],
+      META_TITLE_MAX,
+    );
+  }
+  const kind = houseKind(h.floors, "uz");
+  return firstFit(
+    name
+      ? [`${name} — ${kind} loyihasi, ${plot} sotix, ${area} m²`, `${name} — ${kind} loyihasi, ${area} m²`, `${name} loyihasi, ${area} m²`, `${name} loyihasi`]
+      : [`${cap(kind)} loyihasi № ${h.code}, ${plot} sotix, ${area} m²`, `${cap(kind)} loyihasi № ${h.code}, ${area} m²`, `Uy loyihasi № ${h.code}, ${area} m²`],
+    META_TITLE_MAX,
+  );
+}
+
+/** Meta description, at most 155 characters: the richest version of the house's facts that fits. */
 export function houseDescription(h: HouseSummary, locale: Locale): string {
   const area = formatNumber(h.totalArea);
   const plot = formatNumber(h.plotSotix);
   const price = formatNumber(h.priceUzs);
   const name = houseName(h, locale);
+  const rooms = (bed?: string, bath?: string) => [bed, bath].filter(Boolean).join(", ");
+
   if (locale === "ru") {
-    const parts = [
-      `${name ? `${name} — ` : ""}проект ${houseKind(h.floors, "ru", "gen")}${h.style ? ` ${STYLE_PHRASE[h.style].ru}` : ""}: ${area} м²`,
-      h.bedrooms ? `${h.bedrooms} ${ruPlural(h.bedrooms, "спальня", "спальни", "спален")}` : null,
-      h.bathrooms ? `${h.bathrooms} ${ruPlural(h.bathrooms, "санузел", "санузла", "санузлов")}` : null,
-    ].filter(Boolean);
+    const kind = houseKind(h.floors, "ru", "gen");
+    const lead = name ? `${name} — проект ${kind}` : `Проект ${kind} № ${h.code}`;
+    const bed = h.bedrooms ? `${h.bedrooms} ${ruPlural(h.bedrooms, "спальня", "спальни", "спален")}` : undefined;
+    const bath = h.bathrooms ? `${h.bathrooms} ${ruPlural(h.bathrooms, "санузел", "санузла", "санузлов")}` : undefined;
     const plotWord = ruPlural(h.plotSotix, "сотки", "соток", "соток");
-    return fit(`${parts.join(", ")}. Для участка от ${plot} ${plotWord}${h.minPlotWidth ? ` шириной от ${formatNumber(h.minPlotWidth)} м` : ""}. Цена ${price} сум.`, " Планировки и фото.");
+    const forPlot = `Для участка от ${plot} ${plotWord}${h.minPlotWidth ? ` шириной от ${formatNumber(h.minPlotWidth)} м` : ""}.`;
+    const forPlotShort = `Для участка от ${plot} ${plotWord}.`;
+    const cost = `Цена ${price} сум.`;
+    return firstFit(
+      [
+        `${lead}: ${[`${area} м²`, rooms(bed, bath)].filter(Boolean).join(", ")}. ${forPlot} ${cost} Планировки и фото.`,
+        `${lead}: ${[`${area} м²`, rooms(bed, bath)].filter(Boolean).join(", ")}. ${forPlot} ${cost}`,
+        `${lead}: ${[`${area} м²`, bed].filter(Boolean).join(", ")}. ${forPlotShort} ${cost}`,
+        `${lead}: ${area} м². ${forPlotShort} ${cost}`,
+        `${lead}: ${area} м². ${cost}`,
+      ],
+      META_DESCRIPTION_MAX,
+    );
   }
-  const parts = [
-    `${name ? `${name} — ` : ""}${(name ? (x: string) => x : cap)(`${h.style ? `${STYLE_PHRASE[h.style].uz} ` : ""}${houseKind(h.floors, "uz")} loyihasi (proekti)`)}: ${area} m²`,
-    h.bedrooms ? `${h.bedrooms} ta yotoqxona` : null,
-    h.bathrooms ? `${h.bathrooms} ta sanuzel` : null,
-  ].filter(Boolean);
-  return fit(`${parts.join(", ")}. ${plot} sotix${h.minPlotWidth ? ` va ${formatNumber(h.minPlotWidth)} m enli` : ""} yer uchun. Narxi ${price} so'm.`, " Rejalar va rasmlar.");
+
+  const kind = houseKind(h.floors, "uz");
+  const lead = name ? `${name} — ${kind} loyihasi` : `${cap(kind)} loyihasi № ${h.code}`;
+  const bed = h.bedrooms ? `${h.bedrooms} ta yotoqxona` : undefined;
+  const bath = h.bathrooms ? `${h.bathrooms} ta sanuzel` : undefined;
+  const forPlot = `${plot} sotix${h.minPlotWidth ? ` va ${formatNumber(h.minPlotWidth)} m enli` : ""} yer uchun.`;
+  const forPlotShort = `${plot} sotix yer uchun.`;
+  const cost = `Narxi ${price} so'm.`;
+  return firstFit(
+    [
+      `${lead} (proekti): ${[`${area} m²`, rooms(bed, bath)].filter(Boolean).join(", ")}. ${forPlot} ${cost} Rejalar va rasmlar.`,
+      `${lead}: ${[`${area} m²`, rooms(bed, bath)].filter(Boolean).join(", ")}. ${forPlot} ${cost}`,
+      `${lead}: ${[`${area} m²`, bed].filter(Boolean).join(", ")}. ${forPlotShort} ${cost}`,
+      `${lead}: ${area} m². ${forPlotShort} ${cost}`,
+      `${lead}: ${area} m². ${cost}`,
+    ],
+    META_DESCRIPTION_MAX,
+  );
 }
 
 /** Visible "in short" paragraph on the house page — true by construction. */

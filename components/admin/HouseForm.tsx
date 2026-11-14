@@ -175,7 +175,7 @@ export function HouseForm({ initial }: { initial: AdminHouseInput }) {
         </Section>
 
         {!isNew && (
-          <div className="border border-red-200 bg-paper p-5">
+          <div className="rounded-xl border border-red-200 bg-paper p-5">
             <p className="font-medium">Loyihani o&apos;chirish</p>
             <p className="mt-1 text-sm text-ink-soft">Loyiha saytdan va bazadan butunlay o&apos;chiriladi.</p>
             <button type="button" onClick={remove} disabled={pending} className="btn mt-4 border border-red-700 text-red-700 hover:bg-red-700 hover:text-paper">
@@ -191,11 +191,11 @@ export function HouseForm({ initial }: { initial: AdminHouseInput }) {
           <p className={`text-sm ${notice?.tone === "error" ? "text-red-700" : notice ? "text-green-800" : "text-ink-soft"}`} role="status">
             {notice?.text ?? (dirty ? "Saqlanmagan o'zgarishlar bor" : "Hammasi saqlangan")}
           </p>
-          <div className="ml-auto flex gap-3">
+          <div className="ml-auto flex w-full gap-3 sm:w-auto [&>*]:flex-1 sm:[&>*]:flex-none">
             <Link href="/admin" className="btn border border-line text-ink hover:border-ink">
               Bekor qilish
             </Link>
-            <button type="button" onClick={save} disabled={pending} className="btn bg-ink text-paper hover:bg-gold">
+            <button type="button" onClick={save} disabled={pending} className="btn bg-accent text-[#21150e] hover:bg-accent-hover">
               {pending ? "Saqlanmoqda…" : "Saqlash"}
             </button>
           </div>

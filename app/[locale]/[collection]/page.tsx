@@ -91,7 +91,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ loc
           ))}
         </div>
 
-        <div className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="stagger mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {houses.map((h, i) => (
             <HouseCard key={h.code} house={h} priority={i < 3} />
           ))}

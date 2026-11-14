@@ -53,7 +53,7 @@ export function PhotoManager({
     <div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {photos.map((p, i) => (
-          <figure key={p.key} className={`border ${i === 0 ? "border-ink" : "border-line"} bg-paper`}>
+          <figure key={p.key} className={`overflow-hidden rounded-xl border-2 ${i === 0 ? "border-accent" : "border-line"} bg-paper`}>
             <button
               type="button"
               onClick={() => setEditing(p.key)}
@@ -68,33 +68,33 @@ export function PhotoManager({
                 className="object-cover"
                 style={{ objectPosition: focusPosition(p, 4 / 3) }}
               />
-              {i === 0 && <span className="label-caps absolute left-0 top-0 bg-ink px-3 py-2 text-paper">Asosiy rasm</span>}
+              {i === 0 && <span className="label-caps absolute left-0 top-0 rounded-br-lg bg-accent px-3 py-2 text-[#21150e]">Asosiy rasm</span>}
               <span className="label-caps absolute inset-x-0 bottom-0 bg-ink/75 px-3 py-2 text-left text-paper opacity-0 transition group-hover:opacity-100">
                 Markazini belgilash
               </span>
             </button>
             <figcaption className="flex items-center gap-1 border-t border-line p-2 text-sm">
-              <button type="button" disabled={i === 0} onClick={() => move(i, i - 1)} className="px-2 py-1 hover:bg-paper-2 disabled:opacity-30" aria-label="Chapga">
+              <button type="button" disabled={i === 0} onClick={() => move(i, i - 1)} className="rounded-md px-2.5 py-2 hover:bg-paper-2 disabled:opacity-30" aria-label="Chapga">
                 ←
               </button>
               <button
                 type="button"
                 disabled={i === photos.length - 1}
                 onClick={() => move(i, i + 1)}
-                className="px-2 py-1 hover:bg-paper-2 disabled:opacity-30"
+                className="rounded-md px-2.5 py-2 hover:bg-paper-2 disabled:opacity-30"
                 aria-label="O'ngga"
               >
                 →
               </button>
               {i > 0 && (
-                <button type="button" onClick={() => move(i, 0)} className="px-2 py-1 hover:bg-paper-2">
+                <button type="button" onClick={() => move(i, 0)} className="rounded-md px-2.5 py-2 hover:bg-paper-2">
                   Asosiy qilish
                 </button>
               )}
               <button
                 type="button"
                 onClick={() => update((prev) => prev.filter((x) => x.key !== p.key))}
-                className="ml-auto px-2 py-1 text-red-700 hover:bg-red-50"
+                className="ml-auto rounded-md px-2.5 py-2 text-red-700 hover:bg-red-50"
               >
                 O&apos;chirish
               </button>
@@ -103,7 +103,7 @@ export function PhotoManager({
         ))}
 
         {Array.from({ length: uploading }).map((_, i) => (
-          <div key={`up-${i}`} className="grid aspect-[4/3] place-items-center border border-dashed border-line bg-paper-2 text-sm text-ink-soft">
+          <div key={`up-${i}`} className="grid aspect-[4/3] place-items-center rounded-xl border border-dashed border-line bg-paper-2 text-sm text-ink-soft">
             Yuklanmoqda…
           </div>
         ))}
@@ -116,7 +116,7 @@ export function PhotoManager({
             e.preventDefault();
             add(e.dataTransfer.files);
           }}
-          className={`grid aspect-[4/3] place-items-center border-2 border-dashed ${error ? "border-red-700" : "border-line"} bg-paper text-center hover:border-ink`}
+          className={`grid aspect-[4/3] place-items-center rounded-xl border-2 border-dashed ${error ? "border-red-700" : "border-line"} bg-paper text-center hover:border-accent`}
         >
           <span>
             <span className="font-display block text-[40px] leading-none">+</span>

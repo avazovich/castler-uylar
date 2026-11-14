@@ -10,12 +10,12 @@ export function AdminNav() {
     { href: "/admin/sozlamalar", label: "Sozlamalar", active: pathname.startsWith("/admin/sozlamalar") },
   ];
   return (
-    <nav className="order-last flex h-11 w-full items-stretch gap-6 md:order-none md:h-full md:w-auto">
+    <nav className="order-last flex h-12 w-full items-stretch gap-1 md:order-none md:mr-auto md:ml-4 md:h-full md:w-auto md:gap-2">
       {items.map((i) => (
         <Link
           key={i.href}
           href={i.href}
-          className={`label-caps flex items-center border-b-2 pt-0.5 ${i.active ? "border-gold text-cream" : "border-transparent text-cream/60 hover:text-cream"}`}
+          className={`flex items-center border-b-[3px] px-3 text-[15px] font-black transition-colors ${i.active ? "border-accent text-ink" : "border-transparent text-ink-soft hover:text-ink"}`}
         >
           {i.label}
         </Link>

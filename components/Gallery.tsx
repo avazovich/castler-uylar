@@ -7,6 +7,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Img } from "@/lib/houses";
 import { ChevronLeftIcon, ChevronRightIcon, CloseIcon, ExpandIcon } from "./icons";
 
+const GALLERY_SIZES = "(min-width: 1280px) 795px, (min-width: 1024px) 63vw, calc(100vw - 32px)";
+
+/**
+ * The gallery box is always 4:3. A photo whose own shape is close to that
+ * fills it (cropped around its focal point); a tall or very wide one is shown
+ * whole, over a soft blur of itself, so no house is ever cut in half.
+ */
+const fillsBox = (img: Img) => {
+  const aspect = img.width / Math.max(1, img.height);
+  return aspect >= 1.15 && aspect <= 1.55;
+};
+
 export function Gallery({ images, title, alts }: { images: Img[]; title: string; alts: string[] }) {
   const t = useTranslations("house");
   const browse = useTranslations("browse");
@@ -36,9 +48,13 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
   }, [index]);
 
   useEffect(() => {
-    if (!open || count < 2) return;
+    if (count < 2) return;
     const next = images[(index + 1) % count];
-    const { props } = getImageProps({ src: next.url, alt: "", fill: true, sizes: fullscreenSizes(next), quality: 70 });
+    const { props } = getImageProps(
+      open
+        ? { src: next.url, alt: "", fill: true, sizes: fullscreenSizes(next), quality: 70 }
+        : { src: next.url, alt: "", fill: true, sizes: GALLERY_SIZES },
+    );
     const warm = new window.Image();
     warm.fetchPriority = "low";
     warm.sizes = props.sizes ?? "";
@@ -51,7 +67,14 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
 
   return (
     <div>
-      <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-paper-2">
+      <div className="relative aspect-[4/3] overflow-hidden rounded-lg bg-paper-2">
+        {!fillsBox(current) && current.lqip && (
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 scale-125 bg-cover bg-center blur-2xl"
+            style={{ backgroundImage: `url(${current.lqip})` }}
+          />
+        )}
         <button
           ref={opener}
           type="button"
@@ -65,11 +88,11 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
             alt={alts[index] ?? title}
             fill
             fetchPriority={index === 0 ? "high" : "auto"}
-            sizes="(min-width: 1280px) 795px, (min-width: 1024px) 63vw, calc(100vw - 32px)"
+            sizes={GALLERY_SIZES}
             placeholder={current.lqip ? "blur" : "empty"}
             blurDataURL={current.lqip}
-            style={{ objectPosition: current.position }}
-            className="gallery-photo object-cover"
+            style={fillsBox(current) ? { objectPosition: current.position } : undefined}
+            className={`gallery-photo ${fillsBox(current) ? "object-cover" : "object-contain"}`}
           />
         </button>
         {count > 1 && (

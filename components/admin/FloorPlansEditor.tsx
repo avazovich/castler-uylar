@@ -69,7 +69,7 @@ export function FloorPlansEditor({
           return s + (n && !Number.isNaN(n) ? n : 0);
         }, 0);
         return (
-          <div key={floor.key} className="border border-line">
+          <div key={floor.key} className="overflow-hidden rounded-xl border border-line">
             <div className="flex flex-wrap items-center gap-3 border-b border-line bg-paper-2 px-4 py-3">
               <div className="w-56">
                 <Select
@@ -119,7 +119,7 @@ export function FloorPlansEditor({
                         <button
                           type="button"
                           onClick={() => setFloor(floor.key, { rooms: floor.rooms.filter((r) => r.key !== room.key) })}
-                          className="grid place-items-center border border-line text-ink-soft hover:border-red-700 hover:text-red-700"
+                          className="grid place-items-center rounded-lg border border-line text-ink-soft hover:border-red-700 hover:text-red-700"
                           aria-label="Xonani o'chirish"
                         >
                           ×
@@ -147,7 +147,7 @@ export function FloorPlansEditor({
               <div>
                 <p className="label-caps mb-2 text-ink-soft">Reja chizmasi (ixtiyoriy)</p>
                 {floor.plan ? (
-                  <div className="border border-line">
+                  <div className="overflow-hidden rounded-lg border border-line">
                     <div className="relative aspect-[4/3] bg-paper">
                       <Image src={floor.plan.url} alt="" fill sizes="240px" className="object-contain p-2" />
                     </div>
@@ -156,7 +156,7 @@ export function FloorPlansEditor({
                     </button>
                   </div>
                 ) : (
-                  <label className="grid aspect-[4/3] cursor-pointer place-items-center border-2 border-dashed border-line text-center text-sm text-ink-soft hover:border-ink">
+                  <label className="grid aspect-[4/3] cursor-pointer place-items-center rounded-lg border-2 border-dashed border-line text-center text-sm text-ink-soft hover:border-accent">
                     {uploadingKey === floor.key ? "Yuklanmoqda…" : "Chizmani yuklash"}
                     <input
                       type="file"

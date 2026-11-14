@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Lato, Marcellus } from "next/font/google";
 import "../globals.css";
 
-const inter = Inter({ variable: "--font-inter", subsets: ["latin", "latin-ext", "cyrillic"] });
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin", "latin-ext", "cyrillic"],
-  weight: ["500", "600"],
-});
+// The same two typefaces as the public site (Lato for text, Marcellus for headings).
+const lato = Lato({ variable: "--font-lato", weight: ["400", "700", "900"], subsets: ["latin", "latin-ext"], display: "swap" });
+const marcellus = Marcellus({ variable: "--font-marcellus", weight: "400", subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
   title: "Admin — Castler uy loyihalari",
@@ -17,7 +14,7 @@ export const metadata: Metadata = {
 /** Its own root layout (outside [locale]): Uzbek only, no public header/footer. */
 export default function AdminRootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="uz" className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang="uz" className={`${lato.variable} ${marcellus.variable}`}>
       <body className="min-h-dvh bg-paper-2 text-ink">{children}</body>
     </html>
   );

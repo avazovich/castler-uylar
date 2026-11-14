@@ -45,7 +45,7 @@ export function CostsEditor({
               <button
                 type="button"
                 onClick={() => update((prev) => prev.filter((x) => x.key !== c.key))}
-                className="grid place-items-center border border-line text-ink-soft hover:border-red-700 hover:text-red-700"
+                className="grid place-items-center rounded-lg border border-line text-ink-soft hover:border-red-700 hover:text-red-700"
                 aria-label="Qatorni o'chirish"
               >
                 ×

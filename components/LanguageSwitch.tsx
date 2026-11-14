@@ -17,13 +17,13 @@ export function LanguageSwitch({ tone = "dark", className = "" }: { tone?: "ligh
         const active = l === locale;
         return (
           <span key={l} className="flex items-center">
-            {i > 0 && <span className={`mx-2 h-3 w-px ${tone === "dark" ? "bg-line-on-ink" : "bg-line"}`} />}
+            {i > 0 && <span className={`h-3 w-px ${tone === "dark" ? "bg-line-on-ink" : "bg-ink/25"}`} />}
             <button
               type="button"
               aria-pressed={active}
               // Keep the catalog filters (?sotix=…) when switching language.
               onClick={() => router.replace(`${pathname}${window.location.search}`, { locale: l, scroll: false })}
-              className={`label-caps py-1 transition-colors ${
+              className={`label-caps px-2.5 py-3 transition-colors sm:px-2 sm:py-1 ${
                 active
                   ? tone === "dark"
                     ? "text-gold-light"

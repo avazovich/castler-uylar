@@ -6,6 +6,7 @@ import { Gallery } from "@/components/Gallery";
 import { HouseCard } from "@/components/HouseCard";
 import { CheckIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
 import { LeadDialog } from "@/components/LeadDialog";
+import { MobileActionBar } from "@/components/MobileActionBar";
 import { BuildEstimate } from "@/components/BuildEstimate";
 import { PlotCheck } from "@/components/PlotCheck";
 import { Link } from "@/i18n/navigation";
@@ -15,7 +16,7 @@ import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd, telHref } from "@/lib/format";
 import { getHouse, getHouses, getSettings, toSummary, type House } from "@/lib/houses";
-import { pageMetadata, breadcrumbLd, faqLd, houseAlt, houseDescription, houseFaq, houseKind, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd, faqLd, houseAlt, houseDescription, houseFaq, houseKind, houseMetaTitle, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 
 export const revalidate = 60;
@@ -43,7 +44,7 @@ export async function generateMetadata({
   const house = n ? await getHouse(n, locale) : undefined;
   if (!house) return {};
   const summary = toSummary(house);
-  const title = `${houseTitle(summary, locale)} | Castler`;
+  const title = `${houseMetaTitle(summary, locale)} | Castler`;
   const description = houseDescription(summary, locale);
   return {
     ...pageMetadata(locale, (l) => houseUrlPath(house, l), title, description, house.cover, houseAlt(house, locale)),
@@ -181,7 +182,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
             </aside>
           </div>
 
-          <nav aria-label={browse("overview")} className="plan-toolbar sticky top-0 z-20 mt-5 flex flex-wrap items-center gap-1 rounded-lg border border-line bg-paper p-1 shadow-sm">
+          <nav aria-label={browse("overview")} className="plan-toolbar no-scrollbar sticky top-0 z-20 mt-5 flex items-center gap-1 overflow-x-auto rounded-lg border border-line bg-paper p-1 shadow-sm md:flex-wrap md:overflow-visible">
             {[
               { href: "overview", label: browse("overview") },
               ...(house.floorPlans.length > 0 ? [{ href: "floor-plans", label: t("plansTitle") }] : []),
@@ -189,8 +190,8 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
               { href: "modifications", label: browse("adapt") },
               { href: "build-cost", label: browse("cost") },
               { href: "project-faq", label: browse("faq") },
-            ].map(({ href, label }) => <a key={href} href={`#${href}`} className="rounded-md px-2.5 py-2 text-xs font-bold hover:bg-paper-2 sm:text-sm">{label}</a>)}
-            <a href="#project-package" className="ml-auto rounded-md bg-gold px-3 py-2 text-xs font-bold text-white sm:text-sm">{t("discuss")}</a>
+            ].map(({ href, label }) => <a key={href} href={`#${href}`} className="shrink-0 whitespace-nowrap rounded-md px-3 py-3 text-[13px] font-bold hover:bg-paper-2 active:bg-paper-2 sm:text-sm md:py-2">{label}</a>)}
+            <a href="#project-package" className="ml-auto hidden shrink-0 rounded-md bg-gold px-3 py-2 text-xs font-bold text-white sm:text-sm md:block">{t("discuss")}</a>
           </nav>
 
           <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3 lg:grid-cols-6">
@@ -315,6 +316,15 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           )}
         </div>
       </div>
+      <MobileActionBar
+        label={browse("planPrice")}
+        price={common("price", { amount: fmt(house.priceUzs) })}
+        phone={settings.phone}
+        callLabel={t("call")}
+        requestLabel={nav("request")}
+        houseCode={house.code}
+        houseTitle={title}
+      />
     </>
   );
 }

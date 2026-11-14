@@ -22,6 +22,12 @@ const nextConfig: NextConfig = {
     // lib/imageLoader.ts. Keeps Vercel's image-optimization quota out of it.
     loader: "custom",
     loaderFile: "./lib/imageLoader.ts",
+    // Few, fixed picture widths on purpose. Sanity makes each size the first
+    // time anybody asks for it (1–2 s) and then keeps it; with Next's default
+    // ten widths almost every visitor hit a size nobody had asked for yet.
+    // Four sizes means almost every picture is already waiting, ready-made.
+    deviceSizes: [800, 1200, 1600, 1920],
+    imageSizes: [96, 200, 400],
   },
 };
 

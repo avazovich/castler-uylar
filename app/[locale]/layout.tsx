@@ -67,7 +67,9 @@ export default async function LocaleLayout({
   preconnect("https://cdn.sanity.io");
 
   return (
-    <html lang={locale} className={`${locale === "uz" ? `${lato.variable} ${marcellus.variable}` : `${inter.variable} ${cormorant.variable}`}`}>
+    // data-scroll-behavior: the page scrolls smoothly for in-page links, but a
+    // page change jumps straight to the top (Next 16 no longer does this on its own).
+    <html lang={locale} data-scroll-behavior="smooth" className={`${locale === "uz" ? `${lato.variable} ${marcellus.variable}` : `${inter.variable} ${cormorant.variable}`}`}>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider messages={messages}>
           <Header />
