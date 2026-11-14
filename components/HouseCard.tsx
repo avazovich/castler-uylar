@@ -26,9 +26,9 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
   return (
     <Link
       href={housePath(house, locale)}
-      className="group flex flex-col border border-line bg-paper transition-[border-color,box-shadow] duration-300 hover:border-ink/30 hover:shadow-[0_18px_40px_-24px_rgba(26,29,22,0.45)]"
+      className="group flex flex-col overflow-hidden rounded-xl border border-line bg-paper transition-[border-color,box-shadow] duration-300 hover:border-ink/30 hover:shadow-[0_18px_40px_-24px_rgba(26,29,22,0.45)]"
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
+      <div className="relative aspect-[16/10] overflow-hidden bg-paper-2">
         <Image
           src={house.cover.url}
           alt={houseAlt(house, locale)}
@@ -37,8 +37,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
           sizes="(min-width: 1280px) 420px, (min-width: 640px) 50vw, 100vw"
           placeholder={house.cover.lqip ? "blur" : "empty"}
           blurDataURL={house.cover.lqip}
-          style={{ objectPosition: house.cover.position }}
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          className="object-contain"
         />
         <span className="label-caps absolute left-0 top-0 bg-ink px-3 py-2 text-paper">№ {house.code}</span>
         {house.isSample && (
@@ -47,7 +46,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
       </div>
 
       <div className="flex flex-1 flex-col p-5 md:p-6">
-        <h3 className="font-display truncate text-[28px] leading-tight text-ink">{title}</h3>
+        <h3 className="font-display text-[28px] leading-tight text-ink">{title}</h3>
         <p className="mt-1 text-sm text-ink-soft">
           {[house.style ? STYLES[house.style][locale] : null, t("floors", { count: house.floors, label: n(house.floors) })]
             .filter(Boolean)
@@ -63,7 +62,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
           ))}
         </dl>
 
-        <div className="mt-auto flex items-end justify-between gap-4 pt-5">
+        <div className="mt-auto flex items-end justify-between gap-3 pt-5 max-sm:flex-wrap">
           <div>
             <p className="whitespace-nowrap text-lg font-semibold text-ink">{t("price", { amount: n(house.priceUzs) })}</p>
             {house.oldPriceUzs && (

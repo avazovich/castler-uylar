@@ -11,7 +11,7 @@ import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd, telHref } from "@/lib/format";
 import { getHouse, getHouses, getSettings, toSummary, type House } from "@/lib/houses";
-import { alternates, breadcrumbLd, faqLd, houseAlt, houseDescription, houseFaq, houseKind, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd, socialImage } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd, faqLd, houseAlt, houseDescription, houseFaq, houseKind, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 
 export const revalidate = 60;
@@ -42,18 +42,8 @@ export async function generateMetadata({
   const title = `${houseTitle(summary, locale)} | Castler`;
   const description = houseDescription(summary, locale);
   return {
-    title,
-    description,
-    alternates: alternates(locale, (l) => houseUrlPath(house, l)),
-    // Sample houses carry placeholder sizes and prices — keep them out of
-    // search results until the real figures are entered (untick "Namuna").
+    ...pageMetadata(locale, (l) => houseUrlPath(house, l), title, description, house.cover, houseAlt(house, locale)),
     ...(house.isSample ? { robots: { index: false, follow: true } } : {}),
-    openGraph: {
-      title,
-      description,
-      url: houseUrlPath(house, locale),
-      images: [{ url: socialImage(house.cover), width: 1200, height: 630, alt: houseAlt(house, locale) }],
-    },
   };
 }
 

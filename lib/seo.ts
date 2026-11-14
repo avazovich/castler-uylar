@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 /**
  * Search-engine helpers: absolute URLs + hreflang, generated page wording
  * (titles, descriptions, summaries built from each house's own data, so
@@ -68,6 +69,33 @@ export function alternates(locale: Locale, path: (l: Locale) => string) {
       ...Object.fromEntries(routing.locales.map((l) => [l, absoluteUrl(path(l))])),
       "x-default": absoluteUrl(path(routing.defaultLocale)),
     },
+  };
+}
+
+export function pageMetadata(
+  locale: Locale,
+  path: (language: Locale) => string,
+  title: string,
+  description: string,
+  cover?: { url: string; focus: { x: number; y: number } },
+  imageAlt?: string,
+): Metadata {
+  const image = cover ? socialImage(cover) : absoluteUrl("/brand/social.jpg");
+  return {
+    title,
+    description,
+    alternates: alternates(locale, path),
+    openGraph: {
+      type: "website",
+      siteName: "Castler Uylar",
+      locale: locale === "ru" ? "ru_UZ" : "uz_UZ",
+      alternateLocale: [locale === "ru" ? "uz_UZ" : "ru_UZ"],
+      url: absoluteUrl(path(locale)),
+      title,
+      description,
+      images: [{ url: image, width: 1200, height: 630, alt: imageAlt ?? "Castler Uylar" }],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [image] },
   };
 }
 

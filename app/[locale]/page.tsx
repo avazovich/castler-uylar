@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { BrowseTiles } from "@/components/BrowseTiles";
+import { BuildEstimate } from "@/components/BuildEstimate";
 import { FinderForm } from "@/components/FinderForm";
 import { HouseCard } from "@/components/HouseCard";
 import { ArrowRightIcon, CheckIcon, InstagramIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
@@ -11,8 +13,9 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { formatNumber, telHref } from "@/lib/format";
 import { focusPosition, getHouses, getSettings, toSummary } from "@/lib/houses";
+import { browsePath } from "@/lib/browse";
 import { collectionHref, liveCollections } from "@/lib/collections";
-import { alternates, houseAlt, organizationLd, socialImage, websiteLd } from "@/lib/seo";
+import { pageMetadata, houseAlt, organizationLd, websiteLd } from "@/lib/seo";
 import { AREA_REALIZED_M2, DEFAULT_INSTAGRAM_URL, FOUNDING_YEAR } from "@/lib/site";
 
 export const revalidate = 60;
@@ -22,17 +25,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale = raw as Locale;
   const [t, houses] = await Promise.all([getTranslations({ locale, namespace: "meta" }), getHouses(locale)]);
   const hero = [...houses.filter((h) => h.featured), ...houses][0];
-  return {
-    title: t("title"),
-    description: t("description"),
-    alternates: alternates(locale, (l) => `/${l}`),
-    openGraph: {
-      title: t("title"),
-      description: t("description"),
-      url: `/${locale}`,
-      ...(hero ? { images: [{ url: socialImage(hero.cover), width: 1200, height: 630, alt: houseAlt(hero, locale) }] } : {}),
-    },
-  };
+  return pageMetadata(locale, (l) => `/${l}`, t("title"), t("description"), hero?.cover, hero && houseAlt(hero, locale));
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -40,11 +33,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const locale = raw as Locale;
   setRequestLocale(locale);
 
-  const [t, nav, meta, coll, houses, settings] = await Promise.all([
+  const [t, nav, meta, browse, houses, settings] = await Promise.all([
     getTranslations("home"),
     getTranslations("nav"),
     getTranslations("meta"),
-    getTranslations("collection"),
+    getTranslations("browse"),
     getHouses(locale),
     getSettings(locale),
   ]);
@@ -68,56 +61,45 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       <JsonLd data={[organizationLd(settings, locale), websiteLd(locale, meta("siteName"))]} />
-      {/* Hero — full-width banner, text on the left */}
-      <section className="relative flex min-h-[600px] items-center overflow-hidden bg-ink md:min-h-[680px]">
+      <section className="relative isolate flex min-h-[520px] items-center overflow-hidden bg-ink">
         {hero && (
-          <Image
-            src={hero.cover.url}
-            alt={houseAlt(hero, locale)}
-            fill
-            priority
-            sizes="100vw"
-            placeholder={hero.cover.lqip ? "blur" : "empty"}
-            blurDataURL={hero.cover.lqip}
-            // The banner is tall on phones and very wide on desktops, so the
-            // focal point is re-centred for each shape (see focusPosition).
-            style={
-              {
-                "--pos-sm": focusPosition(hero.cover, 0.55),
-                "--pos-md": focusPosition(hero.cover, 1.15),
-                "--pos-xl": focusPosition(hero.cover, 2.2),
-              } as React.CSSProperties
-            }
-            className="object-cover [object-position:var(--pos-sm)] md:[object-position:var(--pos-md)] xl:[object-position:var(--pos-xl)]"
-          />
+          <Image src={hero.cover.url} alt={houseAlt(hero, locale)} fill preload sizes="100vw"
+            style={{ "--pos-small": focusPosition(hero.cover, 0.65), "--pos-wide": focusPosition(hero.cover, 2.2) } as React.CSSProperties}
+            className="-z-20 object-cover [object-position:var(--pos-small)] md:[object-position:var(--pos-wide)]" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/60 to-ink/15" />
-        <div className={`relative z-10 w-full pb-28 pt-16 md:pb-36 ${container}`}>
-          {houses.length > 0 && (
-            <p className="label-caps flex items-center gap-3 text-gold-light">
-              <span className="h-px w-10 bg-current" />
-              {t("eyebrow", { count: houses.length })}
-            </p>
-          )}
-          <h1 className="font-display mt-6 max-w-3xl text-[50px] leading-[1.02] text-paper sm:text-[64px] md:text-[84px]">
-            {t("title")}
-          </h1>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-paper/75 md:text-lg">{t("subtitle")}</p>
-          <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="/loyihalar" className="btn w-full bg-gold text-paper hover:bg-paper hover:text-ink sm:w-auto">
-              {t("viewCatalog")} <ArrowRightIcon className="h-4 w-4" />
-            </Link>
-            <Link href="/#aloqa" className="btn w-full border border-paper/50 text-paper hover:border-paper hover:bg-paper hover:text-ink sm:w-auto">
-              {nav("request")}
-            </Link>
+        <div className="absolute inset-0 -z-10 bg-linear-to-r from-black/80 via-black/55 to-black/25" />
+        <div className={`w-full py-14 md:py-20 ${container}`}>
+          {houses.length > 0 && <p className="label-caps text-gold-light">{t("eyebrow", { count: houses.length })}</p>}
+          <h1 className="font-display mt-4 max-w-4xl text-[clamp(2.4rem,6vw,4.25rem)] leading-[1.05] text-paper">{t("title")}</h1>
+          <p className="mb-6 mt-3 max-w-xl text-white">{t("subtitle")}</p>
+          <FinderForm floorOptions={floorOptions} />
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link href="/loyihalar" className="rounded-full border border-white/40 bg-black/55 px-4 py-2 text-sm text-white">{t("viewCatalog")}</Link>
+            {categories.slice(0, 4).map(({ collection }) => (
+              <Link key={collection.id} href={collectionHref(collection, locale)} className="rounded-full border border-white/40 bg-black/55 px-4 py-2 text-sm text-white hover:bg-ink">{collection.short[locale]}</Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Search panel straddling the banner's bottom edge */}
-      <section className={`relative z-20 -mt-16 md:-mt-[52px] ${container}`}>
-        <FinderForm floorOptions={floorOptions} />
-      </section>
+      <div className="border-b border-line bg-paper-2">
+        <div className={`flex flex-wrap items-center justify-between gap-3 py-4 ${container}`}>
+          <p className="text-sm text-ink-soft">{browse("consultIntro")}</p>
+          <Link href={browsePath("consult")} className="font-bold text-gold">{browse("consult")} →</Link>
+        </div>
+      </div>
+
+      {categories.length > 0 && (
+        <section className={`pt-14 md:pt-20 ${container}`}>
+          <SectionTitle eyebrow={browse("collections")} title={t("categoriesTitle")} />
+          <div className="mt-6"><BrowseTiles categories={categories.slice(0, 6)} locale={locale} /></div>
+          <div className="mt-4 flex flex-wrap gap-4 font-bold text-gold">
+            <Link href={browsePath("styles")}>{browse("styles")} →</Link>
+            <Link href={browsePath("collections")}>{browse("collections")} →</Link>
+            <Link href={browsePath("size")}>{browse("size")} →</Link>
+          </div>
+        </section>
+      )}
 
       {/* Stats */}
       <section className={`mt-14 ${container}`}>
@@ -149,28 +131,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
-      {/* Popular categories — real pages for common searches */}
-      {categories.length > 0 && (
-        <section className={`pt-20 md:pt-28 ${container}`}>
-          <SectionTitle eyebrow={t("categoriesEyebrow")} title={t("categoriesTitle")} />
-          <ul className="mt-10 grid border-l border-t border-line sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map(({ collection: c, houses: list }) => (
-              <li key={c.id} className="border-b border-r border-line">
-                <Link
-                  href={collectionHref(c, locale)}
-                  className="group flex h-full items-center justify-between gap-4 px-5 py-5 hover:bg-paper-2"
-                >
-                  <span>
-                    <span className="block font-medium text-ink">{c.title[locale]}</span>
-                    <span className="mt-0.5 block text-sm text-ink-soft">{coll("count", { count: list.length })}</span>
-                  </span>
-                  <ArrowRightIcon className="h-4 w-4 shrink-0 text-ink-soft transition-colors group-hover:text-gold" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <section className="mt-14 border-y border-line bg-paper-2 md:mt-20">
+        <div className={`grid gap-6 py-14 md:grid-cols-2 ${container}`}>
+          <div>
+            <SectionTitle eyebrow={browse("cost")} title={browse("cost")} />
+            <p className="mt-4 max-w-lg text-ink-soft">{browse("costIntro")}</p>
+          </div>
+          <BuildEstimate />
+        </div>
+      </section>
 
       {/* How it works */}
       <section id="jarayon" className={`pt-20 md:pt-28 ${container}`}>
@@ -216,8 +185,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
+      <section className={`py-14 md:py-20 ${container}`}>
+        <SectionTitle eyebrow={browse("faq")} title={browse("faqIntro")} />
+        <div className="mt-6 max-w-3xl space-y-3">
+          {(browse.raw("faqItems") as { title: string; text: string }[]).map((item) => (
+            <details key={item.title} className="rounded-lg border border-line p-4">
+              <summary className="cursor-pointer font-bold">{item.title}</summary>
+              <p className="mt-2 text-ink-soft">{item.text}</p>
+            </details>
+          ))}
+        </div>
+        <Link href={browsePath("faq")} className="mt-5 inline-block font-bold text-gold">{browse("faq")} →</Link>
+      </section>
+
       {/* Custom project / contact */}
-      <section id="aloqa" className={`bg-ink text-cream ${settings.included.length ? "" : "mt-20 md:mt-28"}`}>
+      <section id="aloqa" className={`bg-ink text-cream `}>
         <div className={`grid gap-12 py-16 md:py-24 lg:grid-cols-[1.1fr_1fr] lg:gap-20 ${container}`}>
           <div>
             <SectionTitle eyebrow={t("customEyebrow")} title={t("customTitle")} tone="dark" />

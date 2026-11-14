@@ -10,7 +10,7 @@ import { routing, type Locale } from "@/i18n/routing";
 import { collectionHref, findCollection, liveCollections } from "@/lib/collections";
 import { formatNumber } from "@/lib/format";
 import { getHouses, toSummary } from "@/lib/houses";
-import { alternates, breadcrumbLd, itemListLd, socialImage } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd, itemListLd } from "@/lib/seo";
 
 export const revalidate = 60;
 
@@ -41,17 +41,7 @@ export async function generateMetadata({
   const title = meta("collectionTitle", { title: c.title[locale] });
   const from = formatNumber(Math.min(...data.houses.map((h) => h.priceUzs)));
   const description = meta("collectionDescription", { title: c.title[locale], count: data.houses.length, from });
-  return {
-    title,
-    description,
-    alternates: alternates(locale, (l) => `/${l}/${c.slug[l]}`),
-    openGraph: {
-      title,
-      description,
-      url: `/${locale}/${c.slug[locale]}`,
-      images: [{ url: socialImage(data.houses[0].cover), width: 1200, height: 630 }],
-    },
-  };
+  return pageMetadata(locale, (l) => `/${l}/${c.slug[l]}`, title, description, data.houses[0].cover);
 }
 
 export default async function CollectionPage({ params }: { params: Promise<{ locale: string; collection: string }> }) {

@@ -35,6 +35,7 @@ const SORT_LABEL: Record<SortKey, string> = {
  *  stays shareable. */
 export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; emptyAction: React.ReactNode }) {
   const t = useTranslations("filters");
+  const browse = useTranslations("browse");
   const tc = useTranslations("catalog");
   const locale = useLocale() as Locale;
   const searchParams = useSearchParams();
@@ -105,8 +106,8 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
   ];
 
   const active = hasActiveFilters(filters);
-  const activeCount = [filters.sotix, filters.qavat, filters.eni, filters.xona, filters.uslub].filter(Boolean).length;
-  const reset = () => update({ sotix: undefined, qavat: undefined, eni: undefined, xona: undefined, uslub: undefined });
+  const activeCount = [filters.sotix, filters.qavat, filters.eni, filters.xona, filters.uslub, filters.q, filters.min || filters.max].filter(Boolean).length;
+  const reset = () => update({ sotix: undefined, qavat: undefined, eni: undefined, xona: undefined, uslub: undefined, q: undefined, min: undefined, max: undefined });
 
   return (
     <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
@@ -131,6 +132,15 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
           )}
         </div>
         <div className={`grid-cols-2 gap-x-4 gap-y-5 p-5 lg:grid lg:grid-cols-1 ${open ? "grid" : "hidden"}`}>
+          <form className="col-span-full flex flex-wrap gap-2" onSubmit={(event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            update({ q: String(data.get("q")).trim() || undefined });
+          }}>
+            <input key={filters.q} name="q" type="search" maxLength={120} defaultValue={filters.q}
+              aria-label={browse("keyword")} placeholder={browse("keyword")} className="field-input min-w-0 flex-1" />
+            <button className="btn bg-gold px-3 text-paper">{browse("search")}</button>
+          </form>
           {selects
             .filter((s) => !s.hidden)
             .map((s) => (

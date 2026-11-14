@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { routing, type Locale } from "@/i18n/routing";
+import { browsePath, browseSections } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
 import { absoluteUrl, houseUrlPath } from "@/lib/seo";
@@ -42,6 +43,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...entries((l) => `/${l}`, { lastModified: latest }),
     ...entries((l) => `/${l}/loyihalar`, { lastModified: latest }),
+    ...browseSections.flatMap((section) => entries((l) => `/${l}${browsePath(section)}`)),
     ...liveCollections(summaries).flatMap(({ collection, houses: list }) =>
       entries((l) => `/${l}/${collection.slug[l]}`, { lastModified: newest(list.map((h) => h.updatedAt)) }),
     ),

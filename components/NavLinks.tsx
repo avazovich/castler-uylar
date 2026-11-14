@@ -11,7 +11,7 @@ export interface NavItem {
 export function NavLinks({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
   return (
-    <nav className="hidden h-full items-stretch gap-6 lg:flex xl:gap-8">
+    <nav className="hidden min-h-12 flex-wrap items-stretch gap-x-4 lg:flex xl:gap-x-6">
       {items.map((item) => {
         const path = item.href.split("#")[0] || "/";
         const active = !item.href.includes("#") && (path === "/" ? pathname === "/" : pathname.startsWith(path));
@@ -19,7 +19,8 @@ export function NavLinks({ items }: { items: NavItem[] }) {
           <Link
             key={item.href}
             href={item.href}
-            className={`label-caps flex items-center whitespace-nowrap border-b-2 pt-0.5 text-[12px] transition-colors ${
+            aria-current={active ? "page" : undefined}
+            className={`label-caps flex items-center whitespace-nowrap border-b-2 py-3 text-[12px] transition-colors ${
               active ? "border-gold text-ink" : "border-transparent text-ink-soft hover:text-ink"
             }`}
           >

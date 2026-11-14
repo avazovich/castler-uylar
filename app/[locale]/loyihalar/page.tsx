@@ -10,7 +10,7 @@ import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { collectionHref, liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
-import { alternates, breadcrumbLd, itemListLd, socialImage } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd, itemListLd } from "@/lib/seo";
 
 export const revalidate = 60;
 
@@ -21,17 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const title = meta("catalogTitle", { count: houses.length });
   const description = meta("catalogDescription");
   const cover = [...houses.filter((h) => h.featured), ...houses][0]?.cover;
-  return {
-    title,
-    description,
-    alternates: alternates(locale, (l) => `/${l}/loyihalar`),
-    openGraph: {
-      title,
-      description,
-      url: `/${locale}/loyihalar`,
-      ...(cover ? { images: [{ url: socialImage(cover), width: 1200, height: 630 }] } : {}),
-    },
-  };
+  return pageMetadata(locale, (l) => `/${l}/loyihalar`, title, description, cover);
 }
 
 export default async function CatalogPage({ params }: { params: Promise<{ locale: string }> }) {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Cormorant_Garamond, Inter, Lato, Marcellus } from "next/font/google";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -19,6 +19,9 @@ const cormorant = Cormorant_Garamond({
   subsets: ["latin", "latin-ext", "cyrillic"],
   weight: ["500", "600"],
 });
+
+const lato = Lato({ variable: "--font-lato", weight: ["400", "700", "900"], subsets: ["latin"], display: "swap" });
+const marcellus = Marcellus({ variable: "--font-marcellus", weight: "400", subsets: ["latin"], display: "swap" });
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -63,7 +66,7 @@ export default async function LocaleLayout({
   preconnect("https://cdn.sanity.io");
 
   return (
-    <html lang={locale} className={`${inter.variable} ${cormorant.variable}`}>
+    <html lang={locale} className={`${locale === "uz" ? `${lato.variable} ${marcellus.variable}` : `${inter.variable} ${cormorant.variable}`}`}>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider messages={messages}>
           <TopBar />

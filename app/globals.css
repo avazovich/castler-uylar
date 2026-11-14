@@ -6,11 +6,11 @@
   --ink: #1a1d16;
   --ink-2: #23261e;
   --ink-soft: #6b6f61;
-  --gold: #9a8550;
-  --gold-light: #c2ab74;
+  --gold: #9d4f30;
+  --gold-light: #e6a27d;
   --cream: #f2f0e9;
   --paper: #ffffff;
-  --paper-2: #f6f5f1;
+  --paper-2: #f1efe9;
   --line: #e4e2db;
   --line-on-ink: #3a3d32;
 }
@@ -26,8 +26,8 @@
   --color-paper-2: var(--paper-2);
   --color-line: var(--line);
   --color-line-on-ink: var(--line-on-ink);
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-  --font-display: var(--font-cormorant), Georgia, serif;
+  --font-sans: var(--font-lato, var(--font-inter)), system-ui, sans-serif;
+  --font-display: var(--font-marcellus, var(--font-cormorant)), Georgia, serif;
 }
 
 @layer base {
@@ -61,7 +61,7 @@
 
 /* Component classes live in the components layer so Tailwind utilities
    (hidden, md:inline-flex, font-medium …) on the same element still win.
-   The whole site is deliberately square-cornered: no rounding anywhere. */
+   Utilities can override these defaults at individual call sites. */
 @layer components {
   /* Headlines — a classic serif (Cormorant Garamond has full Cyrillic). */
   .font-display {
@@ -83,6 +83,7 @@
      from utilities on each use (bg-ink text-paper hover:bg-gold, …). */
   .btn {
     display: inline-flex;
+    border-radius: 0.4rem;
     align-items: center;
     justify-content: center;
     gap: 0.6rem;
@@ -145,4 +146,11 @@
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+}
+
+
+.field-input:focus, .field-select:focus, input[type="search"]:focus {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+  box-shadow: none;
 }

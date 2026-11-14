@@ -189,5 +189,47 @@
     "count": "{count} ta loyiha",
     "otherTitle": "Boshqa turkumlar",
     "allProjects": "Barcha loyihalar"
+  },
+  "browse": {
+    "describeHint": "Masalan: zamonaviy, 1 qavat, 300 m²",
+    "styles": "Uslublar",
+    "collections": "To‘plamlar",
+    "size": "Uy maydoni",
+    "cost": "Qurilish xarajati",
+    "guides": "Qo‘llanmalar",
+    "faq": "Savollar",
+    "consult": "Arxitektor bilan maslahat",
+    "search": "Qidirish",
+    "keyword": "Loyiha nomi, raqami yoki uslubi",
+    "filterMode": "Filtrlardan foydalaning",
+    "describeMode": "Uyingizni tasvirlab bering",
+    "stylesIntro": "Zamonaviy, klassik va boshqa uslublardagi tayyor uy loyihalarini ko‘ring.",
+    "collectionsIntro": "Qavatlar soni, yer maydoni va uy imkoniyatlari bo‘yicha to‘plamlarni ko‘ring.",
+    "sizeIntro": "Uy maydoniga qarab loyihalarni saralang. Yer maydonini katalogda alohida tekshiring.",
+    "costIntro": "Uy maydoni va quruvchi bergan bir kvadrat metr narxi asosida dastlabki hisobni oling.",
+    "guidesIntro": "Tayyor uy loyihasini tanlashdan oldin nimalarni tekshirish kerakligini bilib oling.",
+    "faqIntro": "Tayyor uy loyihasi, yerga moslik va hujjatlar bo‘yicha javoblar.",
+    "consultIntro": "Uchastkangiz, tanlagan rejangiz va kerakli o‘zgarishlarni Castler arxitektori bilan muhokama qiling.",
+    "compact": "300 m² gacha",
+    "medium": "301–400 m²",
+    "large": "401 m² va katta",
+    "area": "Uy maydoni (m²)",
+    "rate": "1 m² uchun narx (so‘m)",
+    "calculate": "Hisoblash",
+    "estimate": "Dastlabki hisob: {amount} so‘m",
+    "faqItems": [
+      {
+        "title": "Loyiha narxiga qurilish kiradimi?",
+        "text": "Katalogdagi narx loyiha hujjatlari uchun. Qurilish xarajatlari alohida hisoblanadi."
+      },
+      {
+        "title": "Loyiha yerimga mos keladimi?",
+        "text": "Uchastka eni va maydonini loyiha o‘lchamlari bilan solishtiring. Kirish tomoni va relyefni arxitektor bilan tekshiring."
+      },
+      {
+        "title": "Tayyor rejani o‘zgartirish mumkinmi?",
+        "text": "Loyiha raqami va kerakli o‘zgarishlarni Castler jamoasiga yuboring."
+      }
+    ]
   }
 }
