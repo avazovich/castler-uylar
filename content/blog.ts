@@ -7,7 +7,8 @@ type Translation = {
 };
 
 type Article = {
-  slug: string;
+  legacySlug: string;
+  slugs: Record<Locale, string>;
   destination: string;
   uz: Translation;
   ru: Translation;
@@ -15,7 +16,7 @@ type Article = {
 
 export const articles: Article[] = [
   {
-    slug: "house-on-4-sotix", destination: "/loyihalar?sotix=4",
+    legacySlug: "house-on-4-sotix", slugs: { uz: "4-sotixga-uy-loyihasi", ru: "proekt-doma-na-4-sotkah" }, destination: "/loyihalar?sotix=4",
     uz: {
       title: "4 sotixga qanday uy loyihasi mos keladi?",
       description: "4 sotixli uchastkada uy, mashina joyi va hovli uchun joyni qanday taqsimlash mumkin?",
@@ -36,7 +37,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "house-on-6-sotix", destination: "/loyihalar?sotix=6",
+    legacySlug: "house-on-6-sotix", slugs: { uz: "6-sotixga-uy-loyihasi", ru: "proekt-doma-na-6-sotkah" }, destination: "/loyihalar?sotix=6",
     uz: {
       title: "6 sotixga uy loyihasini qanday tanlash kerak?",
       description: "6 sotixli yerda xona soni, hovli, terassa va mashina joyini bir rejada solishtiring.",
@@ -57,7 +58,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "one-or-two-floors", destination: "/loyihalar",
+    legacySlug: "one-or-two-floors", slugs: { uz: "bir-yoki-ikki-qavatli-uy", ru: "odnoetazhnyy-ili-dvuhetazhnyy-dom" }, destination: "/loyihalar",
     uz: {
       title: "Bir qavatli yoki ikki qavatli uy: qaysi biri qulay?",
       description: "Bir va ikki qavatli uy rejalarini hovli, zinapoya, kundalik harakat va qurilish smetasi bo‘yicha taqqoslang.",
@@ -78,7 +79,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "narrow-lot-house", destination: "/loyihalar?eni=15",
+    legacySlug: "narrow-lot-house", slugs: { uz: "tor-yerga-uy-loyihasi", ru: "proekt-doma-dlya-uzkogo-uchastka" }, destination: "/loyihalar?eni=15",
     uz: {
       title: "Tor yerga uy loyihasi: nimalarni tekshirish kerak?",
       description: "Tor uchastkada uy eni, mashina kirishi, tabiiy yorug‘lik va ichki hovlini qanday rejalashtirish mumkin.",
@@ -99,7 +100,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "cost-to-build-a-house", destination: "/browse/cost",
+    legacySlug: "cost-to-build-a-house", slugs: { uz: "uy-qurish-qancha-turadi", ru: "skolko-stoit-postroit-dom" }, destination: "/browse/cost",
     uz: {
       title: "Uy qurish qancha turadi va smeta qanday tuziladi?",
       description: "Uy qurish xarajatini kvadrat metr narxidan boshlab, ishlar va materiallar bo‘yicha qanday aniqlashtirish mumkin?",
@@ -120,7 +121,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "what-is-in-a-house-plan", destination: "/loyihalar",
+    legacySlug: "what-is-in-a-house-plan", slugs: { uz: "uy-loyihasi-tarkibi", ru: "chto-vhodit-v-proekt-doma" }, destination: "/loyihalar",
     uz: {
       title: "Tayyor uy loyihasi tarkibiga nimalar kiradi?",
       description: "Qavat rejasi, fasad, kesim, konstruktiv va muhandislik chizmalarini sotib olishdan oldin tekshiring.",
@@ -141,7 +142,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "ready-made-or-custom-project", destination: "/browse/consult",
+    legacySlug: "ready-made-or-custom-project", slugs: { uz: "tayyor-yoki-individual-uy-loyihasi", ru: "gotovyy-ili-individualnyy-proekt-doma" }, destination: "/browse/consult",
     uz: {
       title: "Tayyor loyiha yoki individual loyiha: qaysi birini tanlash kerak?",
       description: "Uchastka, oila ehtiyoji va kerakli o‘zgarishlarga qarab tayyor va individual loyiha orasida tanlang.",
@@ -162,7 +163,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "measure-your-plot", destination: "/loyihalar",
+    legacySlug: "measure-your-plot", slugs: { uz: "uy-qurish-uchun-yerni-olchash", ru: "kak-izmerit-uchastok" }, destination: "/loyihalar",
     uz: {
       title: "Uy loyihasini tanlash uchun yerni qanday o‘lchash kerak?",
       description: "Loyihani tekshirish uchun uchastka eni, uzunligi, ko‘cha tomoni va boshqa ma’lumotlarni tayyorlang.",
@@ -183,7 +184,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "courtyard-house-plan", destination: "/loyihalar",
+    legacySlug: "courtyard-house-plan", slugs: { uz: "ichki-hovlili-uy-loyihasi", ru: "proekt-doma-s-vnutrennim-dvorom" }, destination: "/loyihalar",
     uz: {
       title: "Ichki hovlili uy loyihasini qanday tanlash kerak?",
       description: "Ichki hovlini tanlashda xonalar yo‘nalishi, maxfiylik, soya va kundalik foydalanishni tekshiring.",
@@ -204,7 +205,7 @@ export const articles: Article[] = [
     },
   },
   {
-    slug: "before-building-checklist", destination: "/browse/consult",
+    legacySlug: "before-building-checklist", slugs: { uz: "uy-qurishni-nimadan-boshlash", ru: "s-chego-nachat-stroitelstvo-doma" }, destination: "/browse/consult",
     uz: {
       title: "Uy qurishni nimadan boshlash kerak? Amaliy ro‘yxat",
       description: "Uchastka ma’lumotlari, oilaviy talablar, loyiha va smetani qurilishdan oldin qanday tartibga solish mumkin.",

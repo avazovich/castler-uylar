@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...entries((l) => `/${l}`, { lastModified: latest }),
     ...entries((l) => `/${l}/loyihalar`, { lastModified: latest }),
     ...entries((l) => articlePath(l)),
-    ...articles.flatMap(({ slug }) => entries((l) => articlePath(l, slug))),
+    ...articles.flatMap(({ slugs }) => entries((l) => articlePath(l, slugs[l]))),
     ...browseSections.flatMap((section) => entries((l) => `/${l}${browsePath(section)}`)),
     ...liveCollections(summaries).flatMap(({ collection, houses: list }) =>
       entries((l) => `/${l}/${collection.slug[l]}`, { lastModified: newest(list.map((h) => h.updatedAt)) }),

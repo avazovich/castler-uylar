@@ -14,18 +14,20 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
 async function readArticle(params: Props["params"]) {
   const { locale, slug } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
-  const article = articles.find((entry) => entry.slug === slug);
+  const article = articles.find((entry) => entry.slugs[locale] === slug);
   if (!article) notFound();
   return { locale, entry: article, article: article[locale] };
 }
 
-export function generateStaticParams() {
-  return articles.map(({ slug }) => ({ slug }));
+export function generateStaticParams({ params }: { params: { locale: string } }) {
+  if (!hasLocale(routing.locales, params.locale)) return [];
+  const locale = params.locale;
+  return articles.map(({ slugs }) => ({ slug: slugs[locale] }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, entry, article } = await readArticle(params);
-  const metadata = pageMetadata(locale, (language) => articlePath(language, entry.slug), `${article.title} | Castler Uylar`, article.description);
+  const metadata = pageMetadata(locale, (language) => articlePath(language, entry.slugs[language]), `${article.title} | Castler Uylar`, article.description);
   return { ...metadata, openGraph: { ...metadata.openGraph, type: "article" } };
 }
 
@@ -33,7 +35,7 @@ export default async function BlogArticlePage({ params }: Props) {
   const { locale, entry, article } = await readArticle(params);
   setRequestLocale(locale);
   const [t, nav, browse] = await Promise.all([getTranslations("blog"), getTranslations("nav"), getTranslations("browse")]);
-  const path = articlePath(locale, entry.slug);
+  const path = articlePath(locale, entry.slugs[locale]);
   const destinationLabel = entry.destination === "/browse/consult" ? browse("consult")
     : entry.destination === "/browse/cost" ? browse("cost") : nav("catalog");
   return (

@@ -32,9 +32,9 @@ export default async function BlogPage({ params }: Props) {
       <PageHeader title={t("title")} subtitle={t("intro")} crumbs={[{ label: nav("home"), href: "/" }, { label: t("label") }]} />
       <div className="bg-paper-2">
         <ul className="mx-auto grid max-w-[1280px] gap-4 px-4 py-8 sm:grid-cols-2 md:px-8 md:py-12 lg:grid-cols-3">
-          {articles.map(({ slug, [locale]: article }) => (
-            <li key={slug}>
-              <Link className="group flex h-full flex-col rounded-xl border border-line bg-white p-5 transition-colors hover:border-gold md:p-6" href={blogPath(slug)}>
+          {articles.map(({ slugs, [locale]: article }) => (
+            <li key={slugs[locale]}>
+              <Link className="group flex h-full flex-col rounded-xl border border-line bg-white p-5 transition-colors hover:border-gold md:p-6" href={blogPath(slugs[locale])}>
                 <h2 className="font-display text-2xl leading-tight">{article.title}</h2>
                 <p className="mb-5 mt-2 text-ink-soft">{article.description}</p>
                 <span className="mt-auto text-sm font-bold text-gold group-hover:underline">{t("read")} →</span>
