@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export interface Crumb {
@@ -7,10 +8,11 @@ export interface Crumb {
 
 /** Grey band at the top of inner pages: breadcrumbs, title, optional line. */
 export function PageHeader({ crumbs, title, subtitle }: { crumbs: Crumb[]; title?: string; subtitle?: string }) {
+  const t = useTranslations("browse");
   return (
     <section className="border-b border-line bg-paper-2">
-      <div className={`mx-auto max-w-[1280px] px-4 md:px-8 ${title ? "py-10 md:py-14" : "py-4"}`}>
-        <nav aria-label="Breadcrumb">
+      <div className={`mx-auto max-w-[1280px] px-4 md:px-8 ${title ? "py-8 md:py-11" : "py-4"}`}>
+        <nav aria-label={t("breadcrumbs")}>
           <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-ink-soft">
             {crumbs.map((c, i) => (
               <li key={i} className="flex items-center gap-2">
@@ -28,7 +30,7 @@ export function PageHeader({ crumbs, title, subtitle }: { crumbs: Crumb[]; title
             ))}
           </ol>
         </nav>
-        {title && <h1 className="font-display mt-4 text-[44px] leading-[1.05] text-ink md:text-[64px]">{title}</h1>}
+        {title && <h1 className="font-display mt-4 text-[38px] leading-[1.05] text-ink md:text-[54px]">{title}</h1>}
         {subtitle && <p className="mt-3 max-w-2xl text-lg text-ink-soft">{subtitle}</p>}
       </div>
     </section>

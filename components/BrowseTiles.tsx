@@ -1,23 +1,28 @@
+import { getTranslations } from "next-intl/server";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
 import { collectionHref, type liveCollections } from "@/lib/collections";
 
-export function BrowseTiles({ categories, locale }: {
+export async function BrowseTiles({ categories, locale }: {
   categories: ReturnType<typeof liveCollections>;
   locale: Locale;
 }) {
+  const t = await getTranslations("collection");
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
+    <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
       {categories.map(({ collection, houses }) => {
         const cover = houses[0].cover;
         return (
-          <Link key={collection.id} href={collectionHref(collection, locale)} className="group overflow-hidden rounded-lg border border-line bg-paper transition-colors hover:border-gold">
-            <div className="relative aspect-[5/4] bg-paper-2">
-              <Image src={cover.url} alt="" fill sizes="(min-width: 1024px) 200px, (min-width: 768px) 33vw, 50vw" className="object-contain" />
+          <Link key={collection.id} href={collectionHref(collection, locale)} className="group relative isolate flex min-h-40 items-end overflow-hidden rounded-xl bg-ink text-white md:min-h-64">
+            <div className="absolute inset-0 -z-20">
+              <Image src={cover.url} alt="" fill sizes="(min-width: 1024px) 33vw, 50vw" style={{objectPosition: cover.position}} className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.03]" />
             </div>
-            <div className="flex items-start justify-between gap-2 p-3 text-sm font-bold">
-              {collection.short[locale]} <span aria-hidden="true">↗</span>
+            <div className="absolute inset-0 -z-10 bg-linear-to-t from-black/85 via-black/20 to-transparent" />
+            <div className="flex w-full items-end justify-between gap-2 p-4">
+              <div><h2 className="font-display text-xl md:text-3xl">{collection.short[locale]}</h2>
+                <p className="text-sm text-white/85">{t("count", { count: houses.length })}</p></div>
+              <span aria-hidden="true">↗</span>
             </div>
           </Link>
         );

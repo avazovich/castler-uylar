@@ -29,10 +29,11 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
   const locale = raw as Locale;
   setRequestLocale(locale);
 
-  const [t, home, nav, houses] = await Promise.all([
+  const [t, home, nav, browse, houses] = await Promise.all([
     getTranslations("catalog"),
     getTranslations("home"),
     getTranslations("nav"),
+    getTranslations("browse"),
     getHouses(locale),
   ]);
   const summaries = houses.map(toSummary);
@@ -55,16 +56,16 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
           itemListLd(locale, summaries),
         ]}
       />
-      <PageHeader crumbs={[{ label: nav("home"), href: "/" }, { label: t("eyebrow") }]} title={t("title")} />
+      <PageHeader crumbs={[{ label: nav("home"), href: "/" }, { label: t("eyebrow") }]} title={t("title")} subtitle={browse("catalogIntro")} />
       <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-10 md:px-8 md:pt-12">
         {categories.length > 0 && (
-          <nav aria-label={t("categories")} className="mb-10 flex flex-wrap items-center gap-2">
+          <nav aria-label={t("categories")} className="mb-6 flex flex-wrap items-center gap-2">
             <span className="label-caps mr-2 text-ink-soft">{t("categories")}</span>
             {categories.map(({ collection: c, houses: list }) => (
               <Link
                 key={c.id}
                 href={collectionHref(c, locale)}
-                className="border border-line px-3 py-2 text-sm text-ink transition-colors hover:border-ink"
+                className="rounded-full border border-line bg-paper px-3 py-2 text-sm text-ink transition-colors hover:border-ink"
               >
                 {c.short[locale]} <span className="text-ink-soft">· {list.length}</span>
               </Link>
@@ -76,9 +77,9 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
             the page is never empty (and search engines see every house). */}
         <Suspense
           fallback={
-            <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
-              <div className="hidden h-[520px] border border-line bg-paper-2 lg:block" />
-              <div className="grid gap-6 pt-[61px] sm:grid-cols-2">
+            <div className="grid gap-6">
+              <div className="hidden h-40 rounded-xl border border-line bg-paper-2 lg:block" />
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {summaries.map((h) => (
                   <HouseCard key={h.code} house={h} />
                 ))}

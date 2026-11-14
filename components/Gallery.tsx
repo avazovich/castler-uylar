@@ -19,8 +19,13 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
 
   // Keep the active thumbnail in view as the visitor steps through.
   useEffect(() => {
-    const el = thumbs.current?.children[index] as HTMLElement | undefined;
-    el?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+    const strip = thumbs.current;
+    const button = strip?.children[index] as HTMLElement | undefined;
+    if (!strip || !button) return;
+    const offset = button.offsetLeft - strip.scrollLeft;
+    if (offset < 0 || offset + button.offsetWidth > strip.clientWidth) {
+      strip.scrollLeft = button.offsetLeft - (strip.clientWidth - button.offsetWidth) / 2;
+    }
   }, [index]);
 
   useEffect(() => {
@@ -34,11 +39,11 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
   }, [open, go]);
 
   const arrowCls =
-    "grid h-12 w-12 place-items-center bg-paper text-ink transition hover:bg-ink hover:text-paper";
+    "grid h-11 w-11 place-items-center rounded-md bg-paper text-ink transition hover:bg-ink hover:text-paper";
 
   return (
     <div>
-      <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
+      <div className="relative aspect-[16/9] overflow-hidden rounded-lg bg-paper-2">
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -55,12 +60,12 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
             placeholder={current.lqip ? "blur" : "empty"}
             blurDataURL={current.lqip}
             style={{ objectPosition: current.position }}
-            className="object-cover"
+            className="gallery-photo object-contain"
           />
         </button>
         {count > 1 && (
           <>
-            <div className="pointer-events-none absolute inset-x-0 top-1/2 flex -translate-y-1/2 justify-between">
+            <div className="pointer-events-none absolute inset-x-2.5 top-1/2 flex -translate-y-1/2 justify-between">
               <button type="button" onClick={() => go(-1)} aria-label={t("prev")} className={`pointer-events-auto ${arrowCls}`}>
                 <ChevronLeftIcon />
               </button>
@@ -68,7 +73,7 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
                 <ChevronRightIcon />
               </button>
             </div>
-            <span className="label-caps absolute bottom-0 left-0 bg-ink px-3 py-2 text-paper">
+            <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-black/65 py-2.5 pr-12 text-right text-xs text-white">
               {t("photoCount", { n: index + 1, total: count })}
             </span>
           </>
@@ -79,7 +84,7 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
       </div>
 
       {count > 1 && (
-        <div ref={thumbs} className="no-scrollbar mt-3 flex gap-2 overflow-x-auto pb-1">
+        <div ref={thumbs} className="no-scrollbar relative mt-3 flex gap-2 overflow-x-auto pb-1">
           {images.map((img, i) => (
             <button
               key={img.url}
@@ -87,8 +92,8 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
               onClick={() => setIndex(i)}
               aria-label={`${i + 1}`}
               aria-current={i === index}
-              className={`relative aspect-[4/3] w-24 shrink-0 overflow-hidden border-2 transition sm:w-28 ${
-                i === index ? "border-ink" : "border-transparent opacity-65 hover:opacity-100"
+              className={`relative aspect-[4/3] w-20 shrink-0 overflow-hidden rounded-md border-2 transition sm:w-28 ${
+                i === index ? "border-gold" : "border-transparent opacity-65 hover:opacity-100"
               }`}
             >
               <Image src={img.url} alt={alts[i] ?? ""} fill sizes="112px" className="object-cover" style={{ objectPosition: img.position }} />

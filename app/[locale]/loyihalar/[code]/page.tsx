@@ -6,6 +6,10 @@ import { Gallery } from "@/components/Gallery";
 import { HouseCard } from "@/components/HouseCard";
 import { CheckIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
 import { LeadDialog } from "@/components/LeadDialog";
+import { BuildEstimate } from "@/components/BuildEstimate";
+import { PlotCheck } from "@/components/PlotCheck";
+import { Link } from "@/i18n/navigation";
+import { browsePath } from "@/lib/browse";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
@@ -69,11 +73,12 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
   if (!house) notFound();
   if (decodeURIComponent(code) !== houseSlug(house, locale)) permanentRedirect(houseUrlPath(house, locale));
 
-  const [t, common, home, nav, settings, all] = await Promise.all([
+  const [t, common, home, nav, browse, settings, all] = await Promise.all([
     getTranslations("house"),
     getTranslations("common"),
     getTranslations("home"),
     getTranslations("nav"),
+    getTranslations("browse"),
     getSettings(locale),
     getHouses(locale),
   ]);
@@ -128,223 +133,226 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
         ]}
       />
 
-      <div className={`pb-24 pt-8 md:pt-10 ${container}`}>
-        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-12">
-          <Gallery images={images} title={title} alts={alts} />
+      <div className="plan-page bg-paper-2">
+        <div className={`pb-24 pt-6 md:pt-7 ${container}`}>
+          <div id="overview" className="grid items-start gap-6 lg:grid-cols-[minmax(0,2.08fr)_minmax(0,1fr)] lg:gap-10">
+            <div className="relative min-w-0">
+              <Gallery images={images} title={title} alts={alts} />
+              {house.featured && <span className="pointer-events-none absolute left-3 top-3 rounded-sm bg-gold px-2 py-1 text-xs font-bold text-white">★ {browse("featuredPlan")}</span>}
+              {house.floorPlans.length > 0 && <a href="#floor-plans" className="btn mt-3 border border-line bg-paper hover:border-gold">{browse("photoShortcut")} ↓</a>}
+            </div>
 
-          <aside className="self-start border border-line lg:sticky lg:top-28">
-            {house.isSample && (
-              <p className="border-b border-gold/40 bg-gold/10 px-6 py-3 text-sm text-ink">
-                <span className="label-caps mr-2 text-gold">{common("sample")}</span>
-                {t("sampleNotice")}
-              </p>
-            )}
-            <div className="p-6 md:p-7">
-              {/* The heading says what the page is, not just the house's name. */}
-              <h1>
-                <span className="label-caps block text-ink-soft">
-                  № {house.code} · {kind}
-                </span>
-                <span className="font-display mt-2 block text-[46px] leading-[1.02] text-ink md:text-[54px]">{title}</span>
-              </h1>
-
-              <div className="mt-6 border-t border-line pt-5">
-                <div className="flex flex-wrap items-baseline gap-x-3">
-                  <p className="text-[30px] font-semibold text-ink">{common("price", { amount: fmt(house.priceUzs) })}</p>
-                  {house.oldPriceUzs && (
-                    <p className="text-lg text-ink-soft line-through">{common("price", { amount: fmt(house.oldPriceUzs) })}</p>
-                  )}
-                </div>
-                <p className="mt-1 text-sm text-ink-soft">{t("priceNote")}</p>
+            <aside className="min-w-0">
+              {house.featured && <p className="label-caps mb-2 text-gold">★ {browse("featuredPlan")}</p>}
+              <h1 className="font-display text-[clamp(1.8rem,3.2vw,2.65rem)] leading-[1.1]">{houseTitle(summary, locale)}</h1>
+              <p className="my-3 text-sm text-ink-soft">№ {house.code} · {kind}</p>
+              <div className="mb-5 flex flex-wrap gap-1.5">
+                {specs.slice(0, 5).map(({ label, value }) => <span key={label} className="rounded-sm border border-line bg-[#e9e4d9] px-2 py-1 text-xs font-bold">{label} · {value}</span>)}
               </div>
-
-              <table className="mt-6 w-full border-t border-line text-[15px]">
-                <tbody>
-                  {specs.map((s) => (
-                    <tr key={s.label} className="border-b border-line">
-                      <th scope="row" className="py-3 pr-4 text-left font-normal text-ink-soft">
-                        {s.label}
-                      </th>
-                      <td className="py-3 text-right font-semibold text-ink">{s.value}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <LeadDialog
-                houseCode={house.code}
-                houseTitle={`№ ${house.code}${house.name ? ` «${house.name}»` : ""}`}
-                phone={settings.phone}
-                className="btn mt-7 w-full bg-ink py-[18px] text-paper hover:bg-gold"
-              >
-                {t("discuss")}
-              </LeadDialog>
-              <div className="mt-3 grid grid-cols-2 gap-3">
-                {settings.telegram && (
-                  <a
-                    href={`https://t.me/${settings.telegram}`}
-                    target="_blank"
-                    rel="noopener"
-                    className="btn border border-line px-3 text-ink hover:border-ink"
-                  >
-                    <TelegramIcon className="h-4 w-4" /> Telegram
-                  </a>
-                )}
-                <a
-                  href={telHref(settings.phone)}
-                  className={`btn border border-line px-3 text-ink hover:border-ink ${settings.telegram ? "" : "col-span-2"}`}
-                >
-                  <PhoneIcon className="h-4 w-4" /> {t("call")}
+              {house.isSample && <p className="mb-3 rounded-md border border-gold/30 bg-gold/10 p-3 text-sm">{t("sampleNotice")}</p>}
+              <div className="space-y-3">
+                <a href="#build-cost" className="block rounded-md border border-line bg-[#e9e4d9] p-3.5 hover:border-gold">
+                  <span className="label-caps block text-ink-soft">{browse("cost")}</span>
+                  <span className="font-display text-lg">{costTotal > 0 ? formatUsd(costTotal) : browse("calculate")} ↓</span>
                 </a>
+                {house.minPlotWidth && house.minPlotLength ? (
+                  <PlotCheck width={house.minPlotWidth} length={house.minPlotLength} area={house.plotSotix * 100} />
+                ) : house.minPlotWidth ? (
+                  <a href="#full-specs" className="block rounded-md border border-line bg-[#e9e4d9] p-3.5 font-display text-lg hover:border-gold">{browse("plotCheck")} ↓</a>
+                ) : null}
+                <div id="project-package" className="rounded-lg border border-line bg-paper p-4 md:p-5">
+                  <p className="label-caps text-gold">{browse("planPrice")}</p>
+                  <div className="mt-2 flex flex-wrap items-baseline gap-x-3">
+                    <p className="font-display text-3xl">{common("price", { amount: fmt(house.priceUzs) })}</p>
+                    {house.oldPriceUzs && <p className="text-sm text-ink-soft line-through">{common("price", { amount: fmt(house.oldPriceUzs) })}</p>}
+                  </div>
+                  <p className="mt-1 text-sm text-ink-soft">{t("priceNote")}</p>
+                  {settings.included.length > 0 && <a href="#included" className="mt-2 block text-sm font-semibold underline">{home("includedTitle")} ↓</a>}
+                  <LeadDialog houseCode={house.code} houseTitle={title} phone={settings.phone} className="btn mt-4 w-full bg-gold text-paper hover:bg-ink">{t("discuss")}</LeadDialog>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <a href={telHref(settings.phone)} className="btn flex-1 border border-line px-3"><PhoneIcon className="h-4 w-4" /> {t("call")}</a>
+                    {settings.telegram && <a href={`https://t.me/${settings.telegram}`} className="btn flex-1 border border-line px-3"><TelegramIcon className="h-4 w-4" /> Telegram</a>}
+                  </div>
+                </div>
+              </div>
+            </aside>
+          </div>
+
+          <nav aria-label={browse("overview")} className="plan-toolbar sticky top-0 z-20 mt-7 flex items-center gap-1 overflow-x-auto rounded-md border border-line bg-paper p-1.5 shadow-sm">
+            {[
+              { href: "overview", label: browse("overview") },
+              ...(house.floorPlans.length > 0 ? [{ href: "floor-plans", label: t("plansTitle") }] : []),
+              { href: "full-specs", label: browse("specifications") },
+              { href: "modifications", label: browse("adapt") },
+              { href: "build-cost", label: browse("cost") },
+              { href: "project-faq", label: browse("faq") },
+            ].map(({ href, label }) => <a key={href} href={`#${href}`} className="shrink-0 rounded-md px-3 py-2 text-sm font-bold hover:bg-paper-2">{label}</a>)}
+            <a href="#project-package" className="ml-auto shrink-0 rounded-md bg-gold px-3 py-2 text-sm font-bold text-white">{t("discuss")}</a>
+          </nav>
+
+          <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3 lg:grid-cols-6">
+            {specs.map(({ label, value }) => <div key={label} className="bg-paper p-3 text-center">
+              <dt className="text-xs font-bold text-ink-soft">{label}</dt><dd className="font-display text-xl md:text-2xl">{value}</dd>
+            </div>)}
+          </dl>
+
+          <section className="mt-10 rounded-lg border border-line bg-paper p-5 md:p-7">
+            <SectionTitle title={t("about")} />
+            <div className="mt-4 max-w-3xl space-y-3 leading-relaxed">
+              {house.description && <p className="whitespace-pre-line">{house.description}</p>}
+              <p className="text-ink-soft">{houseSummary(summary, locale)}</p>
+            </div>
+          </section>
+
+          {house.floorPlans.length > 0 && (
+            <section id="floor-plans" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
+              <div className="flex flex-wrap items-end justify-between gap-4">
+                <SectionTitle title={t("plansTitle")} />
+                {roomsTotal > 0 && <p className="text-ink-soft">{t("plansTotal", { value: fmt(roomsTotal) })}</p>}
+              </div>
+              <div className={`mt-10 grid gap-6 ${house.floorPlans.length > 1 ? "md:grid-cols-2" : "max-w-3xl"}`}>
+                {house.floorPlans.map((floor, i) => (
+                  <article key={`${floor.level}-${i}`} className="self-start overflow-hidden rounded-lg border border-line">
+                    <header className="flex items-baseline justify-between gap-3 border-b border-line bg-paper-2 px-5 py-4">
+                      <h3 className="font-display text-[26px] leading-none text-ink">{floor.label}</h3>
+                      {floor.total > 0 && (
+                        <p className="text-sm font-semibold tabular-nums text-ink">{t("m2", { value: fmt(floor.total) })}</p>
+                      )}
+                    </header>
+                    {floor.plan && (
+                      <a href={floor.plan.url} target="_blank" rel="noopener" className="relative block aspect-[4/3] cursor-zoom-in border-b border-line bg-paper">
+                        <Image
+                          src={floor.plan.url}
+                          alt={t("planAlt", { level: floor.label })}
+                          fill
+                          sizes="(min-width: 768px) 45vw, 100vw"
+                          className="object-contain p-4"
+                        />
+                      </a>
+                    )}
+                    {floor.rooms.length > 0 && (
+                      <table className="w-full text-[15px]">
+                        <tbody>
+                          {floor.rooms.map((room, j) => (
+                            <tr key={j} className="border-b border-line last:border-b-0">
+                              <td className="px-5 py-2.5 text-ink">{room.name}</td>
+                              <td className="whitespace-nowrap px-5 py-2.5 text-right tabular-nums text-ink">
+                                {t("m2", { value: fmt(room.area) })}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                        <tfoot>
+                          <tr className="border-t-2 border-ink/15 bg-paper-2 font-semibold">
+                            <td className="px-5 py-3">{t("floorTotal")}</td>
+                            <td className="whitespace-nowrap px-5 py-3 text-right tabular-nums">{t("m2", { value: fmt(floor.total) })}</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    )}
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section id="full-specs" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
+            <SectionTitle title={browse("specifications")} />
+            <dl className="mt-5 grid gap-x-8 md:grid-cols-2">
+              {specs.map(({ label, value }) => <div key={label} className="flex justify-between gap-4 border-b border-line py-3"><dt>{label}</dt><dd className="text-right font-bold">{value}</dd></div>)}
+            </dl>
+          </section>
+
+          <section id="modifications" className="mt-12 rounded-lg border border-line bg-[#e9e4d9] p-5 md:p-7">
+            <SectionTitle title={browse("adapt")} />
+            <p className="my-4 max-w-2xl text-ink-soft">{browse("adaptText")}</p>
+            <Link href={browsePath("consult")} className="btn bg-gold text-paper">{browse("consult")} →</Link>
+          </section>
+
+          {house.buildEstimate.length > 0 ? (
+            <section id="build-cost" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
+              <SectionTitle title={t("costTitle")} />
+              <p className="mt-3 text-ink-soft">{t("costSubtitle")}</p>
+              <div className="mt-10 overflow-x-auto border border-line">
+                <table className="w-full min-w-[420px] text-left text-[15px]">
+                  <thead className="border-b border-line bg-paper-2">
+                    <tr>
+                      <th className="label-caps px-5 py-3.5 text-ink-soft">{t("costPart")}</th>
+                      <th className="label-caps px-5 py-3.5 text-right text-ink-soft">{t("costArea")}</th>
+                      <th className="label-caps px-5 py-3.5 text-right text-ink-soft">{t("costSum")}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {house.buildEstimate.map((c, i) => (
+                      <tr key={i} className="border-b border-line">
+                        <td className="px-5 py-3.5 text-ink">{c.label}</td>
+                        <td className="px-5 py-3.5 text-right tabular-nums text-ink-soft">
+                          {c.area ? t("m2", { value: fmt(c.area) }) : "—"}
+                        </td>
+                        <td className="px-5 py-3.5 text-right tabular-nums text-ink">{formatUsd(c.costUsd)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                  <tfoot>
+                    <tr className="bg-ink font-semibold text-paper">
+                      <td className="px-5 py-4">{t("costTotal")}</td>
+                      <td />
+                      <td className="px-5 py-4 text-right tabular-nums">{formatUsd(costTotal)}</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+              <p className="mt-3 text-sm text-ink-soft">{t("costNote")}</p>
+            </section>
+          ) : (
+            <section id="build-cost" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
+              <SectionTitle title={browse("cost")} />
+              <div className="mt-4"><BuildEstimate /></div>
+            </section>
+          )}
+
+          {settings.included.length > 0 && (
+            <section id="included" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
+              <SectionTitle eyebrow={home("includedEyebrow")} title={home("includedTitle")} />
+              <ul className="mt-8 grid border-t border-line sm:grid-cols-2 sm:gap-x-10">
+                {settings.included.map((item) => (
+                  <li key={item} className="flex gap-3 border-b border-line py-3.5 text-ink">
+                    <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          <section id="project-faq" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
+            <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
+              <h2 className="label-caps flex items-center gap-3 text-gold">
+                <span className="h-px w-10 bg-current" />
+                {t("faqTitle")}
+              </h2>
+              <div className="max-w-3xl divide-y divide-line border-y border-line">
+                {faq.map((x) => (
+                  <details key={x.q} className="py-4">
+                    <summary className="cursor-pointer font-bold">{x.q}</summary>
+                    <p className="mt-2 leading-relaxed text-ink-soft">{x.a}</p>
+                  </details>
+                ))}
               </div>
             </div>
-          </aside>
+          </section>
+
+          {similar.length > 0 && (
+            <section className="mt-16 border-t border-line pt-12 md:mt-20">
+              <SectionTitle title={t("similar")} />
+              <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                {similar.map((h) => (
+                  <HouseCard key={h.code} house={toSummary(h)} />
+                ))}
+              </div>
+            </section>
+          )}
         </div>
-
-        <section className="mt-16 border-t border-line pt-12 md:mt-20">
-          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-            <h2 className="label-caps flex items-center gap-3 text-gold">
-              <span className="h-px w-10 bg-current" />
-              {t("about")}
-            </h2>
-            <div className="max-w-3xl space-y-4 text-lg leading-relaxed text-ink">
-              {house.description && <p className="whitespace-pre-line">{house.description}</p>}
-              {/* Generated from the house's own data, so it's always accurate. */}
-              <p className={house.description ? "text-ink-soft" : ""}>{houseSummary(summary, locale)}</p>
-            </div>
-          </div>
-        </section>
-
-        {house.floorPlans.length > 0 && (
-          <section className="mt-16 border-t border-line pt-12 md:mt-20">
-            <div className="flex flex-wrap items-end justify-between gap-4">
-              <SectionTitle title={t("plansTitle")} />
-              {roomsTotal > 0 && <p className="text-ink-soft">{t("plansTotal", { value: fmt(roomsTotal) })}</p>}
-            </div>
-            <div className={`mt-10 grid gap-6 ${house.floorPlans.length > 1 ? "md:grid-cols-2" : "max-w-3xl"}`}>
-              {house.floorPlans.map((floor, i) => (
-                <article key={`${floor.level}-${i}`} className="self-start border border-line">
-                  <header className="flex items-baseline justify-between gap-3 border-b border-line bg-paper-2 px-5 py-4">
-                    <h3 className="font-display text-[26px] leading-none text-ink">{floor.label}</h3>
-                    {floor.total > 0 && (
-                      <p className="text-sm font-semibold tabular-nums text-ink">{t("m2", { value: fmt(floor.total) })}</p>
-                    )}
-                  </header>
-                  {floor.plan && (
-                    <div className="relative aspect-[4/3] border-b border-line bg-paper">
-                      <Image
-                        src={floor.plan.url}
-                        alt={t("planAlt", { level: floor.label })}
-                        fill
-                        sizes="(min-width: 768px) 45vw, 100vw"
-                        className="object-contain p-4"
-                      />
-                    </div>
-                  )}
-                  {floor.rooms.length > 0 && (
-                    <table className="w-full text-[15px]">
-                      <tbody>
-                        {floor.rooms.map((room, j) => (
-                          <tr key={j} className="border-b border-line last:border-b-0">
-                            <td className="px-5 py-2.5 text-ink">{room.name}</td>
-                            <td className="whitespace-nowrap px-5 py-2.5 text-right tabular-nums text-ink">
-                              {t("m2", { value: fmt(room.area) })}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      <tfoot>
-                        <tr className="border-t-2 border-ink/15 bg-paper-2 font-semibold">
-                          <td className="px-5 py-3">{t("floorTotal")}</td>
-                          <td className="whitespace-nowrap px-5 py-3 text-right tabular-nums">{t("m2", { value: fmt(floor.total) })}</td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  )}
-                </article>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {house.buildEstimate.length > 0 && (
-          <section className="mt-16 border-t border-line pt-12 md:mt-20">
-            <SectionTitle title={t("costTitle")} />
-            <p className="mt-3 text-ink-soft">{t("costSubtitle")}</p>
-            <div className="mt-10 overflow-x-auto border border-line">
-              <table className="w-full min-w-[420px] text-left text-[15px]">
-                <thead className="border-b border-line bg-paper-2">
-                  <tr>
-                    <th className="label-caps px-5 py-3.5 text-ink-soft">{t("costPart")}</th>
-                    <th className="label-caps px-5 py-3.5 text-right text-ink-soft">{t("costArea")}</th>
-                    <th className="label-caps px-5 py-3.5 text-right text-ink-soft">{t("costSum")}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {house.buildEstimate.map((c, i) => (
-                    <tr key={i} className="border-b border-line">
-                      <td className="px-5 py-3.5 text-ink">{c.label}</td>
-                      <td className="px-5 py-3.5 text-right tabular-nums text-ink-soft">
-                        {c.area ? t("m2", { value: fmt(c.area) }) : "—"}
-                      </td>
-                      <td className="px-5 py-3.5 text-right tabular-nums text-ink">{formatUsd(c.costUsd)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr className="bg-ink font-semibold text-paper">
-                    <td className="px-5 py-4">{t("costTotal")}</td>
-                    <td />
-                    <td className="px-5 py-4 text-right tabular-nums">{formatUsd(costTotal)}</td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-            <p className="mt-3 text-sm text-ink-soft">{t("costNote")}</p>
-          </section>
-        )}
-
-        {settings.included.length > 0 && (
-          <section className="mt-16 border border-line bg-paper-2 p-6 md:mt-20 md:p-10">
-            <SectionTitle eyebrow={home("includedEyebrow")} title={home("includedTitle")} />
-            <ul className="mt-8 grid border-t border-line sm:grid-cols-2 sm:gap-x-10">
-              {settings.included.map((item) => (
-                <li key={item} className="flex gap-3 border-b border-line py-3.5 text-ink">
-                  <CheckIcon className="mt-0.5 h-5 w-5 shrink-0 text-gold" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <section className="mt-16 border-t border-line pt-12 md:mt-20">
-          <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
-            <h2 className="label-caps flex items-center gap-3 text-gold">
-              <span className="h-px w-10 bg-current" />
-              {t("faqTitle")}
-            </h2>
-            <dl className="max-w-3xl divide-y divide-line border-y border-line">
-              {faq.map((x) => (
-                <div key={x.q} className="py-5">
-                  <dt className="font-display text-[24px] leading-tight text-ink">{x.q}</dt>
-                  <dd className="mt-2 text-[17px] leading-relaxed text-ink-soft">{x.a}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
-        </section>
-
-        {similar.length > 0 && (
-          <section className="mt-16 border-t border-line pt-12 md:mt-20">
-            <SectionTitle title={t("similar")} />
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-              {similar.map((h) => (
-                <HouseCard key={h.code} house={toSummary(h)} />
-              ))}
-            </div>
-          </section>
-        )}
       </div>
     </>
   );

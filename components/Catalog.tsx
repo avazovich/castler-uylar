@@ -110,9 +110,9 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
   const reset = () => update({ sotix: undefined, qavat: undefined, eni: undefined, xona: undefined, uslub: undefined, q: undefined, min: undefined, max: undefined });
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:gap-10">
+    <div className="grid gap-6">
       {/* Filters — a column on desktop, a block above the results on phones */}
-      <aside className="self-start border border-line bg-paper lg:sticky lg:top-28">
+      <aside className="overflow-hidden rounded-xl border border-line bg-paper">
         <div className={`flex items-center justify-between bg-paper-2 px-5 py-4 lg:border-b lg:border-line ${open ? "border-b border-line" : ""}`}>
           <button
             type="button"
@@ -122,7 +122,7 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
           >
             <ChevronRightIcon className={`h-4 w-4 transition-transform lg:hidden ${open ? "rotate-90" : ""}`} />
             {t("title")}
-            {activeCount > 0 && <span className="bg-ink px-1.5 py-0.5 text-[10px] text-paper">{activeCount}</span>}
+            {activeCount > 0 && <span className="rounded-full bg-gold px-1.5 py-0.5 text-[10px] text-paper">{activeCount}</span>}
           </button>
           {active && (
             <button type="button" onClick={reset} className="label-caps inline-flex items-center gap-1.5 text-ink-soft hover:text-ink">
@@ -131,7 +131,7 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
             </button>
           )}
         </div>
-        <div className={`grid-cols-2 gap-x-4 gap-y-5 p-5 lg:grid lg:grid-cols-1 ${open ? "grid" : "hidden"}`}>
+        <div className={`grid-cols-2 gap-x-4 gap-y-5 p-5 lg:grid lg:grid-cols-5 ${open ? "grid" : "hidden"}`}>
           <form className="col-span-full flex flex-wrap gap-2" onSubmit={(event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -186,7 +186,7 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
         </div>
 
         {results.length > 0 ? (
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((h, i) => (
               <HouseCard key={h.code} house={h} priority={i < 2} />
             ))}

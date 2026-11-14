@@ -85,13 +85,13 @@ export default async function CollectionPage({ params }: { params: Promise<{ loc
       />
 
       <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-10 md:px-8 md:pt-12">
-        <div className="max-w-3xl space-y-4 text-lg leading-relaxed text-ink">
+        <div className="max-w-3xl space-y-4 rounded-xl border border-line bg-paper-2 p-5 leading-relaxed text-ink-soft md:p-7">
           {c.intro[locale].map((p) => (
             <p key={p}>{p}</p>
           ))}
         </div>
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-7 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {houses.map((h, i) => (
             <HouseCard key={h.code} house={h} priority={i < 3} />
           ))}
@@ -109,7 +109,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ loc
             <ul className="mt-6 flex flex-wrap gap-2">
               {others.map(({ collection: o, houses: list }) => (
                 <li key={o.id}>
-                  <Link href={collectionHref(o, locale)} className="block border border-line px-4 py-2.5 text-ink hover:border-ink">
+                  <Link href={collectionHref(o, locale)} className="block rounded-full border border-line px-4 py-2.5 text-ink hover:border-ink">
                     {o.title[locale]} <span className="text-ink-soft">· {list.length}</span>
                   </Link>
                 </li>
@@ -118,7 +118,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ loc
           </nav>
         )}
 
-        <div className="mt-16 border border-line bg-paper-2 p-6 md:p-10">
+        <div className="mt-16 rounded-xl border border-line bg-paper-2 p-6 md:p-10">
           <p className="font-display text-[30px] leading-tight text-ink">{home("customTitle")}</p>
           <p className="mt-3 max-w-2xl text-ink-soft">{home("customText")}</p>
           <Link href="/#aloqa" className="btn mt-6 bg-ink text-paper hover:bg-gold">
