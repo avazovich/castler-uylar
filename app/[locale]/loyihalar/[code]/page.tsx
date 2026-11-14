@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { FloorPlans } from "@/components/FloorPlans";
 import { notFound, permanentRedirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Gallery } from "@/components/Gallery";
@@ -213,49 +213,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
                 <SectionTitle title={t("plansTitle")} />
                 {roomsTotal > 0 && <p className="text-ink-soft">{t("plansTotal", { value: fmt(roomsTotal) })}</p>}
               </div>
-              <div className={`mt-10 grid gap-6 ${house.floorPlans.length > 1 ? "md:grid-cols-2" : "max-w-3xl"}`}>
-                {house.floorPlans.map((floor, i) => (
-                  <article key={`${floor.level}-${i}`} className="self-start overflow-hidden rounded-lg border border-line">
-                    <header className="flex items-baseline justify-between gap-3 border-b border-line bg-paper-2 px-5 py-4">
-                      <h3 className="font-display text-[26px] leading-none text-ink">{floor.label}</h3>
-                      {floor.total > 0 && (
-                        <p className="text-sm font-semibold tabular-nums text-ink">{t("m2", { value: fmt(floor.total) })}</p>
-                      )}
-                    </header>
-                    {floor.plan && (
-                      <a href={floor.plan.url} target="_blank" rel="noopener" className="relative block aspect-[4/3] cursor-zoom-in border-b border-line bg-paper">
-                        <Image
-                          src={floor.plan.url}
-                          alt={t("planAlt", { level: floor.label })}
-                          fill
-                          sizes="(min-width: 768px) 45vw, 100vw"
-                          className="object-contain p-4"
-                        />
-                      </a>
-                    )}
-                    {floor.rooms.length > 0 && (
-                      <table className="w-full text-[15px]">
-                        <tbody>
-                          {floor.rooms.map((room, j) => (
-                            <tr key={j} className="border-b border-line last:border-b-0">
-                              <td className="px-5 py-2.5 text-ink">{room.name}</td>
-                              <td className="whitespace-nowrap px-5 py-2.5 text-right tabular-nums text-ink">
-                                {t("m2", { value: fmt(room.area) })}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                        <tfoot>
-                          <tr className="border-t-2 border-ink/15 bg-paper-2 font-semibold">
-                            <td className="px-5 py-3">{t("floorTotal")}</td>
-                            <td className="whitespace-nowrap px-5 py-3 text-right tabular-nums">{t("m2", { value: fmt(floor.total) })}</td>
-                          </tr>
-                        </tfoot>
-                      </table>
-                    )}
-                  </article>
-                ))}
-              </div>
+              <FloorPlans floors={house.floorPlans} />
             </section>
           )}
 
