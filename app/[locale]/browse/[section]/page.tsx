@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BrowsePage({ params }: Props) {
   const { locale, section } = await readParams(params);
   setRequestLocale(locale);
-  const [t, nav, home] = await Promise.all([getTranslations("browse"), getTranslations("nav"), getTranslations("home")]);
+  const [t, nav, home, blog] = await Promise.all([getTranslations("browse"), getTranslations("nav"), getTranslations("home"), getTranslations("blog")]);
   const houses = await getHouses(locale);
   const categories = section === "styles" || section === "collections"
     ? liveCollections(houses.map(toSummary)).filter(({ collection }) =>
@@ -88,6 +88,7 @@ export default async function BrowsePage({ params }: Props) {
             ))}
           </div>
         )}
+        {section === "guides" && <Link href="/blog" className="btn mt-6 bg-gold text-white">{blog("all")} →</Link>}
         {settings && <div className="grid gap-5 md:grid-cols-2">
           <div className="relative min-h-52 overflow-hidden rounded-xl bg-paper-2">
             <Image src="/brand/home-consult.jpg" alt="" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />

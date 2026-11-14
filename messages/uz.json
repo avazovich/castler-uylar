@@ -1,4 +1,12 @@
 {
+  "blog": {
+    "label": "Blog",
+    "title": "Uy loyihalari va qurilish bo‘yicha blog",
+    "metaTitle": "Uy loyihalari va qurilish bo‘yicha blog | Castler Uylar",
+    "intro": "Yer maydoniga mos uy tanlash, qavat rejalarini solishtirish va qurilish smetasini tayyorlash bo‘yicha amaliy maqolalar.",
+    "read": "Maqolani o‘qish",
+    "all": "Barcha maqolalar"
+  },
   "meta": {
     "title": "Tayyor uy loyihalari — narxlari, rejalari va rasmlari | Castler",
     "description": "Castler arxitektorlarining tayyor uy loyihalari: 1 va 2 qavatli, zamonaviy va neoklassik uylar. Rejalar, xonalar maydoni, narxlar va rasmlar.",

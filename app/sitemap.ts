@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { articles, articlePath } from "@/content/blog";
 import { routing, type Locale } from "@/i18n/routing";
 import { browsePath, browseSections } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
@@ -43,6 +44,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     ...entries((l) => `/${l}`, { lastModified: latest }),
     ...entries((l) => `/${l}/loyihalar`, { lastModified: latest }),
+    ...entries((l) => articlePath(l)),
+    ...articles.flatMap(({ slug }) => entries((l) => articlePath(l, slug))),
     ...browseSections.flatMap((section) => entries((l) => `/${l}${browsePath(section)}`)),
     ...liveCollections(summaries).flatMap(({ collection, houses: list }) =>
       entries((l) => `/${l}/${collection.slug[l]}`, { lastModified: newest(list.map((h) => h.updatedAt)) }),
