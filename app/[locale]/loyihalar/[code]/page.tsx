@@ -181,7 +181,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
             </aside>
           </div>
 
-          <nav aria-label={browse("overview")} className="plan-toolbar sticky top-0 z-20 mt-7 flex items-center gap-1 overflow-x-auto rounded-md border border-line bg-paper p-1.5 shadow-sm">
+          <nav aria-label={browse("overview")} className="plan-toolbar sticky top-0 z-20 mt-5 flex flex-wrap items-center gap-1 rounded-lg border border-line bg-paper p-1 shadow-sm">
             {[
               { href: "overview", label: browse("overview") },
               ...(house.floorPlans.length > 0 ? [{ href: "floor-plans", label: t("plansTitle") }] : []),
@@ -189,8 +189,8 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
               { href: "modifications", label: browse("adapt") },
               { href: "build-cost", label: browse("cost") },
               { href: "project-faq", label: browse("faq") },
-            ].map(({ href, label }) => <a key={href} href={`#${href}`} className="shrink-0 rounded-md px-3 py-2 text-sm font-bold hover:bg-paper-2">{label}</a>)}
-            <a href="#project-package" className="ml-auto shrink-0 rounded-md bg-gold px-3 py-2 text-sm font-bold text-white">{common("price", { amount: fmt(house.priceUzs) })} · {t("discuss")}</a>
+            ].map(({ href, label }) => <a key={href} href={`#${href}`} className="rounded-md px-2.5 py-2 text-xs font-bold hover:bg-paper-2 sm:text-sm">{label}</a>)}
+            <a href="#project-package" className="ml-auto rounded-md bg-gold px-3 py-2 text-xs font-bold text-white sm:text-sm">{t("discuss")}</a>
           </nav>
 
           <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3 lg:grid-cols-6">

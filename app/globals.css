@@ -156,18 +156,18 @@
 }
 
 @keyframes page-enter {
-  from { opacity: .72; translate: 0 7px; }
+  from { opacity: .9; translate: 0 4px; }
   to { opacity: 1; translate: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
-  .page-entrance { animation: page-enter 220ms cubic-bezier(.2,.7,.3,1); }
+  .page-entrance { animation: page-enter 150ms cubic-bezier(.2,.7,.3,1); }
   .gallery-photo { animation: page-enter 170ms ease-out; }
 }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
 }
 .plan-toolbar { scrollbar-width: thin; }
-.plan-page [id] { scroll-margin-top: 5rem; }
+.plan-page [id] { scroll-margin-top: 6rem; }
 
 .catalog-heading, .catalog-heading section { background: #e5e1d7; }
 .catalog-heading { border-bottom: 1px solid #d6d0c3; }

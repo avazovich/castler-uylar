@@ -127,10 +127,10 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
 
   return (
     <>
-      <div className="catalog-controls border-b border-line pb-9">
+      <div className="catalog-controls border-b border-line pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <p aria-live="polite" className="mr-2 text-sm"><strong className="text-xl">{n(results.length)}</strong> {browse("plansUnit", { count: results.length })}</p>
-          <div className="hidden flex-wrap gap-2 lg:flex">{selects.filter((field) => !field.hidden).map(selectField)}</div>
+          <div className="hidden flex-wrap gap-2 lg:flex">{selects.filter((field) => field.key === "qavat" || field.key === "sotix" || field.key === "uslub").filter((field) => !field.hidden).map(selectField)}</div>
           <button type="button" aria-expanded={open} aria-controls="extra-filters" onClick={() => setOpen(!open)} className="catalog-toggle">
             {browse("moreFilters")} {open ? "−" : "+"}
           </button>
@@ -143,7 +143,7 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
         </div>
 
         <div id="extra-filters" hidden={!open} className="mt-3 rounded-lg border border-line bg-white p-3">
-          <div className="mb-2 grid grid-cols-2 gap-2 lg:hidden">{selects.filter((field) => !field.hidden).map(selectField)}</div>
+          <div className="mb-2 grid grid-cols-2 gap-2 sm:grid-cols-5">{selects.filter((field) => !field.hidden).map((field) => <div key={field.key} className={field.key === "eni" || field.key === "xona" ? "" : "lg:hidden"}>{selectField(field)}</div>)}</div>
           <form key={`${filters.q}-${filters.min}-${filters.max}`} className="grid grid-cols-2 gap-2 sm:grid-cols-[2fr_1fr_1fr_auto]" onSubmit={(event) => {
             event.preventDefault();
             const data = new FormData(event.currentTarget);
@@ -172,7 +172,7 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
         {results.length > 0 ? (
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((h, i) => (
-              <HouseCard key={h.code} house={h} priority={i < 2} />
+              <HouseCard key={h.code} house={h} priority={i === 0} />
             ))}
           </div>
         ) : (

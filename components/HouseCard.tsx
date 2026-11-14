@@ -30,8 +30,8 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
       className="group flex flex-col overflow-hidden rounded-xl border border-line bg-paper transition-[border-color,box-shadow] duration-300 hover:border-ink/30 hover:shadow-[0_18px_40px_-24px_rgba(26,29,22,0.45)]"
     >
       <div className="relative aspect-[16/9] overflow-hidden bg-paper-2">
-        <Image src={house.cover.url} alt={houseAlt(house, locale)} fill priority={priority}
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        <Image src={house.cover.url} alt={houseAlt(house, locale)} fill fetchPriority={priority ? "high" : "auto"} loading={priority ? "eager" : "lazy"}
+          sizes="(min-width: 1280px) 392px, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, calc(100vw - 32px)"
           placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip}
           style={{ objectPosition: house.cover.position }}
           className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.025]" />
