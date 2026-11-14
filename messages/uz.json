@@ -191,6 +191,16 @@
     "allProjects": "Barcha loyihalar"
   },
   "browse": {
+    "compactPlot": "Ixcham yer uchun",
+    "announcement": "Arxitektorlar chizgan tayyor uy loyihalarini ko‘ring →",
+    "contactLabel": "ARXITEKTOR BILAN",
+    "contactAction": "Maslahatlashing",
+    "any": "Barchasi",
+    "min": "Min",
+    "max": "Maks",
+    "minArea": "Minimal uy maydoni",
+    "maxArea": "Maksimal uy maydoni",
+    "keywordHint": "Yoki uslub, loyiha nomi va raqami bo‘yicha qidiring",
     "describeHint": "Masalan: zamonaviy, 1 qavat, 300 m²",
     "styles": "Uslublar",
     "collections": "To‘plamlar",
@@ -231,5 +241,43 @@
         "text": "Loyiha raqami va kerakli o‘zgarishlarni Castler jamoasiga yuboring."
       }
     ]
+  },
+  "referenceHome": {
+    "heroTitle": "Har bir oila uchun tayyor uy loyihalari",
+    "heroLabel": "★ ARXITEKTORLAR CHIZGAN TAYYOR LOYIHALAR",
+    "help": "Loyihani tanlashda yordam kerakmi?",
+    "helpText": "Yer o‘lchamlaringiz va oilangizga mos variantlarni birga ko‘rib chiqamiz.",
+    "contact": "Castler bilan bog‘lanish",
+    "start": "SHU YERDAN BOSHLANG",
+    "styleTitle": "Uslub bo‘yicha tanlang",
+    "styleIntro": "Fasad va rejalardan ilhom oling yoki sizga mos to‘plamga o‘ting.",
+    "docsTitle": "Castler loyihasida nimalar bor?",
+    "docAction": "Loyiha tarkibini muhokama qilish",
+    "picks": "CASTLER TANLOVI",
+    "picksIntro": "Katalogdan tanlangan loyihalar",
+    "costTitle": "Uy qurish qancha turadi?",
+    "costFactors": "Narxga ta’sir qiladigan qismlar",
+    "factors": [
+      "Poydevor va yer ishlari",
+      "Devorlar, tom va derazalar",
+      "Kommunikatsiyalar va pardoz ishlari"
+    ],
+    "portfolio": "CASTLER PORTFOLIOSI",
+    "portfolioTitle": "Castler chizgan uylar",
+    "portfolioIntro": "Fasadlardan tortib hovli yechimlarigacha, loyihalarni yaqindan ko‘ring.",
+    "why": "Nega Castler?",
+    "review": "MIJOZLAR FIKRI",
+    "reviewTitle": "Loyiha tanlash tajribasi",
+    "reviewIntro": "Castler loyihasidan foydalangan bo‘lsangiz, tajribangizni biz bilan bo‘lishing.",
+    "consultTitle": "Loyihangizni birga ko‘rib chiqamiz",
+    "consultItems": [
+      "Uchastkaga mos keladigan variantlarni muhokama qiling.",
+      "Qavat rejasida qanday o‘zgarishlar kerakligini aniqlang.",
+      "Hujjatlar tarkibi va keyingi qadamlarni bilib oling."
+    ],
+    "guideTitle": "Uy qurishni rejalashtiring",
+    "faqTitle": "Ko‘p so‘raladigan savollar",
+    "closing": "Uyingiz loyihasini toping",
+    "closingIntro": "Tayyor loyihalarni ko‘ring yoki tanlovingizni Castler bilan muhokama qiling."
   }
 }

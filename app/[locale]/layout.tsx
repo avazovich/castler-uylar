@@ -5,12 +5,12 @@ import { getMessages, getTranslations, setRequestLocale } from "next-intl/server
 import { notFound } from "next/navigation";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { TopBar } from "@/components/TopBar";
 import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site";
 import { preconnect } from "react-dom";
 import { Analytics } from "@/components/Analytics";
 import "../globals.css";
+import "../reference-home.css";
 
 // Cyrillic subsets matter here: the site is fully bilingual (uz / ru).
 const inter = Inter({ variable: "--font-inter", subsets: ["latin", "latin-ext", "cyrillic"] });
@@ -69,7 +69,6 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${locale === "uz" ? `${lato.variable} ${marcellus.variable}` : `${inter.variable} ${cormorant.variable}`}`}>
       <body className="flex min-h-dvh flex-col">
         <NextIntlClientProvider messages={messages}>
-          <TopBar />
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
