@@ -8,7 +8,6 @@ import { PageHeader } from "@/components/PageHeader";
 import { ArrowRightIcon } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
-import { collectionHref, liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
 import { pageMetadata, breadcrumbLd, itemListLd } from "@/lib/seo";
 
@@ -37,7 +36,6 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
     getHouses(locale),
   ]);
   const summaries = houses.map(toSummary);
-  const categories = liveCollections(summaries);
 
   const customLink = (
     <Link href="/#aloqa" className="btn bg-ink text-paper hover:bg-gold">
@@ -56,22 +54,16 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
           itemListLd(locale, summaries),
         ]}
       />
-      <PageHeader crumbs={[{ label: nav("home"), href: "/" }, { label: t("eyebrow") }]} title={t("title")} subtitle={browse("catalogIntro")} />
-      <div className="mx-auto max-w-[1280px] px-4 pb-24 pt-10 md:px-8 md:pt-12">
-        {categories.length > 0 && (
-          <nav aria-label={t("categories")} className="mb-6 flex flex-wrap items-center gap-2">
-            <span className="label-caps mr-2 text-ink-soft">{t("categories")}</span>
-            {categories.map(({ collection: c, houses: list }) => (
-              <Link
-                key={c.id}
-                href={collectionHref(c, locale)}
-                className="rounded-full border border-line bg-paper px-3 py-2 text-sm text-ink transition-colors hover:border-ink"
-              >
-                {c.short[locale]} <span className="text-ink-soft">· {list.length}</span>
-              </Link>
-            ))}
-          </nav>
-        )}
+      <div className="catalog-heading">
+        <PageHeader crumbs={[{ label: nav("home"), href: "/" }, { label: t("eyebrow") }]} />
+        <section className="mx-auto max-w-[1280px] px-4 py-10 md:px-8 md:py-11">
+          <p className="label-caps text-gold">{t("eyebrow")}</p>
+          <h1 className="mt-2 text-[clamp(2rem,4vw,2.65rem)] leading-tight font-black">{t("title")}</h1>
+          <p className="mt-2 text-sm text-ink-soft">{browse("catalogIntro")} <Link className="font-bold text-ink underline underline-offset-2" href="/browse/collections">{browse("collections")} →</Link></p>
+          <p className="mt-2 text-sm"><Link className="font-bold underline underline-offset-2" href="/#finder">{browse("describeMode")} →</Link></p>
+        </section>
+      </div>
+      <div className="bg-paper-2"><div className="mx-auto max-w-[1280px] px-4 pb-20 pt-4 md:px-8">
         {/* The filters read the URL, which isn't known while the page is
             pre-built — until the browser takes over, show the full list so
             the page is never empty (and search engines see every house). */}
@@ -89,7 +81,7 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
         >
           <Catalog houses={summaries} emptyAction={customLink} />
         </Suspense>
-      </div>
+      </div></div>
     </>
   );
 }

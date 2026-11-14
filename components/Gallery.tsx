@@ -9,6 +9,7 @@ import { ChevronLeftIcon, ChevronRightIcon, CloseIcon, ExpandIcon } from "./icon
 
 export function Gallery({ images, title, alts }: { images: Img[]; title: string; alts: string[] }) {
   const t = useTranslations("house");
+  const browse = useTranslations("browse");
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const thumbs = useRef<HTMLDivElement>(null);
@@ -60,7 +61,7 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
             placeholder={current.lqip ? "blur" : "empty"}
             blurDataURL={current.lqip}
             style={{ objectPosition: current.position }}
-            className="gallery-photo object-contain"
+            className="gallery-photo object-cover"
           />
         </button>
         {count > 1 && (
@@ -73,11 +74,13 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
                 <ChevronRightIcon />
               </button>
             </div>
-            <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-black/65 py-2.5 pr-12 text-right text-xs text-white">
-              {t("photoCount", { n: index + 1, total: count })}
-            </span>
           </>
         )}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center gap-2 bg-black/65 px-4 py-2 pr-12 text-xs text-white">
+          <span className="rounded-sm border border-white/45 px-1.5 py-0.5 font-bold">{browse("galleryLabel")}</span>
+          <span className="hidden truncate sm:block">{title}</span>
+          <span className="ml-auto shrink-0">{index + 1} / {count}</span>
+        </div>
         <span className="pointer-events-none absolute bottom-0 right-0 grid h-10 w-10 place-items-center bg-ink text-paper">
           <ExpandIcon className="h-4 w-4" />
         </span>

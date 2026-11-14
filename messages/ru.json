@@ -191,6 +191,11 @@
     "allProjects": "Все проекты"
   },
   "browse": {
+    "galleryLabel": "Фото проекта",
+    "plansUnit": "{count, plural, one {проект} few {проекта} other {проектов}}",
+    "allStyles": "Все стили",
+    "quickFilters": "Быстрые фильтры",
+    "moreFilters": "Ещё фильтры",
     "breadcrumbs": "Навигационная цепочка",
     "overview": "Обзор",
     "specifications": "Подробные характеристики",

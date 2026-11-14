@@ -33,7 +33,7 @@ export function FinderForm({ floorOptions }: { floorOptions: number[] }) {
   }
 
   return (
-    <form onSubmit={submit} className="finder" role="search">
+    <form id="finder" onSubmit={submit} className="finder" role="search">
       <div className="modes">
         <button type="button" aria-pressed={describe} onClick={() => setDescribe(true)}>✧ {browse("describeMode")}</button>
         <button type="button" aria-pressed={!describe} onClick={() => setDescribe(false)}>☷ {browse("filterMode")}</button>

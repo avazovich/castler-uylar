@@ -191,6 +191,11 @@
     "allProjects": "Barcha loyihalar"
   },
   "browse": {
+    "galleryLabel": "Rasmlar",
+    "plansUnit": "loyiha",
+    "allStyles": "Barcha uslublar",
+    "quickFilters": "Tezkor filtrlar",
+    "moreFilters": "Yana filtrlar",
     "breadcrumbs": "Sahifa yo‘li",
     "overview": "Umumiy ko‘rinish",
     "specifications": "Batafsil xususiyatlar",

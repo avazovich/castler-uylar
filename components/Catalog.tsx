@@ -1,6 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import type { Locale } from "@/i18n/routing";
@@ -20,7 +21,7 @@ import { formatNumber } from "@/lib/format";
 import type { HouseSummary } from "@/lib/houses";
 import { STYLES, type Style } from "@/lib/vocab";
 import { HouseCard } from "./HouseCard";
-import { ChevronRightIcon, CloseIcon } from "./icons";
+
 
 const SORT_LABEL: Record<SortKey, string> = {
   new: "sortNew",
@@ -106,85 +107,68 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
   ];
 
   const active = hasActiveFilters(filters);
-  const activeCount = [filters.sotix, filters.qavat, filters.eni, filters.xona, filters.uslub, filters.q, filters.min || filters.max].filter(Boolean).length;
   const reset = () => update({ sotix: undefined, qavat: undefined, eni: undefined, xona: undefined, uslub: undefined, q: undefined, min: undefined, max: undefined });
+  const quick = floorOptions.map((floor) => ({
+    label: t("floorsOption", { count: floor, label: n(floor) }),
+    count: houses.filter((house) => house.floors === floor).length,
+    selected: filters.qavat === floor,
+    apply: () => update({ qavat: filters.qavat === floor ? undefined : floor }),
+  }));
+
+  function selectField(field: (typeof selects)[number]) {
+    return <label key={field.key} className="min-w-0">
+      <span className="sr-only">{field.label}</span>
+      <select className="catalog-select field-select" value={field.value} onChange={(event) => field.onChange(event.target.value)}>
+        <option value="">{field.label}</option>
+        {field.options.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
+      </select>
+    </label>;
+  }
 
   return (
-    <div className="grid gap-6">
-      {/* Filters — a column on desktop, a block above the results on phones */}
-      <aside className="overflow-hidden rounded-xl border border-line bg-paper">
-        <div className={`flex items-center justify-between bg-paper-2 px-5 py-4 lg:border-b lg:border-line ${open ? "border-b border-line" : ""}`}>
-          <button
-            type="button"
-            onClick={() => setOpen((o) => !o)}
-            aria-expanded={open}
-            className="label-caps flex items-center gap-2 text-ink lg:pointer-events-none"
-          >
-            <ChevronRightIcon className={`h-4 w-4 transition-transform lg:hidden ${open ? "rotate-90" : ""}`} />
-            {t("title")}
-            {activeCount > 0 && <span className="rounded-full bg-gold px-1.5 py-0.5 text-[10px] text-paper">{activeCount}</span>}
+    <>
+      <div className="catalog-controls border-b border-line pb-9">
+        <div className="flex flex-wrap items-center gap-2">
+          <p aria-live="polite" className="mr-2 text-sm"><strong className="text-xl">{n(results.length)}</strong> {browse("plansUnit", { count: results.length })}</p>
+          <div className="hidden flex-wrap gap-2 lg:flex">{selects.filter((field) => !field.hidden).map(selectField)}</div>
+          <button type="button" aria-expanded={open} aria-controls="extra-filters" onClick={() => setOpen(!open)} className="catalog-toggle">
+            {browse("moreFilters")} {open ? "−" : "+"}
           </button>
-          {active && (
-            <button type="button" onClick={reset} className="label-caps inline-flex items-center gap-1.5 text-ink-soft hover:text-ink">
-              <CloseIcon className="h-3.5 w-3.5" />
-              {t("reset")}
-            </button>
-          )}
-        </div>
-        <div className={`grid-cols-2 gap-x-4 gap-y-5 p-5 lg:grid lg:grid-cols-5 ${open ? "grid" : "hidden"}`}>
-          <form className="col-span-full flex flex-wrap gap-2" onSubmit={(event) => {
-            event.preventDefault();
-            const data = new FormData(event.currentTarget);
-            update({ q: String(data.get("q")).trim() || undefined });
-          }}>
-            <input key={filters.q} name="q" type="search" maxLength={120} defaultValue={filters.q}
-              aria-label={browse("keyword")} placeholder={browse("keyword")} className="field-input min-w-0 flex-1" />
-            <button className="btn bg-gold px-3 text-paper">{browse("search")}</button>
-          </form>
-          {selects
-            .filter((s) => !s.hidden)
-            .map((s) => (
-              <label key={s.key} className="block min-w-0">
-                <span className="label-caps mb-2 block text-ink-soft">{s.label}</span>
-                <select
-                  className="field-select"
-                  value={s.value}
-                  data-active={s.value !== ""}
-                  onChange={(e) => s.onChange(e.target.value)}
-                >
-                  <option value="">{t("any")}</option>
-                  {s.options.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            ))}
-        </div>
-      </aside>
-
-      <div className="min-w-0">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-4">
-          <p className="text-ink-soft" aria-live="polite">
-            {t("found", { count: results.length })}
-          </p>
-          <label className="flex items-center gap-3">
-            <span className="label-caps text-ink-soft">{t("sort")}</span>
-            <select
-              className="field-select w-auto min-w-[160px] py-2"
-              value={filters.sort}
-              onChange={(e) => update({ sort: e.target.value as SortKey })}
-            >
-              {SORT_KEYS.map((k) => (
-                <option key={k} value={k}>
-                  {t(SORT_LABEL[k])}
-                </option>
-              ))}
+          <label className="ml-auto">
+            <span className="sr-only">{t("sort")}</span>
+            <select className="catalog-select field-select" value={filters.sort} onChange={(event) => update({ sort: event.target.value as SortKey })}>
+              {SORT_KEYS.map((key) => <option key={key} value={key}>{t(SORT_LABEL[key])}</option>)}
             </select>
           </label>
         </div>
 
+        <div id="extra-filters" hidden={!open} className="mt-3 rounded-lg border border-line bg-white p-3">
+          <div className="mb-2 grid grid-cols-2 gap-2 lg:hidden">{selects.filter((field) => !field.hidden).map(selectField)}</div>
+          <form key={`${filters.q}-${filters.min}-${filters.max}`} className="grid grid-cols-2 gap-2 sm:grid-cols-[2fr_1fr_1fr_auto]" onSubmit={(event) => {
+            event.preventDefault();
+            const data = new FormData(event.currentTarget);
+            update({ q: String(data.get("q")).trim() || undefined, min: Number(data.get("min")) || undefined, max: Number(data.get("max")) || undefined });
+          }}>
+            <input name="q" type="search" maxLength={120} defaultValue={filters.q} aria-label={browse("keyword")} placeholder={browse("keyword")} className="field-input col-span-2 sm:col-span-1" />
+            <input name="min" type="number" min="1" defaultValue={filters.min} aria-label={browse("minArea")} placeholder={browse("minArea")} className="field-input" />
+            <input name="max" type="number" min="1" defaultValue={filters.max} aria-label={browse("maxArea")} placeholder={browse("maxArea")} className="field-input" />
+            <button className="btn bg-gold text-paper">{browse("search")}</button>
+          </form>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
+          <span className="text-ink-soft">{browse("styles")} →</span>
+          {styleOptions.map((style) => <button key={style} type="button" aria-pressed={filters.uslub === style} className="font-bold hover:text-gold aria-pressed:text-gold" onClick={() => update({ uslub: filters.uslub === style ? undefined : style })}>{STYLES[style][locale]}</button>)}
+          <Link href="/browse/styles" className="border-b border-gold font-bold">{browse("allStyles")} →</Link>
+        </div>
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <span className="label-caps mr-1 text-ink-soft">{browse("quickFilters")}</span>
+          {quick.map(({ label, count, apply, selected }) => <button key={label} type="button" onClick={apply} aria-pressed={selected} className="catalog-chip">{label} <span className="text-ink-soft">({n(count)})</span></button>)}
+          <button type="button" aria-pressed={filters.eni === 15} onClick={() => update({ eni: filters.eni === 15 ? undefined : 15 })} className="catalog-chip">{t("widthOption", { value: 15 })}</button>
+          {active && <button type="button" onClick={reset} className="px-2 text-sm font-bold text-gold">{t("reset")} ×</button>}
+        </div>
+      </div>
+
+      <div className="min-w-0">
         {results.length > 0 ? (
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {results.map((h, i) => (
@@ -206,6 +190,6 @@ export function Catalog({ houses, emptyAction }: { houses: HouseSummary[]; empty
           </div>
         )}
       </div>
-    </div>
+    </>
   );
 }

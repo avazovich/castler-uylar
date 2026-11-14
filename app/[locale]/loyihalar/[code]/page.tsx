@@ -144,16 +144,16 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
 
             <aside className="min-w-0">
               {house.featured && <p className="label-caps mb-2 text-gold">★ {browse("featuredPlan")}</p>}
-              <h1 className="font-display text-[clamp(1.8rem,3.2vw,2.65rem)] leading-[1.1]">{houseTitle(summary, locale)}</h1>
-              <p className="my-3 text-sm text-ink-soft">№ {house.code} · {kind}</p>
+              <h1 className="font-display text-[clamp(1.65rem,2.25vw,2.1rem)] leading-[1.1]">{houseTitle(summary, locale)}</h1>
+              <p className="my-3 text-xs text-ink-soft">№ {house.code} · {kind} · {fmt(house.totalArea)} m²</p>
               <div className="mb-5 flex flex-wrap gap-1.5">
                 {specs.slice(0, 5).map(({ label, value }) => <span key={label} className="rounded-sm border border-line bg-[#e9e4d9] px-2 py-1 text-xs font-bold">{label} · {value}</span>)}
               </div>
               {house.isSample && <p className="mb-3 rounded-md border border-gold/30 bg-gold/10 p-3 text-sm">{t("sampleNotice")}</p>}
-              <div className="space-y-3">
-                <a href="#build-cost" className="block rounded-md border border-line bg-[#e9e4d9] p-3.5 hover:border-gold">
+              <div className="space-y-3.5 border-t border-dashed border-line pt-3.5">
+                <a href="#build-cost" className="block rounded-sm border border-[#d5cfc2] bg-[#e5e1d7] p-3.5 hover:border-gold">
                   <span className="label-caps block text-ink-soft">{browse("cost")}</span>
-                  <span className="font-display text-lg">{costTotal > 0 ? formatUsd(costTotal) : browse("calculate")} ↓</span>
+                  <span className="flex justify-between gap-2"><span className="font-display text-lg">{costTotal > 0 ? formatUsd(costTotal) : browse("calculate")}</span><span aria-hidden="true">↓</span></span>
                 </a>
                 {house.minPlotWidth && house.minPlotLength ? (
                   <PlotCheck width={house.minPlotWidth} length={house.minPlotLength} area={house.plotSotix * 100} />
@@ -162,12 +162,15 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
                 ) : null}
                 <div id="project-package" className="rounded-lg border border-line bg-paper p-4 md:p-5">
                   <p className="label-caps text-gold">{browse("planPrice")}</p>
+                  {settings.included.length > 0 && <details className="mt-3 rounded-md border border-gold/40 bg-paper-2 p-3">
+                    <summary className="cursor-pointer text-sm font-bold">{home("includedTitle")}</summary>
+                    <ul className="mt-2 space-y-1 text-sm text-ink-soft">{settings.included.map((item) => <li key={item}>✓ {item}</li>)}</ul>
+                  </details>}
                   <div className="mt-2 flex flex-wrap items-baseline gap-x-3">
                     <p className="font-display text-3xl">{common("price", { amount: fmt(house.priceUzs) })}</p>
                     {house.oldPriceUzs && <p className="text-sm text-ink-soft line-through">{common("price", { amount: fmt(house.oldPriceUzs) })}</p>}
                   </div>
                   <p className="mt-1 text-sm text-ink-soft">{t("priceNote")}</p>
-                  {settings.included.length > 0 && <a href="#included" className="mt-2 block text-sm font-semibold underline">{home("includedTitle")} ↓</a>}
                   <LeadDialog houseCode={house.code} houseTitle={title} phone={settings.phone} className="btn mt-4 w-full bg-gold text-paper hover:bg-ink">{t("discuss")}</LeadDialog>
                   <div className="mt-2 flex flex-wrap gap-2">
                     <a href={telHref(settings.phone)} className="btn flex-1 border border-line px-3"><PhoneIcon className="h-4 w-4" /> {t("call")}</a>
@@ -187,7 +190,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
               { href: "build-cost", label: browse("cost") },
               { href: "project-faq", label: browse("faq") },
             ].map(({ href, label }) => <a key={href} href={`#${href}`} className="shrink-0 rounded-md px-3 py-2 text-sm font-bold hover:bg-paper-2">{label}</a>)}
-            <a href="#project-package" className="ml-auto shrink-0 rounded-md bg-gold px-3 py-2 text-sm font-bold text-white">{t("discuss")}</a>
+            <a href="#project-package" className="ml-auto shrink-0 rounded-md bg-gold px-3 py-2 text-sm font-bold text-white">{common("price", { amount: fmt(house.priceUzs) })} · {t("discuss")}</a>
           </nav>
 
           <dl className="mt-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line sm:grid-cols-3 lg:grid-cols-6">
