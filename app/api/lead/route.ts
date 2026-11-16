@@ -3,12 +3,16 @@ import { routing } from "@/i18n/routing";
 import { formatNumber } from "@/lib/format";
 import { getHouse } from "@/lib/houses";
 import { notifyTelegram } from "@/lib/telegram";
+import { calcLeadLines } from "@/lib/buildCost/leadText";
+import { getUsdRate } from "@/lib/buildCost/usdRate";
 
 interface LeadPayload {
   name?: string;
   phone?: string;
   comment?: string;
   houseCode?: number;
+  /** The build-cost calculator's answers (?area=…&floors=…), when the request comes from it. */
+  calc?: string;
   locale?: string;
   /** Honeypot — a hidden field real visitors never fill in. */
   website?: string;
@@ -66,7 +70,9 @@ export async function POST(request: Request) {
         `💰 Narxi: ${formatNumber(house.priceUzs)} so'm${house.isSample ? " (namuna narx)" : ""}`,
         `🔗 ${origin}/${locale}/loyihalar/${house.code}`,
       ]
-    : ["✏️ <b>Yangi so'rov — individual loyiha</b>"];
+    : typeof body.calc === "string" && body.calc.includes("area=")
+      ? calcLeadLines(body.calc, origin, locale, (await getUsdRate()).rate)
+      : ["✏️ <b>Yangi so'rov — individual loyiha</b>"];
 
   lines.push(
     "",

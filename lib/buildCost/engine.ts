@@ -363,3 +363,34 @@ export function inputFromParams(params: URLSearchParams | Record<string, string 
     plotSotix: plot > 0 && plot <= 100 ? plot : DEFAULT_INPUT.plotSotix,
   };
 }
+
+export type SavingId = "walls" | "roof" | "style" | "finishRough" | "finishShell" | "basement";
+
+export interface Saving {
+  id: SavingId;
+  /** The answers to change. */
+  change: Partial<CostInput>;
+  savingUzs: number;
+}
+
+/**
+ * One-answer changes that make the house cheaper, biggest saving first — what
+ * the result page offers as "how to lower the price". Only changes worth at
+ * least 1 % of the total are listed.
+ */
+export function cheaperOptions(input: CostInput, limit = 3): Saving[] {
+  const total = computeCost(input).totalUzs;
+  const candidates: { id: SavingId; change: Partial<CostInput> }[] = [];
+  if (input.walls === "brick") candidates.push({ id: "walls", change: { walls: "gasblock" } });
+  candidates.push({ id: "roof", change: { roof: input.roof === "pitched" ? "flat" : "pitched" } });
+  if (input.style === "classic") candidates.push({ id: "style", change: { style: "neoclassic" } });
+  if (input.style === "neoclassic") candidates.push({ id: "style", change: { style: "modern" } });
+  if (input.finish === "turnkey") candidates.push({ id: "finishRough", change: { finish: "rough" } });
+  if (input.finish === "rough") candidates.push({ id: "finishShell", change: { finish: "shell" } });
+  if (input.basement) candidates.push({ id: "basement", change: { basement: false } });
+  return candidates
+    .map(({ id, change }) => ({ id, change, savingUzs: total - computeCost({ ...input, ...change }).totalUzs }))
+    .filter((option) => option.savingUzs > total * 0.01)
+    .sort((a, b) => b.savingUzs - a.savingUzs)
+    .slice(0, limit);
+}

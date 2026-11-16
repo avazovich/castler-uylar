@@ -5,12 +5,12 @@ import { useLocale, useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "@/i18n/navigation";
+import { LeadForm } from "./LeadForm";
 import {
-  computeCost, DEFAULT_INPUT, FLOOR_CHOICES, inputFromParams, RANGE,
+  cheaperOptions, computeCost, DEFAULT_INPUT, FLOOR_CHOICES, inputFromParams, RANGE,
   type CostInput, type CostResult, type Floors, type Line, type Stage, type Style,
 } from "@/lib/buildCost/engine";
 import { PRICES_AS_OF, SOURCES, type L } from "@/lib/buildCost/prices";
-import { browsePath } from "@/lib/browse";
 import { formatNumber } from "@/lib/format";
 import { STYLES } from "@/lib/vocab";
 
@@ -18,6 +18,12 @@ type Currency = "uzs" | "usd";
 type Rate = { rate: number; date: string };
 type Locale = "uz" | "ru";
 export type StyleImages = Partial<Record<Style, { url: string; position: string; lqip?: string }>>;
+/** A catalog house, offered on the result when it is close to the visitor's answers. */
+export type PlanCard = {
+  code: number; name?: string; href: string; totalArea: number; floors: number; style?: Style; priceUzs: number;
+  cover: { url: string; position: string; lqip?: string };
+};
+type Extras = { usd: Rate; images: StyleImages; plans: PlanCard[]; phone: string };
 
 /** One question per screen, in this order. */
 const STEPS = ["area", "floors", "style", "walls", "roof", "finish", "extras"] as const;
@@ -45,17 +51,13 @@ function startFrom(params: URLSearchParams): Start {
 
 const FRESH: Start = { input: DEFAULT_INPUT, view: { kind: "step", step: 0 }, prefilled: false, answered: [] };
 
-export function CostCalculatorFromUrl(props: { usd: Rate; images: StyleImages }) {
+export function CostCalculatorFromUrl(props: Extras) {
   const params = useSearchParams();
   const start = useMemo(() => startFrom(new URLSearchParams(params.toString())), [params]);
   return <CostCalculator {...props} start={start} />;
 }
 
-export function CostCalculator({ usd, images, start }: {
-  usd: Rate;
-  images: StyleImages;
-  start?: Start;
-}) {
+export function CostCalculator({ usd, images, plans, phone, start }: Extras & { start?: Start }) {
   const t = useTranslations("calc");
   const locale = useLocale() as Locale;
   const [input, setInput] = useState<CostInput>(start?.input ?? DEFAULT_INPUT);
@@ -83,12 +85,7 @@ export function CostCalculator({ usd, images, start }: {
   // A finished calculation keeps its answers in the address, so it can be shared or reopened.
   useEffect(() => {
     if (view.kind !== "result") return;
-    const q = new URLSearchParams({
-      area: String(input.area), floors: String(input.floors), style: input.style, walls: input.walls,
-      roof: input.roof, finish: input.finish, plot: String(input.plotSotix),
-      ...(input.basement ? { basement: "1" } : {}), ...(input.fence ? { fence: "1" } : {}), ...(input.paving ? { paving: "1" } : {}),
-    });
-    window.history.replaceState(null, "", `${window.location.pathname}?${q}`);
+    window.history.replaceState(null, "", `${window.location.pathname}?${answersQuery(input)}`);
   }, [view.kind, input]);
 
   const show = (next: View) => {
@@ -130,8 +127,9 @@ export function CostCalculator({ usd, images, start }: {
       {view.kind === "calculating" && <Calculating />}
       {view.kind === "result" && (
         <ResultView
-          input={input} result={result} usd={usd} locale={locale} currency={currency}
+          input={input} result={result} usd={usd} locale={locale} currency={currency} plans={plans} phone={phone}
           setCurrency={setCurrency} edit={edit} restart={restart} t={t}
+          apply={(change) => setInput((prev) => ({ ...prev, ...change }))}
         />
       )}
     </div>
@@ -349,15 +347,18 @@ function Calculating() {
 
 // ───────────────────────────── The price ─────────────────────────────
 
-function ResultView({ input, result, usd, locale, currency, setCurrency, edit, restart, t }: {
-  input: CostInput; result: CostResult; usd: Rate; locale: Locale; currency: Currency;
+function ResultView({ input, result, usd, locale, currency, plans, phone, setCurrency, edit, restart, apply, t }: {
+  input: CostInput; result: CostResult; usd: Rate; locale: Locale; currency: Currency; plans: PlanCard[]; phone: string;
   setCurrency: (currency: Currency) => void; edit: (step: StepId) => void; restart: () => void;
+  apply: (change: Partial<CostInput>) => void;
   t: ReturnType<typeof useTranslations<"calc">>;
 }) {
   const money = moneyFormat(currency, usd.rate, locale);
   const other = moneyFormat(currency === "uzs" ? "usd" : "uzs", usd.rate, locale);
   const shown = useCountUp(result.totalUzs);
   const tr = (l: L) => l[locale];
+  const savings = cheaperOptions(input);
+  const matches = matchPlans(plans, input);
   const extras = result.stages.find((stage) => stage.id === "extra")?.totalUzs ?? 0;
   const split = [
     { key: "materials", value: result.materialsUzs + result.bothUzs, className: "bg-gold" },
@@ -420,10 +421,35 @@ function ResultView({ input, result, usd, locale, currency, setCurrency, edit, r
             </div>
           ))}
         </dl>
-        <p className="mt-6 border-t border-line-on-ink pt-5 text-[14px] text-paper/70">
-          {t("range", { pct: RANGE * 100, low: money.big(result.lowUzs), high: money.big(result.highUzs) })}
-        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-line-on-ink pt-5">
+          <p className="max-w-md text-[14px] text-paper/70">
+            {t("range", { pct: RANGE * 100, low: money.big(result.lowUzs), high: money.big(result.highUzs) })}
+          </p>
+          <a href="#calc-lead" className="btn bg-accent text-[#21150e] hover:bg-accent-hover">{t("ctaJump")} ↓</a>
+        </div>
       </section>
+
+      {savings.length > 0 && (
+        <section className="rounded-2xl border border-line bg-paper p-5 md:p-8">
+          <h2 className="font-display text-[28px] text-ink">{t("saveTitle")}</h2>
+          <p className="mt-1 text-[14px] text-ink-soft">{t("saveHint")}</p>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {savings.map((option) => (
+              <article key={option.id} className="flex flex-col rounded-xl border border-line p-4">
+                <p className="font-display text-[26px] leading-none text-gold tabular-nums">−{money.big(option.savingUzs)}</p>
+                <h3 className="mt-3 font-semibold text-ink">{t(`save.${option.id}`)}</h3>
+                <p className="mt-1 flex-1 text-[14px] leading-snug text-ink-soft">
+                  {t(`save.${option.id}Why`, {
+                    from: STYLES[input.style][locale],
+                    to: option.change.style ? STYLES[option.change.style][locale] : "",
+                  })}
+                </p>
+                <button type="button" onClick={() => apply(option.change)} className="calc-chip mt-4 self-start">{t("save.apply")}</button>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="rounded-2xl border border-line bg-paper">
         <div className="px-5 pb-2 pt-6 md:px-8">
@@ -449,12 +475,65 @@ function ResultView({ input, result, usd, locale, currency, setCurrency, edit, r
         </p>
       </section>
 
-      <section className="grid gap-5 rounded-2xl bg-cream p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
+      {matches.length === 0 && (
+        <section className="grid gap-5 rounded-2xl border border-line bg-cream p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
+          <div>
+            <h2 className="font-display text-[28px] text-ink">{t("customTitle")}</h2>
+            <p className="mt-2 max-w-xl text-ink-soft">{t("customText", { area: formatNumber(input.area) })}</p>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a href="#calc-lead" className="btn bg-gold text-paper hover:bg-ink">{t("customCta")} ↓</a>
+            <Link href="/loyihalar" className="btn border border-ink/20 text-ink hover:border-ink">{t("allPlans")}</Link>
+          </div>
+        </section>
+      )}
+
+      {matches.length > 0 && (
+        <section className="rounded-2xl border border-line bg-paper p-5 md:p-8">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="font-display text-[28px] text-ink">{t("plansTitle")}</h2>
+              <p className="mt-1 max-w-xl text-[14px] text-ink-soft">{t("plansHint")}</p>
+            </div>
+            <Link href="/loyihalar" className="text-[14px] font-semibold text-gold underline-offset-4 hover:underline">{t("allPlans")} →</Link>
+          </div>
+          <div className="mt-5 grid gap-4 sm:grid-cols-3">
+            {matches.map((plan) => (
+              <Link key={plan.code} href={plan.href} className="group overflow-hidden rounded-xl border border-line transition-shadow hover:shadow-[0_12px_30px_-20px_rgb(26_29_22/0.5)]">
+                <span className="relative block aspect-[4/3] overflow-hidden bg-cream">
+                  <Image src={plan.cover.url} alt="" fill sizes="(min-width: 640px) 290px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    style={{ objectPosition: plan.cover.position }} placeholder={plan.cover.lqip ? "blur" : "empty"} blurDataURL={plan.cover.lqip} />
+                </span>
+                <span className="block p-4">
+                  <span className="block font-semibold text-ink">№{plan.code}{plan.name ? ` · ${plan.name}` : ""}</span>
+                  <span className="mt-1 block text-[14px] text-ink-soft">
+                    {formatNumber(plan.totalArea)} m² · {t("floorsLabel", { n: formatNumber(plan.floors) })}{plan.style ? ` · ${STYLES[plan.style][locale]}` : ""}
+                  </span>
+                  <span className="mt-3 block text-[14px] text-ink">{t("planPrice", { amount: moneyFormat("uzs", usd.rate, locale).unit(plan.priceUzs) })}</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <section id="calc-lead" className="grid scroll-mt-28 gap-6 rounded-2xl bg-ink p-6 text-paper md:grid-cols-[minmax(0,1fr)_minmax(0,420px)] md:p-10">
         <div>
-          <h2 className="font-display text-[26px] text-ink">{t("ctaTitle")}</h2>
-          <p className="mt-2 max-w-xl text-ink-soft">{t("ctaText")}</p>
+          <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold-light">{t("leadEyebrow")}</p>
+          <h2 className="mt-3 font-display text-[32px] leading-tight md:text-[38px]">{t("leadTitle")}</h2>
+          <ul className="mt-6 grid gap-3">
+            {(t.raw("leadPoints") as string[]).map((point) => (
+              <li key={point} className="flex gap-3 text-paper/85">
+                <svg className="mt-0.5 h-5 w-5 shrink-0 text-gold-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7.5" /></svg>
+                {point}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 text-[14px] text-paper/60">{t("leadNote")}</p>
         </div>
-        <Link href={browsePath("consult")} className="btn bg-gold text-paper hover:bg-ink">{t("cta")} →</Link>
+        <div className="rounded-xl bg-paper p-5 text-ink md:p-6">
+          <LeadForm calc={answersQuery(input)} phone={phone} />
+        </div>
       </section>
 
       <details className="rounded-2xl border border-line bg-paper px-5 py-4 text-[14px] text-ink-soft md:px-8">
@@ -590,6 +669,25 @@ function Dot({ source }: { source: "market" | "estimate" }) {
 // ───────────────────────────── Helpers ─────────────────────────────
 
 const capitalize = (text: string) => text.charAt(0).toLocaleUpperCase() + text.slice(1);
+
+/** The answers as a page address query — for sharing, and sent with a request. */
+function answersQuery(input: CostInput): string {
+  return new URLSearchParams({
+    area: String(input.area), floors: String(input.floors), style: input.style, walls: input.walls,
+    roof: input.roof, finish: input.finish, plot: String(input.plotSotix),
+    ...(input.basement ? { basement: "1" } : {}), ...(input.fence ? { fence: "1" } : {}), ...(input.paving ? { paving: "1" } : {}),
+  }).toString();
+}
+
+/**
+ * Catalog houses within about a third of the visitor's size, closest first
+ * (size, then the same floors, then the same style). None close enough → [].
+ */
+function matchPlans(plans: PlanCard[], input: CostInput, limit = 3): PlanCard[] {
+  const sizeGap = (plan: PlanCard) => Math.abs(plan.totalArea - input.area) / input.area;
+  const distance = (plan: PlanCard) => sizeGap(plan) + (plan.floors === input.floors ? 0 : 0.35) + (plan.style === input.style ? 0 : 0.2);
+  return plans.filter((plan) => sizeGap(plan) <= 0.35).sort((a, b) => distance(a) - distance(b)).slice(0, limit);
+}
 
 function reducedMotion() {
   return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;

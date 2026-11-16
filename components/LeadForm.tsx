@@ -15,11 +15,14 @@ type Status = "idle" | "sending" | "sent" | "error" | "invalid";
 
 export function LeadForm({
   houseCode,
+  calc,
   phone: officePhone,
   tone = "light",
   autoFocus = false,
 }: {
   houseCode?: number;
+  /** The calculator's answers, sent along so the team sees the visitor's calculation. */
+  calc?: string;
   phone: string;
   tone?: "light" | "dark";
   autoFocus?: boolean;
@@ -46,7 +49,7 @@ export function LeadForm({
       const res = await fetch("/api/lead", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, comment, houseCode, locale, website }),
+        body: JSON.stringify({ name, phone, comment, houseCode, calc, locale, website }),
       });
       setStatus(res.ok ? "sent" : "error");
     } catch {

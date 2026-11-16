@@ -411,9 +411,6 @@
     "legendEstimate": "taxminiy narx",
     "usta": "Usta",
     "geometry": "Hisob uchun olingan o‘lchamlar: uy izi {footprint} m², tashqi devor uzunligi {perimeter} m, qavat balandligi {height} m, derazalar {windows} m².",
-    "ctaTitle": "Aniq smeta kerakmi?",
-    "ctaText": "Castler arxitektori tanlagan loyihangiz va yeringiz bo‘yicha batafsil smeta tuzib beradi.",
-    "cta": "Aniq smeta olish",
     "sources": "Narxlar qayerdan olingan",
     "asOf": "Narxlar: {date}. Dollar kursi: {rate} so‘m (Markaziy bank, {rateDate}).",
     "note": "Bu dastlabki hisob. Aniq narx loyiha chizmalari, yer sharoiti va siz tanlagan materiallarga qarab smetada hisoblanadi. «Taxminiy» belgisi bor narxlar quruvchilar bilan aniqlashtiriladi.",
@@ -421,6 +418,39 @@
     "open": "Hisoblashni boshlash",
     "houseLink": "Shu uyni qurish narxini hisoblash",
     "houseText": "Kalkulyator shu loyihaning maydoni, qavatlari va uslubi bilan ochiladi — yana 4 ta savol qoladi.",
-    "yourAnswers": "Javoblaringiz"
+    "yourAnswers": "Javoblaringiz",
+    "ctaJump": "Aniq smeta olish",
+    "saveTitle": "Narxni qanday kamaytirish mumkin",
+    "saveHint": "Bitta javobni o‘zgartirsangiz, shuncha tejaysiz. Bosing — narx darhol qayta hisoblanadi.",
+    "save": {
+      "walls": "Devorni gazoblokdan qurish",
+      "wallsWhy": "Blok yengil va katta — material ham, usta ishi ham kamroq.",
+      "roof": "Tom shaklini o‘zgartirish",
+      "roofWhy": "Boshqa tom shakli bu uy uchun arzonroq chiqadi.",
+      "style": "Fasadni soddaroq qilish",
+      "styleWhy": "{from} o‘rniga {to} uslubi — fasad dekori va derazalar arzonroq.",
+      "finishRough": "Toza pardozni keyinroq qilish",
+      "finishRoughWhy": "Hozir qoralama pardozgacha quring, toza pardozni keyin bosqichma-bosqich qiling.",
+      "finishShell": "Avval faqat karobka",
+      "finishShellWhy": "Hozir karobkani quring — muhandislik va pardozni keyinroq.",
+      "basement": "Yerto‘lasiz qurish",
+      "basementWhy": "Yerto‘la — eng qimmat qo‘shimchalardan biri: qazish, beton va izolyatsiya.",
+      "apply": "Shu variantni hisoblash"
+    },
+    "plansTitle": "Sizga mos tayyor loyihalar",
+    "plansHint": "Uy qurish uchun loyiha kerak. Tayyor loyihada chizmalar bor — qurilishni darhol boshlash mumkin. Javoblaringizga eng yaqinlari:",
+    "allPlans": "Barcha loyihalar",
+    "planPrice": "Loyiha narxi: {amount}",
+    "leadEyebrow": "Keyingi qadam",
+    "leadTitle": "Aniq smeta va tejash rejasini oling",
+    "leadPoints": [
+      "Smetani tanlagan loyihangiz va yeringizga moslab hisoblaymiz",
+      "Qayerda pul tejash mumkinligini ko‘rsatamiz",
+      "Mos tayyor loyihani tanlashga yordam beramiz"
+    ],
+    "leadNote": "Hisobingiz so‘rov bilan birga keladi — qayta tushuntirish shart emas.",
+    "customTitle": "Individual loyiha",
+    "customText": "Katalogda hozircha {area} m² atrofidagi tayyor loyiha yo‘q. Castler arxitektori aynan sizning yeringiz va oilangiz uchun loyiha chizib beradi.",
+    "customCta": "So‘rov qoldirish"
   }
 }
