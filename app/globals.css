@@ -316,61 +316,74 @@
 body:has(.action-bar) { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 @media (min-width: 1024px) { body:has(.action-bar) { padding-bottom: 0; } }
 
-/* ───────────── Build-cost calculator ───────────── */
-.calc-pill {
+/* ───────────── Build-cost calculator ─────────────
+   One question per screen: big answer cards, a tick on the chosen one. */
+.calc-option {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 64px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  cursor: pointer;
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease, background-color 160ms ease;
+}
+.calc-option:hover { border-color: #bdb6a6; box-shadow: 0 10px 26px -18px rgb(26 29 22 / 0.45); transform: translateY(-1px); }
+.calc-option[aria-pressed="true"] { border-color: var(--gold); background: #fdf6f1; box-shadow: 0 0 0 1px var(--gold); }
+.calc-option:focus-visible, .calc-chip:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+.calc-tick {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--gold);
+  color: var(--paper);
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+.calc-tick svg { width: 13px; height: 13px; }
+.calc-tick.is-check { opacity: 1; transform: none; background: var(--paper); border: 1.5px solid #cfc8b8; color: transparent; }
+.calc-option[aria-pressed="true"] .calc-tick { opacity: 1; transform: none; background: var(--gold); border-color: var(--gold); color: var(--paper); }
+.calc-chip {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   min-height: 40px;
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 999px;
+  background: var(--paper);
   font-size: 14px;
   font-weight: 600;
   color: var(--ink);
-  cursor: pointer;
   transition: border-color 150ms ease, background-color 150ms ease;
 }
-.calc-pill:hover { border-color: var(--ink-soft); }
-.calc-pill.is-on { border-color: var(--gold); background: #f8e6db; color: var(--gold); }
-.calc-pill:has(:focus-visible), .calc-card:has(:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
-.calc-card {
-  display: grid;
-  gap: 2px;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: border-color 150ms ease, background-color 150ms ease;
-}
-.calc-card:hover { border-color: var(--ink-soft); }
-.calc-card.is-on { border-color: var(--gold); background: #fbf1ea; box-shadow: inset 3px 0 0 var(--gold); }
-.calc-switch {
-  appearance: none;
-  position: relative;
-  flex-shrink: 0;
-  width: 42px;
-  height: 24px;
-  border-radius: 999px;
-  background: var(--line);
-  cursor: pointer;
-  transition: background-color 150ms ease;
-}
-.calc-switch::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
+.calc-chip:hover { border-color: #bdb6a6; }
+.calc-chip[aria-pressed="true"] { border-color: var(--gold); background: #f8e6db; color: var(--gold); }
+.calc-spinner {
+  width: 46px;
+  height: 46px;
   border-radius: 50%;
-  background: var(--paper);
-  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
-  transition: transform 150ms ease;
+  border: 3px solid var(--line);
+  border-top-color: var(--gold);
+  animation: calc-spin 900ms linear infinite;
 }
-.calc-switch:checked { background: var(--gold); }
-.calc-switch:checked::after { transform: translateX(18px); }
-.calc-switch:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.calc-range { accent-color: var(--gold); height: 24px; }
+@keyframes calc-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: no-preference) {
+  .calc-enter { animation: rise-in 420ms cubic-bezier(.22, .8, .3, 1) backwards; }
+  .calc-ticker > li { animation: fade-in 300ms ease backwards; }
+  .calc-ticker > li:nth-child(2) { animation-delay: 300ms; }
+  .calc-ticker > li:nth-child(3) { animation-delay: 600ms; }
+  .calc-ticker > li:nth-child(4) { animation-delay: 900ms; }
+}
 @media (prefers-reduced-motion: reduce) {
-  .calc-pill, .calc-card, .calc-switch, .calc-switch::after { transition: none; }
+  .calc-option, .calc-tick, .calc-chip { transition: none; }
+  .calc-option:hover { transform: none; }
+  .calc-spinner { animation: none; }
 }

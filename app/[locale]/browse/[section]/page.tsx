@@ -4,7 +4,7 @@ import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { CostCalculator, CostCalculatorFromUrl } from "@/components/CostCalculator";
+import { CostCalculator, CostCalculatorFromUrl, type StyleImages } from "@/components/CostCalculator";
 import { BrowseTiles } from "@/components/BrowseTiles";
 import { JsonLd } from "@/components/JsonLd";
 import { LeadForm } from "@/components/LeadForm";
@@ -48,6 +48,11 @@ export default async function BrowsePage({ params }: Props) {
   const guide = section === "faq" ? t.raw("faqItems") : home.raw("guide");
   const settings = section === "consult" ? await getSettings(locale) : undefined;
   const usd = section === "cost" ? await getUsdRate() : undefined;
+  // A real Castler house for each style, shown on the calculator's style question.
+  const styleImages: StyleImages = Object.fromEntries((["modern", "neoclassic", "classic"] as const).flatMap((style) => {
+    const house = houses.find((item) => item.style === style && !item.isSample) ?? houses.find((item) => item.style === style);
+    return house ? [[style, { url: house.cover.url, position: house.cover.position, lqip: house.cover.lqip }]] : [];
+  }));
   const sizes = [
     { label: t("compact"), query: "max=300", min: 0, max: 300 },
     { label: t("medium"), query: "min=301&max=400", min: 301, max: 400 },
@@ -78,8 +83,8 @@ export default async function BrowsePage({ params }: Props) {
           </div>
         )}
         {usd && (
-          <Suspense fallback={<CostCalculator usd={usd} />}>
-            <CostCalculatorFromUrl usd={usd} />
+          <Suspense fallback={<CostCalculator usd={usd} images={styleImages} />}>
+            <CostCalculatorFromUrl usd={usd} images={styleImages} />
           </Suspense>
         )}
         {(section === "guides" || section === "faq") && (
