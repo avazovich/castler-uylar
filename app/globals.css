@@ -315,3 +315,62 @@
 }
 body:has(.action-bar) { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }
 @media (min-width: 1024px) { body:has(.action-bar) { padding-bottom: 0; } }
+
+/* ───────────── Build-cost calculator ───────────── */
+.calc-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.calc-pill:hover { border-color: var(--ink-soft); }
+.calc-pill.is-on { border-color: var(--gold); background: #f8e6db; color: var(--gold); }
+.calc-pill:has(:focus-visible), .calc-card:has(:focus-visible) { outline: 2px solid var(--ink); outline-offset: 2px; }
+.calc-card {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 150ms ease, background-color 150ms ease;
+}
+.calc-card:hover { border-color: var(--ink-soft); }
+.calc-card.is-on { border-color: var(--gold); background: #fbf1ea; box-shadow: inset 3px 0 0 var(--gold); }
+.calc-switch {
+  appearance: none;
+  position: relative;
+  flex-shrink: 0;
+  width: 42px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--line);
+  cursor: pointer;
+  transition: background-color 150ms ease;
+}
+.calc-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.2);
+  transition: transform 150ms ease;
+}
+.calc-switch:checked { background: var(--gold); }
+.calc-switch:checked::after { transform: translateX(18px); }
+.calc-switch:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.calc-range { accent-color: var(--gold); height: 24px; }
+@media (prefers-reduced-motion: reduce) {
+  .calc-pill, .calc-card, .calc-switch, .calc-switch::after { transition: none; }
+}

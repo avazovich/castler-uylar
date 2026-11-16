@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { BuildEstimate } from "@/components/BuildEstimate";
 import { FinderForm } from "@/components/FinderForm";
 import { JsonLd } from "@/components/JsonLd";
 import { Link } from "@/i18n/navigation";
@@ -28,9 +27,9 @@ export default async function HomePage({ params }: Props) {
   const { locale: raw } = await params;
   const locale = raw as Locale;
   setRequestLocale(locale);
-  const [t, home, browse, meta, common, houses, settings] = await Promise.all([
+  const [t, home, browse, meta, common, calc, houses, settings] = await Promise.all([
     getTranslations("referenceHome"), getTranslations("home"), getTranslations("browse"),
-    getTranslations("meta"), getTranslations("common"), getHouses(locale), getSettings(locale),
+    getTranslations("meta"), getTranslations("common"), getTranslations("calc"), getHouses(locale), getSettings(locale),
   ]);
   const picked = [...houses].sort((a, b) => Number(b.featured) - Number(a.featured)).slice(0, 6);
   const categories = liveCollections(houses.map(toSummary));
@@ -110,7 +109,10 @@ export default async function HomePage({ params }: Props) {
         <p className="eyebrow">{browse("cost")}</p><h2>{t("costTitle")}</h2><p className="intro">{browse("costIntro")}</p>
         <div className="cost">
           <div><h3>{t("costFactors")}</h3><ul className="consult-list">{(t.raw("factors") as string[]).map((item) => <li key={item}>{item}</li>)}</ul></div>
-          <BuildEstimate />
+          <div className="grid content-center gap-4">
+            <p className="text-ink-soft">{calc("teaser")}</p>
+            <Link href={browsePath("cost")} className="btn justify-self-start bg-gold text-paper hover:bg-ink">{calc("open")} →</Link>
+          </div>
         </div>
       </div></section>
 

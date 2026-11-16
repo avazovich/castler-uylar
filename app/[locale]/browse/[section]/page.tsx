@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { BuildEstimate } from "@/components/BuildEstimate";
+import { Suspense } from "react";
+import { CostCalculator, CostCalculatorFromUrl } from "@/components/CostCalculator";
 import { BrowseTiles } from "@/components/BrowseTiles";
 import { JsonLd } from "@/components/JsonLd";
 import { LeadForm } from "@/components/LeadForm";
@@ -14,6 +15,7 @@ import { browsePath, browseSections } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
 import { breadcrumbLd, pageMetadata } from "@/lib/seo";
+import { getUsdRate } from "@/lib/buildCost/usdRate";
 
 type Props = { params: Promise<{ locale: string; section: string }> };
 
@@ -45,6 +47,7 @@ export default async function BrowsePage({ params }: Props) {
     : [];
   const guide = section === "faq" ? t.raw("faqItems") : home.raw("guide");
   const settings = section === "consult" ? await getSettings(locale) : undefined;
+  const usd = section === "cost" ? await getUsdRate() : undefined;
   const sizes = [
     { label: t("compact"), query: "max=300", min: 0, max: 300 },
     { label: t("medium"), query: "min=301&max=400", min: 301, max: 400 },
@@ -74,7 +77,11 @@ export default async function BrowsePage({ params }: Props) {
             })}
           </div>
         )}
-        {section === "cost" && <BuildEstimate />}
+        {usd && (
+          <Suspense fallback={<CostCalculator usd={usd} />}>
+            <CostCalculatorFromUrl usd={usd} />
+          </Suspense>
+        )}
         {(section === "guides" || section === "faq") && (
           <div className={section === "guides" ? "grid gap-4 md:grid-cols-3" : "max-w-3xl space-y-3"}>
             {(guide as { title: string; text: string }[]).map((item, index) => (

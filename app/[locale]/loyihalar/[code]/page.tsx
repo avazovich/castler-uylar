@@ -7,7 +7,6 @@ import { HouseCard } from "@/components/HouseCard";
 import { CheckIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
 import { LeadDialog } from "@/components/LeadDialog";
 import { MobileActionBar } from "@/components/MobileActionBar";
-import { BuildEstimate } from "@/components/BuildEstimate";
 import { PlotCheck } from "@/components/PlotCheck";
 import { Link } from "@/i18n/navigation";
 import { browsePath } from "@/lib/browse";
@@ -84,6 +83,8 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
     getHouses(locale),
   ]);
   const fmt = formatNumber;
+  const calc = await getTranslations("calc");
+  const calcHref = `${browsePath("cost")}?${new URLSearchParams({ area: String(Math.round(house.totalArea)), floors: String(house.floors), plot: String(house.plotSotix), ...(house.style ? { style: house.style } : {}) })}`;
   const title = house.name ?? common("projectNo", { code: house.code });
   const summary = toSummary(house);
   const images = [house.cover, ...house.gallery];
@@ -265,11 +266,13 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
                 </table>
               </div>
               <p className="mt-3 text-sm text-ink-soft">{t("costNote")}</p>
+              <Link href={calcHref} className="btn mt-6 bg-gold text-paper hover:bg-ink">{calc("houseLink")} →</Link>
             </section>
           ) : (
             <section id="build-cost" className="mt-12 rounded-lg border border-line bg-paper p-5 md:p-7">
               <SectionTitle title={browse("cost")} />
-              <div className="mt-4"><BuildEstimate /></div>
+              <p className="mt-3 max-w-2xl text-ink-soft">{calc("houseText")}</p>
+              <Link href={calcHref} className="btn mt-5 bg-gold text-paper hover:bg-ink">{calc("houseLink")} →</Link>
             </section>
           )}
 
