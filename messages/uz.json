@@ -247,7 +247,7 @@
     "stylesIntro": "Zamonaviy, klassik va boshqa uslublardagi tayyor uy loyihalarini ko‘ring.",
     "collectionsIntro": "Qavatlar soni, yer maydoni va uy imkoniyatlari bo‘yicha to‘plamlarni ko‘ring.",
     "sizeIntro": "Uy maydoniga qarab loyihalarni saralang. Yer maydonini katalogda alohida tekshiring.",
-    "costIntro": "7 ta savolga javob bering — uyingizni qurish qancha turishini va pul nimaga ketishini ko‘rasiz.",
+    "costIntro": "8 ta savolga javob bering — uyingizni qurish qancha turishini, pul nimaga ketishini va yeringizga eng mos loyihalarni ko‘rasiz.",
     "guidesIntro": "Tayyor uy loyihasini tanlashdan oldin nimalarni tekshirish kerakligini bilib oling.",
     "faqIntro": "Tayyor uy loyihasi, yerga moslik va hujjatlar bo‘yicha javoblar.",
     "consultIntro": "Uchastkangiz, tanlagan rejangiz va kerakli o‘zgarishlarni Castler arxitektori bilan muhokama qiling.",
@@ -333,7 +333,9 @@
       "finish": "Qaysi bosqichgacha hisoblaymiz?",
       "finishHint": "Ko‘pchilik avval karobkani quradi, pardozni keyinroq qiladi.",
       "extras": "Yana nimalar kerak?",
-      "extrasHint": "Bir nechtasini tanlash mumkin."
+      "extrasHint": "Bir nechtasini tanlash mumkin.",
+      "plot": "Yeringiz necha sotix?",
+      "plotHint": "Uy quriladigan yer maydoni. Shunga qarab yeringizga eng mos tayyor loyihalarni tanlaymiz."
     },
     "areaLabel": {
       "a100": "Ixcham uy",
@@ -386,7 +388,6 @@
     "fenceDesc": "Hovli atrofida 2,5 m g‘isht devor.",
     "paving": "Hovli yo‘laklari",
     "pavingDesc": "Hovlining bir qismiga plitka.",
-    "plot": "Yeringiz necha sotix?",
     "sotix": "{n} sotix",
     "calculating": "Hisoblayapmiz…",
     "calcLines": [
@@ -414,7 +415,7 @@
     "sources": "Narxlar qayerdan olingan",
     "asOf": "Narxlar: {date}. Dollar kursi: {rate} so‘m (Markaziy bank, {rateDate}).",
     "note": "Bu dastlabki hisob. Aniq narx loyiha chizmalari, yer sharoiti va siz tanlagan materiallarga qarab smetada hisoblanadi. «Taxminiy» belgisi bor narxlar quruvchilar bilan aniqlashtiriladi.",
-    "teaser": "7 ta savolga javob bering — beton, armatura, g‘isht, deraza va usta haqigacha har bir xarajatni Namangan narxlarida hisoblab beramiz.",
+    "teaser": "8 ta savolga javob bering — beton, armatura, g‘isht, deraza va usta haqigacha har bir xarajatni Namangan narxlarida hisoblab, yeringizga eng mos loyihalarni tanlab beramiz.",
     "open": "Hisoblashni boshlash",
     "houseLink": "Shu uyni qurish narxini hisoblash",
     "houseText": "Kalkulyator shu loyihaning maydoni, qavatlari va uslubi bilan ochiladi — yana 4 ta savol qoladi.",
@@ -437,8 +438,8 @@
       "basementWhy": "Yerto‘la — eng qimmat qo‘shimchalardan biri: qazish, beton va izolyatsiya.",
       "apply": "Shu variantni hisoblash"
     },
-    "plansTitle": "Sizga mos tayyor loyihalar",
-    "plansHint": "Uy qurish uchun loyiha kerak. Tayyor loyihada chizmalar bor — qurilishni darhol boshlash mumkin. Javoblaringizga eng yaqinlari:",
+    "plansTitle": "Yeringizga eng mos loyihalar",
+    "plansHint": "{plot} sotix yeringiz va javoblaringiz bo‘yicha tanlandi. Tayyor loyihada chizmalar bor — qurilishni darhol boshlash mumkin.",
     "allPlans": "Barcha loyihalar",
     "planPrice": "Loyiha narxi: {amount}",
     "leadEyebrow": "Keyingi qadam",
@@ -449,8 +450,8 @@
       "Mos tayyor loyihani tanlashga yordam beramiz"
     ],
     "leadNote": "Hisobingiz so‘rov bilan birga keladi — qayta tushuntirish shart emas.",
-    "customTitle": "Individual loyiha",
-    "customText": "Katalogda hozircha {area} m² atrofidagi tayyor loyiha yo‘q. Castler arxitektori aynan sizning yeringiz va oilangiz uchun loyiha chizib beradi.",
-    "customCta": "So‘rov qoldirish"
+    "sotixUnit": "sotix",
+    "otherPlot": "Boshqa o‘lcham:",
+    "fitsPlot": "Yeringizga sig‘adi"
   }
 }

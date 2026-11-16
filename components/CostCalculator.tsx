@@ -21,22 +21,24 @@ export type StyleImages = Partial<Record<Style, { url: string; position: string;
 /** A catalog house, offered on the result when it is close to the visitor's answers. */
 export type PlanCard = {
   code: number; name?: string; href: string; totalArea: number; floors: number; style?: Style; priceUzs: number;
+  /** The land the house is designed for, in sotix. */
+  plotSotix: number;
   cover: { url: string; position: string; lqip?: string };
 };
 type Extras = { usd: Rate; images: StyleImages; plans: PlanCard[]; phone: string };
 
 /** One question per screen, in this order. */
-const STEPS = ["area", "floors", "style", "walls", "roof", "finish", "extras"] as const;
+const STEPS = ["plot", "area", "floors", "style", "walls", "roof", "finish", "extras"] as const;
 type StepId = (typeof STEPS)[number];
 type View = { kind: "step"; step: number } | { kind: "calculating" } | { kind: "result" };
 
 const AREA_PRESETS = [100, 150, 200, 250, 300, 400] as const;
-const PLOT_PRESETS = [4, 6, 8, 10, 15] as const;
+const PLOT_PRESETS = [4, 5, 6, 8, 10, 15] as const;
 const STYLE_IDS: Style[] = ["modern", "neoclassic", "classic"];
 
 /**
  * Where the quiz starts. A shared link with every answer opens straight on the
- * result; a house page's link (area, floors, style) skips those three questions.
+ * result; a house page's link (land, area, floors, style) skips those four questions.
  */
 type Start = { input: CostInput; view: View; prefilled: boolean; answered: StepId[] };
 
@@ -44,7 +46,7 @@ function startFrom(params: URLSearchParams): Start {
   const input = inputFromParams(params);
   if (params.has("area") && params.has("finish")) return { input, view: { kind: "result" }, prefilled: false, answered: [...STEPS] };
   if (params.has("area") && params.has("floors") && params.has("style")) {
-    return { input, view: { kind: "step", step: STEPS.indexOf("walls") }, prefilled: true, answered: ["area", "floors", "style"] };
+    return { input, view: { kind: "step", step: STEPS.indexOf("walls") }, prefilled: true, answered: ["plot", "area", "floors", "style"] };
   }
   return FRESH;
 }
@@ -146,6 +148,8 @@ function StepView({ step, index, input, images, locale, answered, editing, prefi
 }) {
   const t = useTranslations("calc");
   const [customArea, setCustomArea] = useState(AREA_PRESETS.includes(input.area as never) ? "" : String(input.area));
+  const [customPlot, setCustomPlot] = useState(PLOT_PRESETS.includes(input.plotSotix as never) ? "" : String(input.plotSotix));
+  const plotOk = Number(customPlot) >= 1 && Number(customPlot) <= 100;
   const progress = ((index + 1) / STEPS.length) * 100;
   /** The chosen card, once this question has an answer. */
   const picked = (match: boolean) => answered && match;
@@ -176,6 +180,33 @@ function StepView({ step, index, input, images, locale, answered, editing, prefi
         <p className="mt-3 max-w-xl text-ink-soft">{t(`q.${step}Hint`)}</p>
 
         <div className="mt-7 md:mt-9">
+          {step === "plot" && (
+            <>
+              <div className="stagger-always stagger grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {PLOT_PRESETS.map((plot) => (
+                  <Option key={plot} on={picked(input.plotSotix === plot && !customPlot)} onClick={() => { setCustomPlot(""); choose("plotSotix", plot); }}>
+                    <span className="font-display text-[30px] leading-none text-ink tabular-nums">{plot}<span className="ml-1.5 text-[18px]">{t("sotixUnit")}</span></span>
+                    <span className="mt-2 text-[14px] text-ink-soft tabular-nums">{formatNumber(plot * 100)} m²</span>
+                  </Option>
+                ))}
+              </div>
+              <form
+                className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-dashed border-line p-4"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (plotOk) { set("plotSotix", Math.round(Number(customPlot) * 10) / 10); next(); }
+                }}>
+                <label htmlFor="calc-plot" className="text-[15px] font-semibold text-ink">{t("otherPlot")}</label>
+                <div className="flex items-center gap-2">
+                  <input id="calc-plot" className="field-input w-28 tabular-nums" type="number" inputMode="decimal" min={1} max={100} step={0.5}
+                    placeholder="7" value={customPlot} onChange={(event) => setCustomPlot(event.target.value)} />
+                  <span className="text-ink-soft">{t("sotixUnit")}</span>
+                </div>
+                <button className="btn ml-auto bg-ink text-paper hover:bg-gold disabled:opacity-40" disabled={!plotOk}>{t("next")} →</button>
+              </form>
+            </>
+          )}
+
           {step === "area" && (
             <>
               <div className="stagger-always stagger grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -292,17 +323,6 @@ function StepView({ step, index, input, images, locale, answered, editing, prefi
                   </Option>
                 ))}
               </div>
-              {(input.fence || input.paving) && (
-                <fieldset className="calc-enter mt-6">
-                  <legend className="mb-3 text-[15px] font-semibold text-ink">{t("plot")}</legend>
-                  <div className="flex flex-wrap gap-2">
-                    {PLOT_PRESETS.map((plot) => (
-                      <button key={plot} type="button" aria-pressed={input.plotSotix === plot} onClick={() => set("plotSotix", plot)}
-                        className="calc-chip">{t("sotix", { n: plot })}</button>
-                    ))}
-                  </div>
-                </fieldset>
-              )}
               <div className="mt-8 flex flex-wrap items-center gap-4">
                 <button type="button" onClick={next} className="btn bg-gold text-paper hover:bg-ink">{t("showPrice")} →</button>
                 {!input.basement && !input.fence && !input.paving && <span className="text-[14px] text-ink-soft">{t("nothingExtra")}</span>}
@@ -366,6 +386,7 @@ function ResultView({ input, result, usd, locale, currency, plans, phone, setCur
     { key: "reserve", value: extras, className: "bg-[#8d8a7c]" },
   ] as const;
   const answers: { step: StepId; label: string }[] = [
+    { step: "plot", label: t("sotix", { n: formatNumber(input.plotSotix) }) },
     { step: "area", label: `${formatNumber(input.area)} m²` },
     { step: "floors", label: t("floorsLabel", { n: formatNumber(input.floors) }) },
     { step: "style", label: STYLES[input.style][locale] },
@@ -475,25 +496,12 @@ function ResultView({ input, result, usd, locale, currency, plans, phone, setCur
         </p>
       </section>
 
-      {matches.length === 0 && (
-        <section className="grid gap-5 rounded-2xl border border-line bg-cream p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:p-8">
-          <div>
-            <h2 className="font-display text-[28px] text-ink">{t("customTitle")}</h2>
-            <p className="mt-2 max-w-xl text-ink-soft">{t("customText", { area: formatNumber(input.area) })}</p>
-          </div>
-          <div className="flex flex-wrap gap-3">
-            <a href="#calc-lead" className="btn bg-gold text-paper hover:bg-ink">{t("customCta")} ↓</a>
-            <Link href="/loyihalar" className="btn border border-ink/20 text-ink hover:border-ink">{t("allPlans")}</Link>
-          </div>
-        </section>
-      )}
-
       {matches.length > 0 && (
         <section className="rounded-2xl border border-line bg-paper p-5 md:p-8">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="font-display text-[28px] text-ink">{t("plansTitle")}</h2>
-              <p className="mt-1 max-w-xl text-[14px] text-ink-soft">{t("plansHint")}</p>
+              <p className="mt-1 max-w-xl text-[14px] text-ink-soft">{t("plansHint", { plot: formatNumber(input.plotSotix) })}</p>
             </div>
             <Link href="/loyihalar" className="text-[14px] font-semibold text-gold underline-offset-4 hover:underline">{t("allPlans")} →</Link>
           </div>
@@ -503,11 +511,14 @@ function ResultView({ input, result, usd, locale, currency, plans, phone, setCur
                 <span className="relative block aspect-[4/3] overflow-hidden bg-cream">
                   <Image src={plan.cover.url} alt="" fill sizes="(min-width: 640px) 290px, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                     style={{ objectPosition: plan.cover.position }} placeholder={plan.cover.lqip ? "blur" : "empty"} blurDataURL={plan.cover.lqip} />
+                  {plan.plotSotix <= input.plotSotix && (
+                    <span className="absolute left-3 top-3 rounded-full bg-paper/95 px-2.5 py-1 text-[12px] font-bold text-ink">✓ {t("fitsPlot")}</span>
+                  )}
                 </span>
                 <span className="block p-4">
                   <span className="block font-semibold text-ink">№{plan.code}{plan.name ? ` · ${plan.name}` : ""}</span>
                   <span className="mt-1 block text-[14px] text-ink-soft">
-                    {formatNumber(plan.totalArea)} m² · {t("floorsLabel", { n: formatNumber(plan.floors) })}{plan.style ? ` · ${STYLES[plan.style][locale]}` : ""}
+                    {formatNumber(plan.totalArea)} m² · {t("floorsLabel", { n: formatNumber(plan.floors) })} · {t("sotix", { n: formatNumber(plan.plotSotix) })}
                   </span>
                   <span className="mt-3 block text-[14px] text-ink">{t("planPrice", { amount: moneyFormat("uzs", usd.rate, locale).unit(plan.priceUzs) })}</span>
                 </span>
@@ -680,13 +691,17 @@ function answersQuery(input: CostInput): string {
 }
 
 /**
- * Catalog houses within about a third of the visitor's size, closest first
- * (size, then the same floors, then the same style). None close enough → [].
+ * The catalog houses that best fit the visitor's land and answers. A house that
+ * needs more land than they have ranks below every one that fits; then the
+ * closest in size, the same floors and the same style come first.
  */
 function matchPlans(plans: PlanCard[], input: CostInput, limit = 3): PlanCard[] {
-  const sizeGap = (plan: PlanCard) => Math.abs(plan.totalArea - input.area) / input.area;
-  const distance = (plan: PlanCard) => sizeGap(plan) + (plan.floors === input.floors ? 0 : 0.35) + (plan.style === input.style ? 0 : 0.2);
-  return plans.filter((plan) => sizeGap(plan) <= 0.35).sort((a, b) => distance(a) - distance(b)).slice(0, limit);
+  const distance = (plan: PlanCard) =>
+    (plan.plotSotix <= input.plotSotix ? 0 : 10 + (plan.plotSotix - input.plotSotix) / input.plotSotix) +
+    Math.abs(plan.totalArea - input.area) / input.area +
+    (plan.floors === input.floors ? 0 : 0.35) +
+    (plan.style === input.style ? 0 : 0.2);
+  return [...plans].sort((a, b) => distance(a) - distance(b)).slice(0, limit);
 }
 
 function reducedMotion() {

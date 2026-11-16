@@ -26,7 +26,8 @@ export function calcLeadLines(query: string, origin: string, locale: string, usd
     "🧮 <b>Yangi so'rov — qurilish kalkulyatori</b>",
     "",
     `🏠 ${formatNumber(input.area)} m² · ${formatNumber(input.floors)} qavat · ${STYLES[input.style].uz} · ${WALLS[input.walls]} · ${ROOF[input.roof]}`,
-    `🧱 ${FINISH[input.finish]}${extras.length ? ` + ${extras.join(", ")}` : ""}${input.fence || input.paving ? ` (yer ${formatNumber(input.plotSotix)} sotix)` : ""}`,
+    `📐 Yer: ${formatNumber(input.plotSotix)} sotix`,
+    `🧱 ${FINISH[input.finish]}${extras.length ? ` + ${extras.join(", ")}` : ""}`,
     `💰 Hisob: ${mln(result.totalUzs)} ≈ $${formatNumber(Math.round(result.totalUzs / usdRate))} · 1 m² ${mln(result.perM2Uzs)}`,
     `🔗 ${origin}/${locale}/browse/cost?${clean}`,
   ];

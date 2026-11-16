@@ -53,7 +53,7 @@ export default async function BrowsePage({ params }: Props) {
   const plans: PlanCard[] = section === "cost"
     ? houses.filter((house) => !house.isSample).map((house) => ({
         code: house.code, name: house.name, href: housePath(house, locale), totalArea: house.totalArea, floors: house.floors,
-        style: house.style, priceUzs: house.priceUzs, cover: { url: house.cover.url, position: house.cover.position, lqip: house.cover.lqip },
+        style: house.style, priceUzs: house.priceUzs, plotSotix: house.plotSotix, cover: { url: house.cover.url, position: house.cover.position, lqip: house.cover.lqip },
       }))
     : [];
   // A real Castler house for each style, shown on the calculator's style question.
