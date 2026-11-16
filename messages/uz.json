@@ -28,7 +28,7 @@
     "home": "Bosh sahifa",
     "request": "So'rov qoldirish",
     "company": "Castler arxitektura kompaniyasi",
-    "mainSite": "Castler studiyasi sayti"
+    "mainSite": "Castler arxitektura byurosi sayti"
   },
   "common": {
     "price": "{amount} so'm",
@@ -184,7 +184,7 @@
   },
   "footer": {
     "tagline": "Castler arxitektura kompaniyasining tayyor uy loyihalari katalogi.",
-    "mainSite": "Castler studiyasi sayti",
+    "mainSite": "Castler arxitektura byurosi sayti",
     "contact": "Aloqa",
     "rights": "© {year} Castler",
     "byFloors": "Katalog"

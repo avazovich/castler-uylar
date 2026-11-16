@@ -25,7 +25,7 @@ export async function Header() {
     <div className="reference-header">
       <div className="announcement">
         <div className="wrap">
-          {/* The way back to the Castler studio site (phones: it is in the menu). */}
+          {/* The way back to the Castler main site (phones: it is in the menu). */}
           <a href={mainSite.href} target="_blank" rel="noopener" className="announce-site" aria-label={mainSite.label}>
             castler.uz <span aria-hidden="true">↗</span>
           </a>

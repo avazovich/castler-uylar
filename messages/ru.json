@@ -28,7 +28,7 @@
     "home": "Главная",
     "request": "Оставить заявку",
     "company": "Архитектурная компания Castler",
-    "mainSite": "Сайт студии Castler"
+    "mainSite": "Сайт архитектурного бюро Castler"
   },
   "common": {
     "price": "{amount} сум",
@@ -184,7 +184,7 @@
   },
   "footer": {
     "tagline": "Каталог готовых проектов домов архитектурной компании Castler.",
-    "mainSite": "Сайт студии Castler",
+    "mainSite": "Сайт архитектурного бюро Castler",
     "contact": "Контакты",
     "rights": "© {year} Castler",
     "byFloors": "Каталог"
