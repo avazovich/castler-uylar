@@ -420,7 +420,7 @@
     "houseLink": "Shu uyni qurish narxini hisoblash",
     "houseText": "Kalkulyator shu loyihaning maydoni, qavatlari va uslubi bilan ochiladi — yana 4 ta savol qoladi.",
     "yourAnswers": "Javoblaringiz",
-    "ctaJump": "Aniq smeta olish",
+    "ctaJump": "Castler bilan loyihalash",
     "saveTitle": "Narxni qanday kamaytirish mumkin",
     "saveHint": "Bitta javobni o‘zgartirsangiz, shuncha tejaysiz. Bosing — narx darhol qayta hisoblanadi.",
     "save": {
@@ -442,17 +442,21 @@
     "plansHint": "{plot} sotix yeringiz va javoblaringiz bo‘yicha tanlandi. Tayyor loyihada chizmalar bor — qurilishni darhol boshlash mumkin.",
     "allPlans": "Barcha loyihalar",
     "planPrice": "Loyiha narxi: {amount}",
-    "leadEyebrow": "Keyingi qadam",
-    "leadTitle": "Aniq smeta va tejash rejasini oling",
+    "leadEyebrow": "Castler xizmati",
+    "leadTitle": "Uyingizni Castler arxitektorlari loyihalasin",
     "leadPoints": [
-      "Smetani tanlagan loyihangiz va yeringizga moslab hisoblaymiz",
-      "Qayerda pul tejash mumkinligini ko‘rsatamiz",
-      "Mos tayyor loyihani tanlashga yordam beramiz"
+      "Arxitektura va fasad loyihasi — aynan sizning yeringiz va oilangiz uchun",
+      "Interyer dizayni — xonalar, materiallar va yoritish",
+      "Qurilish nazorati — uy loyihada qanday chizilgan bo‘lsa, shunday quriladi",
+      "Aniq smeta — shu hisob asosida, loyihangiz bo‘yicha"
     ],
     "leadNote": "Hisobingiz so‘rov bilan birga keladi — qayta tushuntirish shart emas.",
     "sotixUnit": "sotix",
     "otherPlot": "Boshqa o‘lcham:",
-    "fitsPlot": "Yeringizga sig‘adi"
+    "fitsPlot": "Yeringizga sig‘adi",
+    "ctaDetails": "Batafsil hisob",
+    "leadText": "2013 yildan Namanganda. Konsepsiyadan qurilish nazoratigacha — bitta jamoa, bitta mas’uliyat.",
+    "plansEyebrow": "Yoki tayyor loyiha"
   },
   "calcSeo": {
     "title": "Uy qurish narxi kalkulyatori 2026 — Namangan | Castler Uylar",

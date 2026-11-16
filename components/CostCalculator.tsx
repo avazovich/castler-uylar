@@ -446,61 +446,39 @@ function ResultView({ input, result, usd, locale, currency, plans, phone, setCur
           <p className="max-w-md text-[14px] text-paper/70">
             {t("range", { pct: RANGE * 100, low: money.big(result.lowUzs), high: money.big(result.highUzs) })}
           </p>
-          <a href="#calc-lead" className="btn bg-accent text-[#21150e] hover:bg-accent-hover">{t("ctaJump")} ↓</a>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a href="#calc-breakdown" className="text-[14px] font-semibold text-paper/80 underline-offset-4 hover:text-paper hover:underline">{t("ctaDetails")} ↓</a>
+            <a href="#calc-lead" className="btn bg-accent text-[#21150e] hover:bg-accent-hover">{t("ctaJump")} ↓</a>
+          </div>
         </div>
       </section>
 
-      {savings.length > 0 && (
-        <section className="rounded-2xl border border-line bg-paper p-5 md:p-8">
-          <h2 className="font-display text-[28px] text-ink">{t("saveTitle")}</h2>
-          <p className="mt-1 text-[14px] text-ink-soft">{t("saveHint")}</p>
-          <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {savings.map((option) => (
-              <article key={option.id} className="flex flex-col rounded-xl border border-line p-4">
-                <p className="font-display text-[26px] leading-none text-gold tabular-nums">−{money.big(option.savingUzs)}</p>
-                <h3 className="mt-3 font-semibold text-ink">{t(`save.${option.id}`)}</h3>
-                <p className="mt-1 flex-1 text-[14px] leading-snug text-ink-soft">
-                  {t(`save.${option.id}Why`, {
-                    from: STYLES[input.style][locale],
-                    to: option.change.style ? STYLES[option.change.style][locale] : "",
-                  })}
-                </p>
-                <button type="button" onClick={() => apply(option.change)} className="calc-chip mt-4 self-start">{t("save.apply")}</button>
-              </article>
+      <section id="calc-lead" className="grid scroll-mt-28 gap-6 rounded-2xl border border-[#e2d6c6] bg-[#f6efe6] p-6 text-ink md:grid-cols-[minmax(0,1fr)_minmax(0,420px)] md:p-10">
+        <div>
+          <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold">{t("leadEyebrow")}</p>
+          <h2 className="mt-3 font-display text-[32px] leading-tight md:text-[38px]">{t("leadTitle")}</h2>
+          <p className="mt-3 max-w-md text-ink-soft">{t("leadText")}</p>
+          <ul className="mt-6 grid gap-3">
+            {(t.raw("leadPoints") as string[]).map((point) => (
+              <li key={point} className="flex gap-3 text-ink">
+                <svg className="mt-0.5 h-5 w-5 shrink-0 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7.5" /></svg>
+                {point}
+              </li>
             ))}
-          </div>
-        </section>
-      )}
-
-      <section className="rounded-2xl border border-line bg-paper">
-        <div className="px-5 pb-2 pt-6 md:px-8">
-          <h2 className="font-display text-[28px] text-ink">{t("breakdown")}</h2>
-          <p className="mt-1 text-[14px] text-ink-soft">{t("breakdownHint")}</p>
-          <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-ink-soft">
-            <span className="inline-flex items-center gap-1.5"><Dot source="market" />{t("legendMarket")}</span>
-            <span className="inline-flex items-center gap-1.5"><Dot source="estimate" />{t("legendEstimate")}</span>
-          </p>
+          </ul>
+          <p className="mt-6 text-[14px] text-ink-soft">{t("leadNote")}</p>
         </div>
-        <ol className="mt-3">
-          {result.stages.map((stage) => (
-            <StageRow key={stage.id} stage={stage} total={result.totalUzs} money={money} tr={tr} usta={t("usta")} />
-          ))}
-        </ol>
-        <p className="border-t border-line px-5 py-4 text-[13px] leading-relaxed text-ink-soft md:px-8">
-          {t("geometry", {
-            footprint: formatNumber(Math.round(result.geometry.footprint)),
-            perimeter: formatNumber(Math.round(result.geometry.perimeter)),
-            height: formatNumber(result.geometry.storeyHeight),
-            windows: formatNumber(Math.round(result.geometry.windowsM2)),
-          })}
-        </p>
+        <div className="rounded-xl bg-paper p-5 text-ink shadow-[0_16px_40px_-28px_rgb(26_29_22/0.45)] md:p-6">
+          <LeadForm calc={answersQuery(input)} phone={phone} />
+        </div>
       </section>
 
       {matches.length > 0 && (
         <section className="rounded-2xl border border-line bg-paper p-5 md:p-8">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="font-display text-[28px] text-ink">{t("plansTitle")}</h2>
+              <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold">{t("plansEyebrow")}</p>
+              <h2 className="mt-2 font-display text-[28px] text-ink">{t("plansTitle")}</h2>
               <p className="mt-1 max-w-xl text-[14px] text-ink-soft">{t("plansHint", { plot: formatNumber(input.plotSotix) })}</p>
             </div>
             <Link href="/loyihalar" className="text-[14px] font-semibold text-gold underline-offset-4 hover:underline">{t("allPlans")} →</Link>
@@ -528,23 +506,50 @@ function ResultView({ input, result, usd, locale, currency, plans, phone, setCur
         </section>
       )}
 
-      <section id="calc-lead" className="grid scroll-mt-28 gap-6 rounded-2xl bg-ink p-6 text-paper md:grid-cols-[minmax(0,1fr)_minmax(0,420px)] md:p-10">
-        <div>
-          <p className="text-[12.5px] font-semibold uppercase tracking-[0.14em] text-gold-light">{t("leadEyebrow")}</p>
-          <h2 className="mt-3 font-display text-[32px] leading-tight md:text-[38px]">{t("leadTitle")}</h2>
-          <ul className="mt-6 grid gap-3">
-            {(t.raw("leadPoints") as string[]).map((point) => (
-              <li key={point} className="flex gap-3 text-paper/85">
-                <svg className="mt-0.5 h-5 w-5 shrink-0 text-gold-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12.5 10 17 19 7.5" /></svg>
-                {point}
-              </li>
+      {savings.length > 0 && (
+        <section className="rounded-2xl border border-line bg-paper p-5 md:p-8">
+          <h2 className="font-display text-[28px] text-ink">{t("saveTitle")}</h2>
+          <p className="mt-1 text-[14px] text-ink-soft">{t("saveHint")}</p>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {savings.map((option) => (
+              <article key={option.id} className="flex flex-col rounded-xl border border-line p-4">
+                <p className="font-display text-[26px] leading-none text-gold tabular-nums">−{money.big(option.savingUzs)}</p>
+                <h3 className="mt-3 font-semibold text-ink">{t(`save.${option.id}`)}</h3>
+                <p className="mt-1 flex-1 text-[14px] leading-snug text-ink-soft">
+                  {t(`save.${option.id}Why`, {
+                    from: STYLES[input.style][locale],
+                    to: option.change.style ? STYLES[option.change.style][locale] : "",
+                  })}
+                </p>
+                <button type="button" onClick={() => apply(option.change)} className="calc-chip mt-4 self-start">{t("save.apply")}</button>
+              </article>
             ))}
-          </ul>
-          <p className="mt-6 text-[14px] text-paper/60">{t("leadNote")}</p>
+          </div>
+        </section>
+      )}
+
+      <section id="calc-breakdown" className="scroll-mt-28 rounded-2xl border border-line bg-paper">
+        <div className="px-5 pb-2 pt-6 md:px-8">
+          <h2 className="font-display text-[28px] text-ink">{t("breakdown")}</h2>
+          <p className="mt-1 text-[14px] text-ink-soft">{t("breakdownHint")}</p>
+          <p className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-ink-soft">
+            <span className="inline-flex items-center gap-1.5"><Dot source="market" />{t("legendMarket")}</span>
+            <span className="inline-flex items-center gap-1.5"><Dot source="estimate" />{t("legendEstimate")}</span>
+          </p>
         </div>
-        <div className="rounded-xl bg-paper p-5 text-ink md:p-6">
-          <LeadForm calc={answersQuery(input)} phone={phone} />
-        </div>
+        <ol className="mt-3">
+          {result.stages.map((stage) => (
+            <StageRow key={stage.id} stage={stage} total={result.totalUzs} money={money} tr={tr} usta={t("usta")} />
+          ))}
+        </ol>
+        <p className="border-t border-line px-5 py-4 text-[13px] leading-relaxed text-ink-soft md:px-8">
+          {t("geometry", {
+            footprint: formatNumber(Math.round(result.geometry.footprint)),
+            perimeter: formatNumber(Math.round(result.geometry.perimeter)),
+            height: formatNumber(result.geometry.storeyHeight),
+            windows: formatNumber(Math.round(result.geometry.windowsM2)),
+          })}
+        </p>
       </section>
 
       <details className="rounded-2xl border border-line bg-paper px-5 py-4 text-[14px] text-ink-soft md:px-8">

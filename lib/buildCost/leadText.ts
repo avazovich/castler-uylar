@@ -23,7 +23,7 @@ export function calcLeadLines(query: string, origin: string, locale: string, usd
     ...(input.basement ? { basement: "1" } : {}), ...(input.fence ? { fence: "1" } : {}), ...(input.paving ? { paving: "1" } : {}),
   });
   return [
-    "🧮 <b>Yangi so'rov — qurilish kalkulyatori</b>",
+    "🏗 <b>Yangi so'rov — Castler xizmati</b> (qurilish kalkulyatoridan)",
     "",
     `🏠 ${formatNumber(input.area)} m² · ${formatNumber(input.floors)} qavat · ${STYLES[input.style].uz} · ${WALLS[input.walls]} · ${ROOF[input.roof]}`,
     `📐 Yer: ${formatNumber(input.plotSotix)} sotix`,
