@@ -1,4 +1,5 @@
 import { articles, articlePath } from "./content/blog";
+import { CALC_SLUG } from "./lib/browse";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -6,7 +7,7 @@ const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return articles.flatMap(({ legacySlug, slugs }) =>
+    const blog = articles.flatMap(({ legacySlug, slugs }) =>
       (["uz", "ru"] as const).flatMap((locale) => {
         const other = locale === "uz" ? "ru" : "uz";
         return [legacySlug, slugs[other]].map((slug) => ({
@@ -16,6 +17,18 @@ const nextConfig: NextConfig = {
         }));
       }),
     );
+    // The calculator: its old address and the other language's slug (the
+    // language switch keeps the path) go to this language's own address.
+    // Next keeps the query, so a shared calculation (?area=…) survives.
+    const calculator = (["uz", "ru"] as const).flatMap((locale) => {
+      const other = locale === "uz" ? "ru" : "uz";
+      return [`/${locale}/browse/cost`, `/${locale}/${CALC_SLUG[other]}`].map((source) => ({
+        source,
+        destination: `/${locale}/${CALC_SLUG[locale]}`,
+        permanent: true,
+      }));
+    });
+    return [...blog, ...calculator];
   },
   images: {
     // Photos live on Sanity's CDN, which resizes on its own — see

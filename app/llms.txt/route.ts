@@ -1,3 +1,4 @@
+import { calcPath } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
 import { formatNumber, formatUsd } from "@/lib/format";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
@@ -55,6 +56,11 @@ export async function GET() {
     `- Telefon: ${settings.phone}`,
     `- Saytdagi har bir loyiha sahifasida «Loyihani muhokama qilish» tugmasi — ism va telefon qoldiriladi, mutaxassis qo'ng'iroq qiladi.`,
     settings.instagram ? `- Instagram: ${settings.instagram}` : null,
+    "",
+    "## Uy qurish narxi kalkulyatori / Калькулятор стоимости строительства",
+    "",
+    `- [Uy qurish narxi kalkulyatori](${absoluteUrl(`/uz${calcPath("uz")}`)}): 8 ta savol (yer, maydon, qavatlar, uslub, devor, tom, bosqich, qo'shimchalar) — poydevordan pardozgacha har bir material va usta haqi Namangan narxlarida, so'm va dollarda; yerga eng mos tayyor loyihalarni ham ko'rsatadi. Bepul.`,
+    `- [Калькулятор стоимости строительства дома](${absoluteUrl(`/ru${calcPath("ru")}`)}): 8 вопросов — каждый материал и работа мастеров по ценам Намангана, в сумах и долларах; подбирает готовые проекты под участок. Бесплатно.`,
     "",
     ...(settings.included.length ? ["## Loyihaga nimalar kiradi / Что входит в проект", "", ...settings.included.map((x) => `- ${x}`), ""] : []),
     "## Loyihalar / Проекты",

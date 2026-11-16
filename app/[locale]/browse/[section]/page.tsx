@@ -2,20 +2,17 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { notFound } from "next/navigation";
-import { Suspense } from "react";
-import { CostCalculator, CostCalculatorFromUrl, type PlanCard, type StyleImages } from "@/components/CostCalculator";
+import { notFound, permanentRedirect } from "next/navigation";
 import { BrowseTiles } from "@/components/BrowseTiles";
 import { JsonLd } from "@/components/JsonLd";
 import { LeadForm } from "@/components/LeadForm";
 import { PageHeader } from "@/components/PageHeader";
 import { Link } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
-import { browsePath, browseSections } from "@/lib/browse";
+import { browsePath, browseSections, calcPath } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
-import { breadcrumbLd, housePath, pageMetadata } from "@/lib/seo";
-import { getUsdRate } from "@/lib/buildCost/usdRate";
+import { breadcrumbLd, pageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string; section: string }> };
 
@@ -23,17 +20,19 @@ async function readParams(params: Props["params"]) {
   const { locale, section } = await params;
   const entry = browseSections.find((item) => item === section);
   if (!hasLocale(routing.locales, locale) || !entry) notFound();
+  // The calculator lives at its own address now (next.config.ts redirects with the answers kept).
+  if (entry === "cost") permanentRedirect(`/${locale}${calcPath(locale)}`);
   return { locale, section: entry };
 }
 
 export function generateStaticParams() {
-  return browseSections.map((section) => ({ section }));
+  return browseSections.filter((section) => section !== "cost").map((section) => ({ section }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, section } = await readParams(params);
   const t = await getTranslations({ locale, namespace: "browse" });
-  return pageMetadata(locale, (language) => `/${language}${browsePath(section)}`, `${t(section)} | Castler Uylar`, t(`${section}Intro`));
+  return pageMetadata(locale, (language) => `/${language}${browsePath(section, language)}`, `${t(section)} | Castler Uylar`, t(`${section}Intro`));
 }
 
 export default async function BrowsePage({ params }: Props) {
@@ -47,20 +46,6 @@ export default async function BrowsePage({ params }: Props) {
     : [];
   const guide = section === "faq" ? t.raw("faqItems") : home.raw("guide");
   const settings = section === "consult" ? await getSettings(locale) : undefined;
-  const usd = section === "cost" ? await getUsdRate() : undefined;
-  const officePhone = section === "cost" ? (await getSettings(locale)).phone : "";
-  // Real catalog houses (never the "Namuna" samples), for "plans that fit your answers".
-  const plans: PlanCard[] = section === "cost"
-    ? houses.filter((house) => !house.isSample).map((house) => ({
-        code: house.code, name: house.name, href: housePath(house, locale), totalArea: house.totalArea, floors: house.floors,
-        style: house.style, priceUzs: house.priceUzs, plotSotix: house.plotSotix, cover: { url: house.cover.url, position: house.cover.position, lqip: house.cover.lqip },
-      }))
-    : [];
-  // A real Castler house for each style, shown on the calculator's style question.
-  const styleImages: StyleImages = Object.fromEntries((["modern", "neoclassic", "classic"] as const).flatMap((style) => {
-    const house = houses.find((item) => item.style === style && !item.isSample) ?? houses.find((item) => item.style === style);
-    return house ? [[style, { url: house.cover.url, position: house.cover.position, lqip: house.cover.lqip }]] : [];
-  }));
   const sizes = [
     { label: t("compact"), query: "max=300", min: 0, max: 300 },
     { label: t("medium"), query: "min=301&max=400", min: 301, max: 400 },
@@ -69,7 +54,7 @@ export default async function BrowsePage({ params }: Props) {
 
   return (
     <>
-      <JsonLd data={breadcrumbLd([{ name: nav("home"), path: `/${locale}` }, { name: t(section), path: `/${locale}${browsePath(section)}` }])} />
+      <JsonLd data={breadcrumbLd([{ name: nav("home"), path: `/${locale}` }, { name: t(section), path: `/${locale}${browsePath(section, locale)}` }])} />
       <PageHeader title={t(section)} subtitle={t(`${section}Intro`)} crumbs={[{ label: nav("home"), href: "/" }, { label: t(section) }]} />
       <section className="mx-auto max-w-[1280px] px-4 py-12 md:px-8">
         {categories.length > 0 && <BrowseTiles categories={categories} locale={locale} />}
@@ -89,11 +74,6 @@ export default async function BrowsePage({ params }: Props) {
               );
             })}
           </div>
-        )}
-        {usd && (
-          <Suspense fallback={<CostCalculator usd={usd} images={styleImages} plans={plans} phone={officePhone} />}>
-            <CostCalculatorFromUrl usd={usd} images={styleImages} plans={plans} phone={officePhone} />
-          </Suspense>
         )}
         {(section === "guides" || section === "faq") && (
           <div className={section === "guides" ? "grid gap-4 md:grid-cols-3" : "max-w-3xl space-y-3"}>

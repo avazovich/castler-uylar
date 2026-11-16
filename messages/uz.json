@@ -453,5 +453,28 @@
     "sotixUnit": "sotix",
     "otherPlot": "Boshqa o‘lcham:",
     "fitsPlot": "Yeringizga sig‘adi"
+  },
+  "calcSeo": {
+    "title": "Uy qurish narxi kalkulyatori 2026 — Namangan | Castler Uylar",
+    "description": "Uy qurish qancha turadi? 8 ta savolga javob bering: beton, armatura, g‘isht, deraza va usta haqigacha har bir xarajat so‘m va dollarda. Bepul.",
+    "h1": "Uy qurish narxi kalkulyatori",
+    "tableTitle": "Namanganda uy qurish narxi — 2026",
+    "tableIntro": "Pishgan g‘isht, qiya tom va zamonaviy fasadli uy uchun kalkulyatorning o‘zi hisoblagan narxlar. O‘z uyingizni yuqoridagi kalkulyatorda hisoblang.",
+    "tableHouse": "Uy",
+    "tableRow": "{area} m², {floors} qavat",
+    "tableNote": "Narxlar: {date}. Dollar kursi {rate} so‘m (Markaziy bank). Real smeta odatda ±15 % farq qiladi.",
+    "faqTitle": "Ko‘p so‘raladigan savollar",
+    "faq": {
+      "q1": "150 m² uy qurish qancha turadi?",
+      "a1": "Namangan narxlarida 150 m² ikki qavatli g‘isht uy: qora karobka taxminan {shell}, qoralama pardoz bilan {rough}, kalit topshirish {turnkey} ({usd}). Aniq summa uslub, devor va tom turiga bog‘liq — o‘z uyingizni kalkulyatorda hisoblang.",
+      "q2": "1 m² uy qurish narxi qancha?",
+      "a2": "150 m² ikki qavatli g‘isht uyda 1 m² narxi: qora karobka taxminan {shell} ({shellUsd}), kalit topshirish taxminan {turnkey} ({turnkeyUsd}).",
+      "q3": "G‘isht yoki gazoblok — qaysi biri arzon?",
+      "a3": "Gazoblok arzonroq: 150 m² kalit topshiriladigan uyda devorni gazoblokdan qursangiz, taxminan {diff} tejaysiz. Pishgan g‘isht esa an’anaviy, mustahkam va issiqni yaxshi ushlaydi.",
+      "q4": "Kalkulyator hisobiga nimalar kiradi?",
+      "a4": "Poydevor, devorlar va seysmik karkas, plitalar va zinapoya, tom, deraza va tashqi eshiklar. Tanlovingizga qarab — elektr, suv, isitish, suvoq, fasad, pol, bo‘yoq, hammomlar, yerto‘la, devor va darvoza. Har bir material va usta haqi alohida ko‘rsatiladi.",
+      "q5": "Hisob qanchalik aniq?",
+      "a5": "Narxlar Namangan bozoridan olingan ({date}), dollar kursi — Markaziy bank kursi. Real smeta odatda ±15 % farq qiladi; aniq summa loyiha chizmalari va yeringiz bo‘yicha smetada hisoblanadi."
+    }
   }
 }

@@ -84,7 +84,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
   ]);
   const fmt = formatNumber;
   const calc = await getTranslations("calc");
-  const calcHref = `${browsePath("cost")}?${new URLSearchParams({ area: String(Math.round(house.totalArea)), floors: String(house.floors), plot: String(house.plotSotix), ...(house.style ? { style: house.style } : {}) })}`;
+  const calcHref = `${browsePath("cost", locale)}?${new URLSearchParams({ area: String(Math.round(house.totalArea)), floors: String(house.floors), plot: String(house.plotSotix), ...(house.style ? { style: house.style } : {}) })}`;
   const title = house.name ?? common("projectNo", { code: house.code });
   const summary = toSummary(house);
   const images = [house.cover, ...house.gallery];
@@ -229,7 +229,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           <section id="modifications" className="mt-12 rounded-lg border border-line bg-[#e9e4d9] p-5 md:p-7">
             <SectionTitle title={browse("adapt")} />
             <p className="my-4 max-w-2xl text-ink-soft">{browse("adaptText")}</p>
-            <Link href={browsePath("consult")} className="btn bg-gold text-paper">{browse("consult")} →</Link>
+            <Link href={browsePath("consult", locale)} className="btn bg-gold text-paper">{browse("consult")} →</Link>
           </section>
 
           {house.buildEstimate.length > 0 ? (

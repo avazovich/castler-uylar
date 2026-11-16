@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { articles, articlePath, blogPath } from "@/content/blog";
 import { Link } from "@/i18n/navigation";
+import { calcPath } from "@/lib/browse";
 import { routing } from "@/i18n/routing";
 import { absoluteUrl, breadcrumbLd, pageMetadata } from "@/lib/seo";
 
@@ -38,6 +39,7 @@ export default async function BlogArticlePage({ params }: Props) {
   const path = articlePath(locale, entry.slugs[locale]);
   const destinationLabel = entry.destination === "/browse/consult" ? browse("consult")
     : entry.destination === "/browse/cost" ? browse("cost") : nav("catalog");
+  const destination = entry.destination === "/browse/cost" ? calcPath(locale) : entry.destination;
   return (
     <>
       <JsonLd data={[
@@ -57,7 +59,7 @@ export default async function BlogArticlePage({ params }: Props) {
             </section>
           ))}
           <div className="flex flex-wrap items-center gap-4 border-t border-line pt-6">
-            <Link className="btn bg-gold text-white hover:bg-ink" href={entry.destination}>{destinationLabel} →</Link>
+            <Link className="btn bg-gold text-white hover:bg-ink" href={destination}>{destinationLabel} →</Link>
             <Link className="font-bold text-gold hover:underline" href={blogPath()}>{t("all")} →</Link>
           </div>
         </div>

@@ -16,7 +16,7 @@ export async function Header() {
   const [t, browse, blog, settings] = await Promise.all([getTranslations("nav"), getTranslations("browse"), getTranslations("blog"), getSettings(locale)]);
   const items = [
     { href: "/loyihalar", label: t("catalog") },
-    ...browseSections.map((section) => ({ href: browsePath(section), label: browse(section) })),
+    ...browseSections.map((section) => ({ href: browsePath(section, locale), label: browse(section) })),
     { href: "/blog", label: blog("label") },
   ];
   const mainSite = { href: `${MAIN_SITE_URL}/${locale}`, label: t("mainSite") };
@@ -43,7 +43,7 @@ export async function Header() {
             CASTLER UYLAR
           </Link>
           <HeaderSearch />
-          <Link href={browsePath("consult")} className="contact">
+          <Link href={browsePath("consult", locale)} className="contact">
             <small>{browse("contactLabel")}</small><strong>{browse("contactAction")} ↗</strong>
           </Link>
           <a href={telHref(settings.phone)} className="mast-call" aria-label={`${t("call")}: ${settings.phone}`}>
@@ -53,7 +53,7 @@ export async function Header() {
         </div>
         <nav className="nav">
           <div className="wrap">
-            {items.filter((item) => item.href !== browsePath("consult")).map((item) => <Link key={item.href} href={item.href} className={item.href === "/blog" ? "nav-cta" : undefined}>{item.label}</Link>)}
+            {items.filter((item) => item.href !== browsePath("consult", locale)).map((item) => <Link key={item.href} href={item.href} className={item.href === "/blog" ? "nav-cta" : undefined}>{item.label}</Link>)}
           </div>
         </nav>
       </header>

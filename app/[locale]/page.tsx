@@ -39,7 +39,7 @@ export default async function HomePage({ params }: Props) {
   const steps = home.raw("steps") as Entry[];
   const faq = browse.raw("faqItems") as Entry[];
   const floors = [...new Set(houses.map(({ floors }) => floors))].sort((a, b) => a - b);
-  const consult = browsePath("consult");
+  const consult = browsePath("consult", locale);
   const contact = settings.telegram ? `https://t.me/${settings.telegram}` : undefined;
 
   return (
@@ -74,9 +74,9 @@ export default async function HomePage({ params }: Props) {
           ))}
         </div>
         <div className="inline-links">
-          <Link href={browsePath("styles")}>{browse("styles")} →</Link>
-          <Link href={browsePath("collections")}>{browse("collections")}</Link>
-          <Link href={browsePath("size")}>{browse("size")}</Link>
+          <Link href={browsePath("styles", locale)}>{browse("styles")} →</Link>
+          <Link href={browsePath("collections", locale)}>{browse("collections")}</Link>
+          <Link href={browsePath("size", locale)}>{browse("size")}</Link>
         </div>
       </section>}
 
@@ -111,7 +111,7 @@ export default async function HomePage({ params }: Props) {
           <div><h3>{t("costFactors")}</h3><ul className="consult-list">{(t.raw("factors") as string[]).map((item) => <li key={item}>{item}</li>)}</ul></div>
           <div className="grid content-center gap-4">
             <p className="text-ink-soft">{calc("teaser")}</p>
-            <Link href={browsePath("cost")} className="btn justify-self-start bg-gold text-paper hover:bg-ink">{calc("open")} →</Link>
+            <Link href={browsePath("cost", locale)} className="btn justify-self-start bg-gold text-paper hover:bg-ink">{calc("open")} →</Link>
           </div>
         </div>
       </div></section>
