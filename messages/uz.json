@@ -5,7 +5,8 @@
     "metaTitle": "Uy loyihalari va qurilish bo‘yicha blog | Castler Uylar",
     "intro": "Yer maydoniga mos uy tanlash, qavat rejalarini solishtirish va qurilish smetasini tayyorlash bo‘yicha amaliy maqolalar.",
     "read": "Maqolani o‘qish",
-    "all": "Barcha maqolalar"
+    "all": "Barcha maqolalar",
+    "housesTitle": "Maqolaga mos tayyor loyihalar"
   },
   "meta": {
     "title": "Tayyor uy loyihalari — narxlari, rejalari va rasmlari | Castler",
@@ -197,7 +198,25 @@
   "collection": {
     "count": "{count} ta loyiha",
     "otherTitle": "Boshqa turkumlar",
-    "allProjects": "Barcha loyihalar"
+    "allProjects": "Barcha loyihalar",
+    "factProjects": "Loyihalar",
+    "factPrice": "Loyiha narxi",
+    "factPlot": "Yer maydoni",
+    "factWidth": "Eng tor yer eni",
+    "compareTitle": "Loyihalarni solishtiring",
+    "compareNote": "Yeringizning enini o'lchang: «Yer eni» ustunidagi qiymat yeringiz enidan katta bo'lmagan loyihalar sig'adi.",
+    "colProject": "Loyiha",
+    "colPlot": "Yer",
+    "colWidth": "Yer eni",
+    "colFloors": "Qavat",
+    "colPrice": "Narxi",
+    "faqTitle": "Ko'p so'raladigan savollar",
+    "guidesTitle": "Tanlashga yordam beradigan maqolalar",
+    "calcTitle": "Qurilish qancha turadi?",
+    "calcText": "Uy qurish narxi kalkulyatori poydevordan pardozgacha har bir ishni alohida hisoblaydi.",
+    "calcCta": "Narxni hisoblash",
+    "width": "{value} m dan",
+    "priceFrom": "{amount} so'mdan"
   },
   "browse": {
     "galleryLabel": "Rasmlar",

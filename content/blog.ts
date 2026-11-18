@@ -10,13 +10,15 @@ type Article = {
   legacySlug: string;
   slugs: Record<Locale, string>;
   destination: string;
+  /** Category pages (lib/collections.ts ids) whose houses the article shows and links to. */
+  collections?: string[];
   uz: Translation;
   ru: Translation;
 };
 
 export const articles: Article[] = [
   {
-    legacySlug: "house-on-4-sotix", slugs: { uz: "4-sotixga-uy-loyihasi", ru: "proekt-doma-na-4-sotkah" }, destination: "/loyihalar?sotix=4",
+    legacySlug: "house-on-4-sotix", slugs: { uz: "4-sotixga-uy-loyihasi", ru: "proekt-doma-na-4-sotkah" }, destination: "/loyihalar?sotix=4", collections: ["plot-4", "plot-6"],
     uz: {
       title: "4 sotixga qanday uy loyihasi mos keladi?",
       description: "4 sotixli uchastkada uy, mashina joyi va hovli uchun joyni qanday taqsimlash mumkin?",
@@ -37,7 +39,7 @@ export const articles: Article[] = [
     },
   },
   {
-    legacySlug: "house-on-6-sotix", slugs: { uz: "6-sotixga-uy-loyihasi", ru: "proekt-doma-na-6-sotkah" }, destination: "/loyihalar?sotix=6",
+    legacySlug: "house-on-6-sotix", slugs: { uz: "6-sotixga-uy-loyihasi", ru: "proekt-doma-na-6-sotkah" }, destination: "/loyihalar?sotix=6", collections: ["plot-6", "plot-8"],
     uz: {
       title: "6 sotixga uy loyihasini qanday tanlash kerak?",
       description: "6 sotixli yerda xona soni, hovli, terassa va mashina joyini bir rejada solishtiring.",
@@ -58,7 +60,7 @@ export const articles: Article[] = [
     },
   },
   {
-    legacySlug: "one-or-two-floors", slugs: { uz: "bir-yoki-ikki-qavatli-uy", ru: "odnoetazhnyy-ili-dvuhetazhnyy-dom" }, destination: "/loyihalar",
+    legacySlug: "one-or-two-floors", slugs: { uz: "bir-yoki-ikki-qavatli-uy", ru: "odnoetazhnyy-ili-dvuhetazhnyy-dom" }, destination: "/loyihalar", collections: ["floors-1", "floors-2"],
     uz: {
       title: "Bir qavatli yoki ikki qavatli uy: qaysi biri qulay?",
       description: "Bir va ikki qavatli uy rejalarini hovli, zinapoya, kundalik harakat va qurilish smetasi bo‘yicha taqqoslang.",
@@ -79,7 +81,7 @@ export const articles: Article[] = [
     },
   },
   {
-    legacySlug: "narrow-lot-house", slugs: { uz: "tor-yerga-uy-loyihasi", ru: "proekt-doma-dlya-uzkogo-uchastka" }, destination: "/loyihalar?eni=15",
+    legacySlug: "narrow-lot-house", slugs: { uz: "tor-yerga-uy-loyihasi", ru: "proekt-doma-dlya-uzkogo-uchastka" }, destination: "/loyihalar?eni=15", collections: ["plot-4", "floors-2"],
     uz: {
       title: "Tor yerga uy loyihasi: nimalarni tekshirish kerak?",
       description: "Tor uchastkada uy eni, mashina kirishi, tabiiy yorug‘lik va ichki hovlini qanday rejalashtirish mumkin.",
@@ -121,7 +123,7 @@ export const articles: Article[] = [
     },
   },
   {
-    legacySlug: "what-is-in-a-house-plan", slugs: { uz: "uy-loyihasi-tarkibi", ru: "chto-vhodit-v-proekt-doma" }, destination: "/loyihalar",
+    legacySlug: "what-is-in-a-house-plan", slugs: { uz: "uy-loyihasi-tarkibi", ru: "chto-vhodit-v-proekt-doma" }, destination: "/loyihalar", collections: ["style-modern", "style-neoclassic"],
     uz: {
       title: "Tayyor uy loyihasi tarkibiga nimalar kiradi?",
       description: "Qavat rejasi, fasad, kesim, konstruktiv va muhandislik chizmalarini sotib olishdan oldin tekshiring.",
@@ -163,7 +165,7 @@ export const articles: Article[] = [
     },
   },
   {
-    legacySlug: "measure-your-plot", slugs: { uz: "uy-qurish-uchun-yerni-olchash", ru: "kak-izmerit-uchastok" }, destination: "/loyihalar",
+    legacySlug: "measure-your-plot", slugs: { uz: "uy-qurish-uchun-yerni-olchash", ru: "kak-izmerit-uchastok" }, destination: "/loyihalar", collections: ["plot-4", "plot-6", "plot-8", "plot-10"],
     uz: {
       title: "Uy loyihasini tanlash uchun yerni qanday o‘lchash kerak?",
       description: "Loyihani tekshirish uchun uchastka eni, uzunligi, ko‘cha tomoni va boshqa ma’lumotlarni tayyorlang.",
@@ -184,7 +186,7 @@ export const articles: Article[] = [
     },
   },
   {
-    legacySlug: "courtyard-house-plan", slugs: { uz: "ichki-hovlili-uy-loyihasi", ru: "proekt-doma-s-vnutrennim-dvorom" }, destination: "/loyihalar",
+    legacySlug: "courtyard-house-plan", slugs: { uz: "ichki-hovlili-uy-loyihasi", ru: "proekt-doma-s-vnutrennim-dvorom" }, destination: "/loyihalar", collections: ["floors-1"],
     uz: {
       title: "Ichki hovlili uy loyihasini qanday tanlash kerak?",
       description: "Ichki hovlini tanlashda xonalar yo‘nalishi, maxfiylik, soya va kundalik foydalanishni tekshiring.",

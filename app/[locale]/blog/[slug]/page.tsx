@@ -2,15 +2,20 @@ import type { Metadata } from "next";
 import { hasLocale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { HouseCard } from "@/components/HouseCard";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHeader } from "@/components/PageHeader";
 import { articles, articlePath, blogPath } from "@/content/blog";
 import { Link } from "@/i18n/navigation";
 import { calcPath } from "@/lib/browse";
+import { collectionHref, liveCollections } from "@/lib/collections";
+import { getHouses, toSummary } from "@/lib/houses";
 import { routing } from "@/i18n/routing";
 import { absoluteUrl, breadcrumbLd, pageMetadata } from "@/lib/seo";
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
+
+export const revalidate = 60;
 
 async function readArticle(params: Props["params"]) {
   const { locale, slug } = await params;
@@ -35,11 +40,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogArticlePage({ params }: Props) {
   const { locale, entry, article } = await readArticle(params);
   setRequestLocale(locale);
-  const [t, nav, browse] = await Promise.all([getTranslations("blog"), getTranslations("nav"), getTranslations("browse")]);
+  const [t, nav, browse, houses] = await Promise.all([getTranslations("blog"), getTranslations("nav"), getTranslations("browse"), getHouses(locale)]);
   const path = articlePath(locale, entry.slugs[locale]);
-  const destinationLabel = entry.destination === "/browse/consult" ? browse("consult")
+  // The category pages this article is about, in the article's order — only those with houses right now.
+  const live = liveCollections(houses.map(toSummary));
+  const related = (entry.collections ?? []).flatMap((id) => live.filter((x) => x.collection.id === id));
+  const main = related[0];
+  const destinationLabel = main ? main.collection.title[locale] : entry.destination === "/browse/consult" ? browse("consult")
     : entry.destination === "/browse/cost" ? browse("cost") : nav("catalog");
-  const destination = entry.destination === "/browse/cost" ? calcPath(locale) : entry.destination;
+  const destination = main ? collectionHref(main.collection, locale) : entry.destination === "/browse/cost" ? calcPath(locale) : entry.destination;
   return (
     <>
       <JsonLd data={[
@@ -58,6 +67,25 @@ export default async function BlogArticlePage({ params }: Props) {
               <p className="mt-3 text-base leading-relaxed text-ink-soft md:text-lg">{paragraph}</p>
             </section>
           ))}
+          {main && (
+            <section aria-labelledby="related-houses" className="border-t border-line pt-8">
+              <h2 id="related-houses" className="font-display text-[clamp(1.45rem,4vw,2rem)] leading-tight">{t("housesTitle")}</h2>
+              <ul className="mt-3 flex flex-wrap gap-2">
+                {related.map(({ collection: c, houses: list }) => (
+                  <li key={c.id}>
+                    <Link href={collectionHref(c, locale)} className="block rounded-full border border-line px-4 py-2 text-sm text-ink hover:border-ink">
+                      {c.title[locale]} <span className="text-ink-soft">· {list.length}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-5 grid gap-5 sm:grid-cols-2">
+                {main.houses.slice(0, 2).map((h) => (
+                  <HouseCard key={h.code} house={h} />
+                ))}
+              </div>
+            </section>
+          )}
           <div className="flex flex-wrap items-center gap-4 border-t border-line pt-6">
             <Link className="btn bg-gold text-white hover:bg-ink" href={destination}>{destinationLabel} →</Link>
             <Link className="font-bold text-gold hover:underline" href={blogPath()}>{t("all")} →</Link>

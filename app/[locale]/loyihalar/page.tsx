@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { ArrowRightIcon } from "@/components/icons";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { collectionHref, liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
 import { pageMetadata, breadcrumbLd, itemListLd } from "@/lib/seo";
 
@@ -36,6 +37,7 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
     getHouses(locale),
   ]);
   const summaries = houses.map(toSummary);
+  const categories = liveCollections(summaries);
 
   const customLink = (
     <Link href="/#aloqa" className="btn bg-ink text-paper hover:bg-gold">
@@ -61,6 +63,18 @@ export default async function CatalogPage({ params }: { params: Promise<{ locale
           <h1 className="mt-2 text-[clamp(2rem,4vw,2.65rem)] leading-tight font-black">{t("title")}</h1>
           <p className="mt-2 text-sm text-ink-soft">{browse("catalogIntro")} <Link className="font-bold text-ink underline underline-offset-2" href="/browse/collections">{browse("collections")} →</Link></p>
           <p className="mt-2 text-sm"><Link className="font-bold underline underline-offset-2" href="/#finder">{browse("describeMode")} →</Link></p>
+          {/* Every category page, one tap away — and a plain link for search engines to follow. */}
+          <nav aria-label={browse("collections")} className="mt-5 -mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+            <ul className="flex gap-2 md:flex-wrap">
+              {categories.map(({ collection: c, houses: list }) => (
+                <li key={c.id} className="shrink-0">
+                  <Link href={collectionHref(c, locale)} className="block rounded-full border border-line bg-paper px-3.5 py-2 text-sm whitespace-nowrap text-ink hover:border-ink">
+                    {c.title[locale]} <span className="text-ink-soft">· {list.length}</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </section>
       </div>
       <div className="bg-paper-2"><div className="mx-auto max-w-[1280px] px-4 pb-20 pt-4 md:px-8">
