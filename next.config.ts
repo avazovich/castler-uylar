@@ -1,5 +1,6 @@
 import { articles, articlePath } from "./content/blog";
 import { CALC_SLUG } from "./lib/browse";
+import { MATERIAL_KINDS, MATERIAL_SLUG } from "./content/materials";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -28,7 +29,15 @@ const nextConfig: NextConfig = {
         permanent: true,
       }));
     });
-    return [...blog, ...calculator];
+    // The brick, gas-block and concrete calculators: the other language's slug → this language's.
+    const materials = MATERIAL_KINDS.flatMap((kind) =>
+      (["uz", "ru"] as const).map((locale) => ({
+        source: `/${locale}/${MATERIAL_SLUG[kind][locale === "uz" ? "ru" : "uz"]}`,
+        destination: `/${locale}/${MATERIAL_SLUG[kind][locale]}`,
+        permanent: true,
+      })),
+    );
+    return [...blog, ...calculator, ...materials];
   },
   images: {
     // Photos live on Sanity's CDN, which resizes on its own — see

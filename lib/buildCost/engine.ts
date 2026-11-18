@@ -120,11 +120,11 @@ const INNER_OPENINGS = 0.15;
 const BRICKS_PER_M3 = 420;
 /** One 600×300×200 block is 0.036 m³; + 5 % breakage. */
 const BLOCKS_PER_M3 = (1 / 0.036) * 1.05;
-/** m³ of mortar per m³ of wall (thin glue joints for gas block). */
-const MORTAR_PER_M3: Record<Walls, number> = { brick: 0.24, gasblock: 0.08 };
+/** m³ of mortar per m³ of wall (thin glue joints for gas block). Shared with the material calculators. */
+export const MORTAR_PER_M3: Record<Walls, number> = { brick: 0.24, gasblock: 0.08 };
 /** 1 m³ of M100 mortar (1:4): 6 bags of cement, 1.1 m³ of sand. */
-const CEMENT_BAGS_PER_M3 = 6;
-const SAND_PER_M3 = 1.1;
+export const CEMENT_BAGS_PER_M3 = 6;
+export const SAND_PER_M3 = 1.1;
 /** Strip foundation under outer and bearing inner walls: 1.6 × perimeter, 0.6 m wide,
  *  1.2 m deep for one floor and 15 cm deeper for every floor above. */
 const FOUNDATION_LENGTH = 1.6;
@@ -138,7 +138,7 @@ const SLAB_OVERHANG = 1.05;
 /** One concrete stair flight ≈ 2.5 m³. */
 const STAIR_M3 = 2.5;
 /** Rebar, kg per m³ of concrete. */
-const REBAR_KG = { foundation: 45, frame: 120, slab: 100, basement: 90 };
+export const REBAR_KG = { foundation: 45, frame: 120, slab: 100, basement: 90 };
 /** Pitched roof area = 1.4 × footprint (slope + eaves); timber 0.03 m³ per m² of roof. */
 const PITCHED_ROOF_FACTOR = 1.4;
 const TIMBER_PER_M2 = 0.03;

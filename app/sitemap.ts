@@ -5,6 +5,7 @@ import { browsePath, browseSections } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
 import { absoluteUrl, houseUrlPath } from "@/lib/seo";
+import { MATERIAL_KINDS, materialPath } from "@/content/materials";
 
 // Built on every request: a cached sitemap kept the houses out for weeks after the
 // sample data was replaced (it is a cached route handler by default). Crawlers ask rarely.
@@ -47,6 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...entries((l) => articlePath(l)),
     ...articles.flatMap(({ slugs }) => entries((l) => articlePath(l, slugs[l]))),
     ...browseSections.flatMap((section) => entries((l) => `/${l}${browsePath(section, l)}`)),
+    ...MATERIAL_KINDS.flatMap((kind) => entries((l) => `/${l}${materialPath(kind, l)}`)),
     ...liveCollections(summaries).flatMap(({ collection, houses: list }) =>
       entries((l) => `/${l}/${collection.slug[l]}`, { lastModified: newest(list.map((h) => h.updatedAt)) }),
     ),

@@ -13,6 +13,8 @@ import { getHouses, getSettings } from "@/lib/houses";
 import { absoluteUrl, breadcrumbLd, faqLd, housePath, pageMetadata } from "@/lib/seo";
 import { MAIN_SITE_URL } from "@/lib/site";
 import { CostCalculator, CostCalculatorFromUrl, type PlanCard, type StyleImages } from "./CostCalculator";
+import { MATERIAL_KINDS, MATERIAL_PAGE, MATERIAL_TEXT, materialPath } from "@/content/materials";
+import { Link } from "@/i18n/navigation";
 import { JsonLd } from "./JsonLd";
 import { PageHeader } from "./PageHeader";
 
@@ -107,7 +109,7 @@ export async function CalculatorPage({ locale: raw, slugLocale }: { locale: stri
       </section>
 
       <section className="border-t border-line bg-cream/60">
-        <div className="mx-auto grid max-w-[920px] gap-12 px-4 py-14 md:px-8 md:py-20">
+        <div className="mx-auto grid max-w-[920px] grid-cols-[minmax(0,1fr)] gap-12 px-4 py-14 md:px-8 md:py-20">
           <div>
             <h2 className="font-display text-[clamp(1.6rem,4vw,2.4rem)] leading-tight text-ink">{t("tableTitle")}</h2>
             <p className="mt-3 max-w-2xl text-ink-soft">{t("tableIntro")}</p>
@@ -137,6 +139,17 @@ export async function CalculatorPage({ locale: raw, slugLocale }: { locale: stri
             </div>
             <p className="mt-3 text-[13px] text-ink-soft">{t("tableNote", { date: PRICES_AS_OF[locale], rate: formatNumber(usd.rate) })}</p>
           </div>
+
+          <nav aria-label={MATERIAL_TEXT[locale].otherTitle}>
+            <h2 className="font-display text-[clamp(1.4rem,3vw,1.9rem)] leading-tight text-ink">{MATERIAL_TEXT[locale].otherTitle}</h2>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {MATERIAL_KINDS.map((kind) => (
+                <li key={kind}>
+                  <Link href={materialPath(kind, locale)} className="block rounded-full border border-line bg-paper px-4 py-2.5 text-ink hover:border-ink">{MATERIAL_PAGE[kind].h1[locale]}</Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
           <div>
             <h2 className="font-display text-[clamp(1.6rem,4vw,2.4rem)] leading-tight text-ink">{t("faqTitle")}</h2>
