@@ -22,7 +22,7 @@ export function LeadDialog({
 
   return (
     <Dialog.Root>
-      <Dialog.Trigger className={className}>{children}</Dialog.Trigger>
+      <Dialog.Trigger className={className} data-contact="request-form">{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="anim-overlay fixed inset-0 z-50 bg-ink/60" />
         <Dialog.Content className="anim-sheet fixed inset-x-3 bottom-3 z-50 max-h-[calc(100dvh-24px)] overflow-y-auto rounded-2xl border-t-4 border-accent bg-paper p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] shadow-2xl sm:inset-x-auto sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[460px] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:p-8">

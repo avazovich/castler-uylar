@@ -13,6 +13,7 @@ import {
 import { PRICES_AS_OF, SOURCES, type L } from "@/lib/buildCost/prices";
 import { formatNumber } from "@/lib/format";
 import { STYLES } from "@/lib/vocab";
+import { track } from "@/lib/track";
 
 type Currency = "uzs" | "usd";
 type Rate = { rate: number; date: string };
@@ -82,6 +83,13 @@ export function CostCalculator({ usd, images, plans, phone, start }: Extras & { 
     if (view.kind !== "calculating") return;
     const id = window.setTimeout(() => setView({ kind: "result" }), reducedMotion() ? 0 : 1400);
     return () => window.clearTimeout(id);
+  }, [view.kind]);
+
+  // Statistics: a visitor reached a price (once each time the result opens).
+  useEffect(() => {
+    if (view.kind !== "result") return;
+    track("calc", { la: `${input.area} m² · ${input.floors} qavat · ${input.walls} · ${input.finish}` });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- count the result opening, not each change on it
   }, [view.kind]);
 
   // A finished calculation keeps its answers in the address, so it can be shared or reopened.

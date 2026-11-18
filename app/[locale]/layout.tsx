@@ -10,6 +10,7 @@ import { routing } from "@/i18n/routing";
 import { SITE_URL } from "@/lib/site";
 import { preconnect } from "react-dom";
 import { Analytics } from "@/components/Analytics";
+import { Track } from "@/components/Track";
 import "../globals.css";
 import "../reference-home.css";
 
@@ -77,6 +78,7 @@ export default async function LocaleLayout({
           <Footer />
         </NextIntlClientProvider>
         <Analytics />
+        <Track />
       </body>
     </html>
   );

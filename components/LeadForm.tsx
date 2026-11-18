@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { CheckIcon } from "./icons";
+import { track } from "@/lib/track";
 
 /** "901234567" / "+998 90 123…" → "+998 90 123 45 67" as the visitor types. */
 function formatUzPhone(raw: string): string {
@@ -52,6 +53,7 @@ export function LeadForm({
         body: JSON.stringify({ name, phone, comment, houseCode, calc, locale, website }),
       });
       setStatus(res.ok ? "sent" : "error");
+      if (res.ok) track("lead", { la: houseCode ? `№${houseCode}` : calc ? "Kalkulyator" : "Sayt" });
     } catch {
       setStatus("error");
     }
