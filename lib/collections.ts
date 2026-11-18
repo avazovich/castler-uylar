@@ -112,11 +112,14 @@ export const COLLECTIONS: Collection[] = [
     group: "floors",
     slug: { uz: "2-qavatli-uy-loyihalari", ru: "proekty-dvuhetazhnyh-domov" },
     title: { uz: "2 qavatli uy loyihalari", ru: "Проекты двухэтажных домов" },
+    // Many people write "2 etajli uy proekti".
+    metaTitle: { uz: "2 qavatli (2 etajli) uy loyihalari — narxlari | Castler" },
     subject: { uz: "2 qavatli uy", ru: "двухэтажного дома" },
     guides: ["one-or-two-floors", "narrow-lot-house"],
     short: { uz: "2 qavatli", ru: "Двухэтажные" },
     intro: {
       uz: [
+        "2 qavatli (2 etajli) uy proektlari: Castler arxitektorlarining tayyor loyihalari, narxlari, rejalari va rasmlari bilan.",
         "Ikki qavatli uy kichikroq yerda katta yashash maydonini beradi. Odatda pastki qavatda mehmonxona, oshxona va mehmonlar xonasi, yuqori qavatda esa yotoqxonalar joylashadi — kunduzgi va tungi zonalar ajraladi.",
         CLOSING.uz,
       ],

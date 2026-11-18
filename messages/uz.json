@@ -13,7 +13,7 @@
     "description": "Castler arxitektorlarining tayyor uy loyihalari: 1 va 2 qavatli, zamonaviy va neoklassik uylar. Rejalar, xonalar maydoni, narxlar va rasmlar.",
     "siteName": "Castler — tayyor uy loyihalari",
     "catalogTitle": "Uy loyihalari katalogi — {count} ta tayyor loyiha | Castler",
-    "catalogDescription": "Barcha tayyor uy loyihalari bir joyda: yer maydoni (sotix), qavatlar soni, yer eni va uslub bo'yicha saralang. Har bir loyihada narx, rejalar va rasmlar.",
+    "catalogDescription": "Barcha tayyor uy loyihalari va chizmalari bir joyda: yer maydoni (sotix), qavatlar soni, yer eni va uslub bo'yicha saralang. Narx, rejalar va rasmlar.",
     "collectionTitle": "{title} — narxlari va rejalari | Castler",
     "collectionDescription": "{title}: {count} ta tayyor loyiha, narxi {from} so'mdan. Rejalar, rasmlar va xonalar maydoni — Castler arxitektorlaridan."
   },
@@ -478,9 +478,9 @@
     "plansEyebrow": "Yoki tayyor loyiha"
   },
   "calcSeo": {
-    "title": "Uy qurish narxi kalkulyatori 2026 — Namangan | Castler Uylar",
-    "description": "Uy qurish qancha turadi? 8 ta savolga javob bering: beton, armatura, g‘isht, deraza va usta haqigacha har bir xarajat so‘m va dollarda. Bepul.",
-    "h1": "Uy qurish narxi kalkulyatori",
+    "title": "Qurilish kalkulyatori: uy qurish narxi 2026 | Castler Uylar",
+    "description": "Uy qurish uchun qancha pul ketadi? Bepul qurilish kalkulyatori: beton, armatura, g‘isht, deraza va usta haqigacha har bir xarajat so‘m va dollarda.",
+    "h1": "Qurilish kalkulyatori: uy qurish narxi",
     "tableTitle": "Namanganda uy qurish narxi — 2026",
     "tableIntro": "Pishgan g‘isht, qiya tom va zamonaviy fasadli uy uchun kalkulyatorning o‘zi hisoblagan narxlar. O‘z uyingizni yuqoridagi kalkulyatorda hisoblang.",
     "tableHouse": "Uy",
@@ -488,8 +488,8 @@
     "tableNote": "Narxlar: {date}. Dollar kursi {rate} so‘m (Markaziy bank). Real smeta odatda ±15 % farq qiladi.",
     "faqTitle": "Ko‘p so‘raladigan savollar",
     "faq": {
-      "q1": "150 m² uy qurish qancha turadi?",
-      "a1": "Namangan narxlarida 150 m² ikki qavatli g‘isht uy: qora karobka taxminan {shell}, qoralama pardoz bilan {rough}, kalit topshirish {turnkey} ({usd}). Aniq summa uslub, devor va tom turiga bog‘liq — o‘z uyingizni kalkulyatorda hisoblang.",
+      "q1": "Uy qurish uchun qancha pul ketadi?",
+      "a1": "Masalan, Namangan narxlarida 150 m² ikki qavatli g‘isht uy: qora karobka taxminan {shell}, qoralama pardoz bilan {rough}, kalit topshirish {turnkey} ({usd}). Aniq summa uslub, devor va tom turiga bog‘liq — o‘z uyingizni kalkulyatorda hisoblang.",
       "q2": "1 m² uy qurish narxi qancha?",
       "a2": "150 m² ikki qavatli g‘isht uyda 1 m² narxi: qora karobka taxminan {shell} ({shellUsd}), kalit topshirish taxminan {turnkey} ({turnkeyUsd}).",
       "q3": "G‘isht yoki gazoblok — qaysi biri arzon?",
