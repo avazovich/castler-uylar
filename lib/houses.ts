@@ -38,7 +38,7 @@ export interface HouseSummary {
   slugName?: string;
   isSample: boolean;
   featured: boolean;
-  /** First designed for a real client — shown with the “Individual loyiha” sticker. */
+  /** Castler's own signature project — shown with the “Individual loyiha” sticker. */
   individual: boolean;
   style?: Style;
   priceUzs: number;

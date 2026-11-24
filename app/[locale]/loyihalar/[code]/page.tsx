@@ -141,15 +141,13 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           <div id="overview" className="grid items-start gap-6 lg:grid-cols-[minmax(0,2.08fr)_minmax(0,1fr)] lg:gap-10">
             <div className="relative min-w-0">
               <Gallery images={images} title={title} alts={alts} />
-              {(house.featured || house.individual) && <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap items-center gap-2">
-                {house.featured && <span className="rounded-sm bg-gold px-2 py-1 text-xs font-bold text-white">★ {browse("featuredPlan")}</span>}
+              {house.individual && <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap items-center gap-2">
                 {house.individual && <IndividualSticker label={browse("individualPlan")} className="ml-auto" />}
               </div>}
               {house.floorPlans.length > 0 && <a href="#floor-plans" className="btn mt-3 border border-line bg-paper hover:border-gold">{browse("photoShortcut")} ↓</a>}
             </div>
 
             <aside className="min-w-0">
-              {house.featured && <p className="label-caps mb-2 text-gold">★ {browse("featuredPlan")}</p>}
               <h1 className="font-display text-[clamp(1.65rem,2.25vw,2.1rem)] leading-[1.1]">{houseTitle(summary, locale)}</h1>
               <p className="my-3 text-xs text-ink-soft">№ {house.code} · {kind} · {fmt(house.totalArea)} m²</p>
               <div className="mb-5 flex flex-wrap gap-1.5">

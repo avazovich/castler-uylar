@@ -112,13 +112,13 @@ export function HouseForm({ initial }: { initial: AdminHouseInput }) {
               checked={form.featured}
               onChange={(v) => set("featured", v)}
               label="Bosh sahifada ko'rsatish"
-              hint="Bosh sahifadagi “Tanlangan loyihalar” qatoriga chiqadi"
+              hint="Faqat bosh sahifadagi “Tanlangan loyihalar” qatoriga chiqaradi (kartochkada belgi chiqmaydi)"
             />
             <Checkbox
               checked={form.individual}
               onChange={(v) => set("individual", v)}
-              label="Individual loyiha (mijoz uchun chizilgan)"
-              hint="Belgilansa, saytda “Individual loyiha” stikeri chiqadi va loyiha alohida ajralib turadi."
+              label="Individual loyiha (Castler'ning o'z loyihasi)"
+              hint="Ko'p mehnat qilingan, bizga tegishli loyiha. Belgilansa, saytda “Individual loyiha” stikeri va oltin hoshiya chiqadi."
             />
             <Checkbox
               checked={form.isSample}

@@ -49,7 +49,7 @@ export interface AdminHouseInput {
   nameRu: string;
   isSample: boolean;
   featured: boolean;
-  /** First designed for a real client — shown with a sticker on the site. */
+  /** Castler's own signature project — shown with the “Individual loyiha” sticker. */
   individual: boolean;
   style: Style | "";
   floors: string;
@@ -76,7 +76,7 @@ export interface AdminHouseRow {
   floors?: number;
   isSample: boolean;
   featured: boolean;
-  /** First designed for a real client — shown with a sticker on the site. */
+  /** Castler's own signature project — shown with the “Individual loyiha” sticker. */
   individual: boolean;
   cover?: AdminPhoto;
 }

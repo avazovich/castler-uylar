@@ -1,4 +1,5 @@
-// The mark for plans Castler first designed for a real client: a serrated
+// The mark for Castler's own signature projects (the ones the team put the most
+// work into; it replaced the «Castler tanlovi» label on 2026-11-24): a serrated
 // seal with a tick, used as a sticker on photos and as the icon of the note on
 // the plan page.
 

@@ -73,7 +73,7 @@ export default defineType({
       type: "boolean",
       group: "main",
       initialValue: false,
-      description: "Tick when this plan was first designed for a real client. The site then shows it with an “Individual loyiha” sticker.",
+      description: "Tick for Castler's own signature projects, the ones the team put the most work into. The site then shows an “Individual loyiha” sticker and a gold outline.",
     }),
     defineField({
       name: "style",

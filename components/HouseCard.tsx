@@ -36,9 +36,9 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
           placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip}
           style={{ objectPosition: house.cover.position }}
           className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.025]" />
-        {(house.featured || house.isSample || house.individual) && <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap items-center gap-2">
-          {(house.featured || house.isSample) && <span className="rounded-sm bg-ink px-2 py-1 text-[10px] font-black tracking-wide text-white uppercase">
-            {house.isSample ? t("sample") : browse("featuredPlan")}
+        {(house.isSample || house.individual) && <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap items-center gap-2">
+          {house.isSample && <span className="rounded-sm bg-ink px-2 py-1 text-[10px] font-black tracking-wide text-white uppercase">
+            {t("sample")}
           </span>}
           {house.individual && <IndividualSticker label={browse("individualPlan")} className="ml-auto" />}
         </div>}
