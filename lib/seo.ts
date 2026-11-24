@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd } from "./format";
 import type { House, HouseSummary, SiteSettings } from "./houses";
-import { MAIN_SITE_URL, SITE_URL } from "./site";
+import { FOUNDING_YEAR, MAIN_SITE_URL, SITE_URL } from "./site";
 import { ROOM_TYPES, type RoomType, type Style } from "./vocab";
 
 export const absoluteUrl = (path: string) => `${SITE_URL}${path}`;
@@ -316,7 +316,18 @@ export function organizationLd(settings: SiteSettings, locale: Locale) {
       contactType: "sales",
       availableLanguage: ["uz", "ru"],
     },
-    ...(settings.address ? { address: { "@type": "PostalAddress", streetAddress: settings.address, addressCountry: "UZ" } } : {}),
+    description:
+      locale === "ru"
+        ? `Архитектурно-дизайнерская компания из Намангана, с ${FOUNDING_YEAR} года. Каталог готовых проектов частных домов.`
+        : `Namangandagi arxitektura va dizayn kompaniyasi, ${FOUNDING_YEAR} yildan. Tayyor xususiy uy loyihalari katalogi.`,
+    foundingDate: String(FOUNDING_YEAR),
+    areaServed: { "@type": "Country", name: "Uzbekistan" },
+    address: {
+      "@type": "PostalAddress",
+      ...(settings.address ? { streetAddress: settings.address } : {}),
+      addressLocality: "Namangan",
+      addressCountry: "UZ",
+    },
   };
 }
 
