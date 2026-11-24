@@ -38,6 +38,8 @@ export interface HouseSummary {
   slugName?: string;
   isSample: boolean;
   featured: boolean;
+  /** First designed for a real client — shown with the “Individual loyiha” sticker. */
+  individual: boolean;
   style?: Style;
   priceUzs: number;
   oldPriceUzs?: number;
@@ -102,7 +104,7 @@ const IMG = /* groq */ `{
 }`;
 
 const HOUSE = /* groq */ `{
-  _updatedAt, code, name, isSample, featured, style, priceUzs, oldPriceUzs,
+  _updatedAt, code, name, isSample, featured, individual, style, priceUzs, oldPriceUzs,
   plotSotix, minPlotWidth, minPlotLength, totalArea, floors, description,
   "cover": cover${IMG},
   "gallery": gallery[]${IMG},
@@ -125,6 +127,7 @@ interface RawHouse {
   name?: L<string>;
   isSample?: boolean;
   featured?: boolean;
+  individual?: boolean;
   style?: Style;
   priceUzs: number;
   oldPriceUzs?: number;
@@ -195,6 +198,7 @@ function toHouse(raw: RawHouse, locale: Locale): House | undefined {
     slugName: pick(raw.name, "uz"),
     isSample: Boolean(raw.isSample),
     featured: Boolean(raw.featured),
+    individual: Boolean(raw.individual),
     style: raw.style,
     priceUzs: raw.priceUzs,
     oldPriceUzs: raw.oldPriceUzs && raw.oldPriceUzs > raw.priceUzs ? raw.oldPriceUzs : undefined,
@@ -228,6 +232,7 @@ export function toSummary(h: House): HouseSummary {
     slugName: h.slugName,
     isSample: h.isSample,
     featured: h.featured,
+    individual: h.individual,
     style: h.style,
     priceUzs: h.priceUzs,
     oldPriceUzs: h.oldPriceUzs,

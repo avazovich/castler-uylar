@@ -68,6 +68,14 @@ export default defineType({
       initialValue: false,
     }),
     defineField({
+      name: "individual",
+      title: "Individual project",
+      type: "boolean",
+      group: "main",
+      initialValue: false,
+      description: "Tick when this plan was first designed for a real client. The site then shows it with an “Individual loyiha” sticker.",
+    }),
+    defineField({
       name: "style",
       title: "Style",
       type: "string",

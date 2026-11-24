@@ -4,6 +4,7 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Gallery } from "@/components/Gallery";
 import { HouseCard } from "@/components/HouseCard";
+import { IndividualSticker, SealIcon } from "@/components/IndividualBadge";
 import { CheckIcon, PhoneIcon, TelegramIcon } from "@/components/icons";
 import { LeadDialog } from "@/components/LeadDialog";
 import { MobileActionBar } from "@/components/MobileActionBar";
@@ -140,7 +141,10 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           <div id="overview" className="grid items-start gap-6 lg:grid-cols-[minmax(0,2.08fr)_minmax(0,1fr)] lg:gap-10">
             <div className="relative min-w-0">
               <Gallery images={images} title={title} alts={alts} />
-              {house.featured && <span className="pointer-events-none absolute left-3 top-3 rounded-sm bg-gold px-2 py-1 text-xs font-bold text-white">★ {browse("featuredPlan")}</span>}
+              {(house.featured || house.individual) && <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap items-center gap-2">
+                {house.featured && <span className="rounded-sm bg-gold px-2 py-1 text-xs font-bold text-white">★ {browse("featuredPlan")}</span>}
+                {house.individual && <IndividualSticker label={browse("individualPlan")} className="ml-auto" />}
+              </div>}
               {house.floorPlans.length > 0 && <a href="#floor-plans" className="btn mt-3 border border-line bg-paper hover:border-gold">{browse("photoShortcut")} ↓</a>}
             </div>
 
@@ -151,6 +155,13 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
               <div className="mb-5 flex flex-wrap gap-1.5">
                 {specs.slice(0, 5).map(({ label, value }) => <span key={label} className="rounded-sm border border-line bg-[#e9e4d9] px-2 py-1 text-xs font-bold">{label} · {value}</span>)}
               </div>
+              {house.individual && <div className="mb-4 flex gap-3 rounded-md border border-gold/40 bg-gold/10 p-3.5">
+                <SealIcon className="mt-0.5 h-7 w-7 shrink-0 text-gold" check="#fff" />
+                <div>
+                  <p className="font-bold">{browse("individualTitle")}</p>
+                  <p className="mt-0.5 text-sm text-ink-soft">{browse("individualText")}</p>
+                </div>
+              </div>}
               {house.isSample && <p className="mb-3 rounded-md border border-gold/30 bg-gold/10 p-3 text-sm">{t("sampleNotice")}</p>}
               <div className="space-y-3.5 border-t border-dashed border-line pt-3.5">
                 <a href="#build-cost" className="block rounded-sm border border-[#d5cfc2] bg-[#e5e1d7] p-3.5 hover:border-gold">

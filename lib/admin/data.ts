@@ -65,7 +65,7 @@ export async function getAdminHouses(): Promise<AdminHouseRow[]> {
     (Omit<AdminHouseRow, "cover" | "name"> & { name?: { uz?: string }; cover?: RawPhoto })[]
   >(`*[_type == "housePlan"] | order(code desc){
     "id": _id, code, name, priceUzs, totalArea, floors,
-    "isSample": coalesce(isSample, false), "featured": coalesce(featured, false),
+    "isSample": coalesce(isSample, false), "featured": coalesce(featured, false), "individual": coalesce(individual, false),
     "cover": cover${PHOTO}
   }`);
   return rows.map((r) => ({ ...r, name: r.name?.uz, cover: toPhoto(r.cover, "cover") ?? undefined }));
@@ -84,6 +84,7 @@ export async function getAdminHouse(id: string): Promise<AdminHouseInput | null>
     name?: { uz?: string; ru?: string };
     isSample?: boolean;
     featured?: boolean;
+    individual?: boolean;
     style?: AdminHouseInput["style"];
     priceUzs?: number;
     oldPriceUzs?: number;
@@ -99,7 +100,7 @@ export async function getAdminHouse(id: string): Promise<AdminHouseInput | null>
     buildEstimate?: { _key: string; part?: string; customPart?: { uz?: string; ru?: string }; area?: number; costUsd?: number }[];
   } | null>(
     `*[_type == "housePlan" && _id == $id][0]{
-      _id, code, name, isSample, featured, style, priceUzs, oldPriceUzs, plotSotix, minPlotWidth, minPlotLength,
+      _id, code, name, isSample, featured, individual, style, priceUzs, oldPriceUzs, plotSotix, minPlotWidth, minPlotLength,
       totalArea, floors, description,
       "cover": cover${PHOTO}, "gallery": gallery[]${PHOTO},
       floorPlans[]{ _key, level, "plan": plan${PHOTO}, rooms[]{ _key, type, customName, area } },
@@ -118,6 +119,7 @@ export async function getAdminHouse(id: string): Promise<AdminHouseInput | null>
     nameRu: d.name?.ru ?? "",
     isSample: Boolean(d.isSample),
     featured: Boolean(d.featured),
+    individual: Boolean(d.individual),
     style: d.style ?? "",
     floors: str(d.floors),
     priceUzs: priceStr(d.priceUzs),
@@ -278,6 +280,7 @@ export async function buildHouseDocument(
     code,
     isSample: Boolean(input.isSample),
     featured: Boolean(input.featured),
+    individual: Boolean(input.individual),
     priceUzs,
     plotSotix,
     totalArea,

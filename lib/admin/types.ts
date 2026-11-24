@@ -49,6 +49,8 @@ export interface AdminHouseInput {
   nameRu: string;
   isSample: boolean;
   featured: boolean;
+  /** First designed for a real client — shown with a sticker on the site. */
+  individual: boolean;
   style: Style | "";
   floors: string;
   priceUzs: string;
@@ -74,6 +76,8 @@ export interface AdminHouseRow {
   floors?: number;
   isSample: boolean;
   featured: boolean;
+  /** First designed for a real client — shown with a sticker on the site. */
+  individual: boolean;
   cover?: AdminPhoto;
 }
 

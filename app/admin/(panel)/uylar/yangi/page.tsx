@@ -15,6 +15,7 @@ export default async function NewHousePage() {
     nameRu: "",
     isSample: false,
     featured: false,
+    individual: false,
     style: "",
     floors: "",
     priceUzs: "",

@@ -115,6 +115,12 @@ export function HouseForm({ initial }: { initial: AdminHouseInput }) {
               hint="Bosh sahifadagi “Tanlangan loyihalar” qatoriga chiqadi"
             />
             <Checkbox
+              checked={form.individual}
+              onChange={(v) => set("individual", v)}
+              label="Individual loyiha (mijoz uchun chizilgan)"
+              hint="Belgilansa, saytda “Individual loyiha” stikeri chiqadi va loyiha alohida ajralib turadi."
+            />
+            <Checkbox
               checked={form.isSample}
               onChange={(v) => set("isSample", v)}
               label="Namuna (raqamlar hali haqiqiy emas)"

@@ -52,6 +52,7 @@ export function HouseTable({ houses }: { houses: AdminHouseRow[] }) {
               <div className="mt-1.5 flex flex-wrap gap-1.5">
                 {h.isSample && <span className="rounded bg-accent px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-[#21150e]">Namuna</span>}
                 {h.featured && <span className="rounded bg-ink px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-paper">Bosh sahifada</span>}
+                {h.individual && <span className="rounded bg-gold px-2 py-0.5 text-[11px] font-black uppercase tracking-wide text-paper">Individual</span>}
               </div>
               <div className="mt-3 flex items-center gap-4">
                 <Link href={`/admin/uylar/${h.id}`} className="btn min-h-11 border border-ink px-5 text-ink hover:bg-ink hover:text-paper">
@@ -104,6 +105,7 @@ export function HouseTable({ houses }: { houses: AdminHouseRow[] }) {
                   <div className="flex flex-wrap gap-1.5">
                     {h.isSample && <span className="label-caps rounded bg-accent px-2 py-1 text-[#21150e]">Namuna</span>}
                     {h.featured && <span className="label-caps rounded bg-ink px-2 py-1 text-paper">Bosh sahifada</span>}
+                    {h.individual && <span className="label-caps rounded bg-gold px-2 py-1 text-paper">Individual</span>}
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-4 py-3 text-right">

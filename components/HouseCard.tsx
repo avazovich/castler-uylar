@@ -7,6 +7,7 @@ import type { HouseSummary } from "@/lib/houses";
 import { houseAlt, housePath } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 import { ArrowRightIcon } from "./icons";
+import { IndividualSticker } from "./IndividualBadge";
 
 /** Catalog tile. Works in both server pages and the client-side Catalog. */
 export function HouseCard({ house, priority = false }: { house: HouseSummary; priority?: boolean }) {
@@ -27,7 +28,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
   return (
     <Link
       href={housePath(house, locale)}
-      className="lift group flex flex-col overflow-hidden rounded-xl border border-line bg-paper hover:border-ink/30 hover:shadow-[0_22px_44px_-24px_rgba(26,29,22,0.5)]"
+      className={`lift group flex flex-col overflow-hidden rounded-xl border bg-paper hover:shadow-[0_22px_44px_-24px_rgba(26,29,22,0.5)] ${house.individual ? "border-gold/60 ring-1 ring-gold/25 hover:border-gold" : "border-line hover:border-ink/30"}`}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
         <Image src={house.cover.url} alt={houseAlt(house, locale)} fill fetchPriority={priority ? "high" : "auto"} loading={priority ? "eager" : "lazy"}
@@ -35,9 +36,12 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
           placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip}
           style={{ objectPosition: house.cover.position }}
           className="object-cover motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-[1.025]" />
-        {(house.featured || house.isSample) && <span className="absolute left-3 top-3 rounded-sm bg-ink px-2 py-1 text-[10px] font-black tracking-wide text-white uppercase">
-          {house.isSample ? t("sample") : browse("featuredPlan")}
-        </span>}
+        {(house.featured || house.isSample || house.individual) && <div className="pointer-events-none absolute inset-x-3 top-3 flex flex-wrap items-center gap-2">
+          {(house.featured || house.isSample) && <span className="rounded-sm bg-ink px-2 py-1 text-[10px] font-black tracking-wide text-white uppercase">
+            {house.isSample ? t("sample") : browse("featuredPlan")}
+          </span>}
+          {house.individual && <IndividualSticker label={browse("individualPlan")} className="ml-auto" />}
+        </div>}
       </div>
       <div className="flex flex-1 flex-col p-4">
         {house.style && <p className="label-caps text-gold">{STYLES[house.style][locale]}</p>}
