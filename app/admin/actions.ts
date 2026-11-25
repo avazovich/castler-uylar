@@ -6,7 +6,7 @@ import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { buildHouseDocument, isValidId, removeHouse, writeHouse, writeSettings } from "@/lib/admin/data";
 import { endAdminSession, isAdmin, passwordMatches, startAdminSession } from "@/lib/admin/session";
-import { warmPhotos } from "@/lib/warmImages";
+import { warmHouse } from "@/lib/warmImages";
 import type { AdminHouseInput, AdminSettingsInput, SaveResult } from "@/lib/admin/types";
 
 const SIGNED_OUT: SaveResult = {
@@ -51,8 +51,10 @@ export async function saveHouse(input: AdminHouseInput): Promise<SaveResult> {
   }
   // The public site caches pages for up to a minute — refresh them now.
   revalidatePath("/", "layout");
-  // Get the photo sizes ready in the background so the first visitor sees them at once.
-  after(() => warmPhotos((input.photos ?? []).map((p) => p.url)));
+  // Get the photo sizes ready in the background so the first visitor sees them at once
+  // (read back from Sanity: the site's addresses carry the house's readable file names).
+  const code = built.doc.code as number;
+  after(() => warmHouse(code));
   return { ok: true, id: built.doc._id as string, code: built.doc.code as number };
 }
 
