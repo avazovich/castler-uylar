@@ -13,6 +13,8 @@ import {
   type Style,
 } from "./vocab";
 import { CARD_ASPECT, focusPosition } from "./focus";
+import { withFileName } from "./imageUrl";
+import { houseSlug, slugify } from "./seo";
 import { DEFAULT_PHONE } from "./site";
 
 export { CARD_ASPECT, focusPosition };
@@ -27,6 +29,9 @@ export interface Img {
   focus: { x: number; y: number };
   /** object-position for the site's 4:3 boxes (cards, gallery, thumbnails). */
   position: string;
+  /** What the photo shows ("Kechki fasad va basseyn"), in this language — kept on the
+   *  Sanity image asset (captionUz / captionRu); used in alt texts and captions. */
+  caption?: string;
 }
 
 
@@ -99,6 +104,7 @@ const IMG = /* groq */ `{
   "width": asset->metadata.dimensions.width,
   "height": asset->metadata.dimensions.height,
   "lqip": asset->metadata.lqip,
+  "caption": { "uz": asset->captionUz, "ru": asset->captionRu },
   hotspot,
   crop
 }`;
@@ -117,6 +123,7 @@ interface RawImg {
   width?: number;
   height?: number;
   lqip?: string;
+  caption?: L<string>;
   hotspot?: { x: number; y: number };
   crop?: { top: number; bottom: number; left: number; right: number };
 }
@@ -143,9 +150,11 @@ interface RawHouse {
   buildEstimate?: { part: CostPart; customPart?: L<string>; area?: number; costUsd: number }[] | null;
 }
 
-function toImg(raw: RawImg | undefined | null): Img | undefined {
+/** `fileName` gives the photo a readable name in its address (see lib/imageUrl.ts). */
+function toImg(raw: RawImg | undefined | null, locale: Locale, fileName = ""): Img | undefined {
   if (!raw?.url || !raw.width || !raw.height) return undefined;
-  let { url, width, height } = raw;
+  let { width, height } = raw;
+  let url = withFileName(raw.url, fileName);
   let fx = raw.hotspot?.x ?? 0.5;
   let fy = raw.hotspot?.y ?? 0.5;
 
@@ -156,7 +165,7 @@ function toImg(raw: RawImg | undefined | null): Img | undefined {
     const keepW = 1 - c.left - c.right;
     const keepH = 1 - c.top - c.bottom;
     const rect = [c.left * raw.width, c.top * raw.height, keepW * raw.width, keepH * raw.height].map(Math.round);
-    url = `${raw.url}?rect=${rect.join(",")}`;
+    url = `${url}?rect=${rect.join(",")}`;
     width = rect[2];
     height = rect[3];
     fx = Math.min(1, Math.max(0, (fx - c.left) / keepW));
@@ -164,11 +173,20 @@ function toImg(raw: RawImg | undefined | null): Img | undefined {
   }
 
   const focus = { x: fx, y: fy };
-  return { url, width, height, lqip: raw.lqip, focus, position: focusPosition({ width, height, focus }, CARD_ASPECT) };
+  return {
+    url, width, height, lqip: raw.lqip, focus,
+    position: focusPosition({ width, height, focus }, CARD_ASPECT),
+    caption: typography(pick(raw.caption, locale)),
+  };
 }
 
+/** The site's Uzbek spelling: o‘ / g‘ with the turned comma, not a plain apostrophe. */
+const typography = (text: string | undefined) => text?.replace(/([OoGg])['ʻ`’]/g, "$1‘");
+
 function toHouse(raw: RawHouse, locale: Locale): House | undefined {
-  const cover = toImg(raw.cover);
+  // One file name per photo in every language: "113-basseynli-zamonaviy-villa-2-qavatli-zamonaviy-uy-loyihasi-1".
+  const fileBase = houseSlug({ code: raw.code, slugName: pick(raw.name, "uz"), floors: raw.floors, style: raw.style }, "uz");
+  const cover = toImg(raw.cover, locale, `${fileBase}-1`);
   // A half-filled draft that was published without its required fields
   // shouldn't break the catalog — skip it until it's complete.
   if (!cover || raw.priceUzs == null || raw.plotSotix == null || raw.totalArea == null || raw.floors == null) {
@@ -184,7 +202,7 @@ function toHouse(raw: RawHouse, locale: Locale): House | undefined {
     return {
       level: f.level,
       label: LEVELS[f.level]?.[locale] ?? "",
-      plan: toImg(f.plan),
+      plan: toImg(f.plan, locale, `${fileBase}-${slugify(LEVELS[f.level]?.uz ?? f.level)}-rejasi`),
       rooms: rooms.map(({ name, area }) => ({ name, area })),
       total: Math.round(rooms.reduce((s, r) => s + (r.area ?? 0), 0) * 10) / 10,
     };
@@ -215,7 +233,7 @@ function toHouse(raw: RawHouse, locale: Locale): House | undefined {
     hasCostEstimate: (raw.buildEstimate ?? []).length > 0,
     updatedAt: raw._updatedAt,
     description: pick(raw.description, locale),
-    gallery: (raw.gallery ?? []).map(toImg).filter((i): i is Img => Boolean(i)),
+    gallery: (raw.gallery ?? []).map((g, i) => toImg(g, locale, `${fileBase}-${i + 2}`)).filter((i): i is Img => Boolean(i)),
     floorPlans,
     buildEstimate: (raw.buildEstimate ?? []).map((c) => ({
       label: (c.part === "other" && pick(c.customPart, locale)) || COST_PARTS[c.part]?.[locale] || "",

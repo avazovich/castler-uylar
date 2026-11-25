@@ -31,7 +31,7 @@ export function HouseCard({ house, priority = false }: { house: HouseSummary; pr
       className={`lift group flex flex-col overflow-hidden rounded-xl border bg-paper hover:shadow-[0_22px_44px_-24px_rgba(26,29,22,0.5)] ${house.individual ? "border-gold/60 ring-1 ring-gold/25 hover:border-gold" : "border-line hover:border-ink/30"}`}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-paper-2">
-        <Image src={house.cover.url} alt={houseAlt(house, locale)} fill fetchPriority={priority ? "high" : "auto"} loading={priority ? "eager" : "lazy"}
+        <Image src={house.cover.url} alt={houseAlt(house, locale, 1, house.cover.caption)} fill fetchPriority={priority ? "high" : "auto"} loading={priority ? "eager" : "lazy"}
           sizes="(min-width: 1280px) 392px, (min-width: 1024px) 31vw, (min-width: 640px) 47vw, calc(100vw - 32px)"
           placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip}
           style={{ objectPosition: house.cover.position }}

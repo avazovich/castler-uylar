@@ -68,7 +68,7 @@ export default async function HomePage({ params }: Props) {
         <div className="collections stagger">
           {tiles.map(({ collection, houses: [house] }) => (
             <Link key={collection.id} className="collection" href={collectionHref(collection, locale)}>
-              <Image src={house.cover.url} alt="" fill sizes="(min-width: 980px) 210px, 33vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: focusPosition(house.cover, 5 / 4) }} />
+              <Image src={house.cover.url} alt={houseAlt(house, locale, 1, house.cover.caption)} fill sizes="(min-width: 980px) 210px, 33vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: focusPosition(house.cover, 5 / 4) }} />
               <strong>{collection.short[locale]} →</strong>
             </Link>
           ))}
@@ -120,7 +120,7 @@ export default async function HomePage({ params }: Props) {
         <p className="eyebrow">{t("portfolio")}</p><h2>{t("portfolioTitle")}</h2><p className="intro">{t("portfolioIntro")}</p>
         <div className="portfolio stagger">{picked.slice(0, 4).map((house) => (
           <Link key={house.code} href={housePath(house, locale)}>
-            <Image src={house.cover.url} alt="" fill sizes="(min-width: 690px) 25vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /><strong>{house.name} →</strong>
+            <Image src={house.cover.url} alt={houseAlt(house, locale, 1, house.cover.caption)} fill sizes="(min-width: 690px) 25vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /><strong>{house.name} →</strong>
           </Link>
         ))}</div>
       </section>}
@@ -149,7 +149,7 @@ export default async function HomePage({ params }: Props) {
         <div className="cards">{guide.map((item, index) => {
           const house = picked[index];
           return <article className="card" key={item.title}>
-            {house && <div className="photo-frame"><Image src={house.cover.url} alt="" fill sizes="(min-width: 690px) 33vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /></div>}
+            {house && <div className="photo-frame"><Image src={house.cover.url} alt={houseAlt(house, locale, 1, house.cover.caption)} fill sizes="(min-width: 690px) 33vw, 50vw" placeholder={house.cover.lqip ? "blur" : "empty"} blurDataURL={house.cover.lqip} style={{ objectPosition: house.cover.position }} /></div>}
             <div className="card-body"><h3>{item.title}</h3><p>{item.text}</p></div>
           </article>;
         })}</div>

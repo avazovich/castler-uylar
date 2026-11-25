@@ -130,7 +130,8 @@ export function Gallery({ images, title, alts }: { images: Img[]; title: string;
                 i === index ? "border-gold" : "border-transparent opacity-65 hover:opacity-100"
               }`}
             >
-              <Image src={img.url} alt={alts[i] ?? ""} fill sizes="(min-width: 640px) 108px, 76px" quality={55} className="object-cover" style={{ objectPosition: img.position }} />
+              {/* Default quality on purpose: then its address is the photo's one address (lib/imageUrl.ts). */}
+              <Image src={img.url} alt={alts[i] ?? ""} fill sizes="(min-width: 640px) 108px, 76px" className="object-cover" style={{ objectPosition: img.position }} />
             </button>
           ))}
         </div>

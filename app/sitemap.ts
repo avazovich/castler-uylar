@@ -4,8 +4,10 @@ import { routing, type Locale } from "@/i18n/routing";
 import { browsePath, browseSections } from "@/lib/browse";
 import { liveCollections } from "@/lib/collections";
 import { getHouses, toSummary } from "@/lib/houses";
+import { canonicalImageUrl } from "@/lib/imageUrl";
 import { absoluteUrl, houseUrlPath } from "@/lib/seo";
 import { MATERIAL_KINDS, materialPath } from "@/content/materials";
+import { photosPath } from "@/content/photos";
 
 // Built on every request: a cached sitemap kept the houses out for weeks after the
 // sample data was replaced (it is a cached route handler by default). Crawlers ask rarely.
@@ -40,11 +42,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }));
 
   const latest = newest(houses.map((h) => h.updatedAt));
-  const photo = (url: string) => `${url}?w=1600`;
 
   return [
     ...entries((l) => `/${l}`, { lastModified: latest }),
     ...entries((l) => `/${l}/loyihalar`, { lastModified: latest }),
+    ...entries((l) => `/${l}${photosPath(l)}`, { lastModified: latest }),
     ...entries((l) => articlePath(l)),
     ...articles.flatMap(({ slugs }) => entries((l) => articlePath(l, slugs[l]))),
     ...browseSections.flatMap((section) => entries((l) => `/${l}${browsePath(section, l)}`)),
@@ -57,7 +59,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .flatMap((h) =>
         entries((l) => houseUrlPath(h, l), {
           lastModified: h.updatedAt,
-          images: [h.cover, ...h.gallery].map((img) => photo(img.url)),
+          // Photos and floor plans, each at its one address (the same as on the page).
+          // Next writes <image:loc> as given, so the "&" between parameters must be escaped here.
+          images: [h.cover, ...h.gallery, ...h.floorPlans.flatMap((f) => (f.plan ? [f.plan] : []))].map((img) =>
+            canonicalImageUrl(img.url).replace(/&/g, "&amp;"),
+          ),
         }),
       ),
   ];

@@ -48,6 +48,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
       type: "website",
     },
     twitter: { card: "summary_large_image" },
+    // Let Google show our photos big in Images and Discover. A page that sets its own
+    // robots (the noindex sample houses) replaces this whole object.
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
     formatDetection: { telephone: false },
     ...(google || yandex ? { verification: { ...(google ? { google } : {}), ...(yandex ? { yandex } : {}) } } : {}),
   };

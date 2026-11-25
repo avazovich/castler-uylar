@@ -7,6 +7,7 @@ import type { Metadata } from "next";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd } from "./format";
 import type { House, HouseSummary, SiteSettings } from "./houses";
+import { canonicalImageUrl } from "./imageUrl";
 import { FOUNDING_YEAR, MAIN_SITE_URL, SITE_URL } from "./site";
 import { ROOM_TYPES, type RoomType, type Style } from "./vocab";
 
@@ -286,19 +287,54 @@ export function houseSummary(h: HouseSummary, locale: Locale): string {
   return s.join(" ");
 }
 
-/** Image alt text: "Afsona — 2 qavatli uy loyihasi" (+ " — 3-rasm"). */
-export function houseAlt(h: Pick<HouseSummary, "name" | "code" | "floors">, locale: Locale, n?: number): string {
-  const base =
-    locale === "ru"
-      ? `${h.name ? `«${h.name}» — ` : ""}проект ${houseKind(h.floors, "ru", "gen")}${h.name ? "" : ` № ${h.code}`}`
-      : `${h.name ? `${h.name} — ` : ""}${houseKind(h.floors, "uz")} loyihasi${h.name ? "" : ` № ${h.code}`}`;
+const lowerFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
+/**
+ * Image alt text: "Afsona — 2 qavatli uy loyihasi". With what the photo shows
+ * (its caption): "Afsona — kechki fasad va basseyn, 2 qavatli uy loyihasi";
+ * without one, the photo's number: "… — 3-rasm".
+ */
+export function houseAlt(
+  h: Pick<HouseSummary, "name" | "code" | "floors">,
+  locale: Locale,
+  n?: number,
+  caption?: string,
+): string {
+  const ru = locale === "ru";
+  const name = h.name ? (ru ? `«${h.name}»` : h.name) : "";
+  const kind = ru ? `проект ${houseKind(h.floors, "ru", "gen")}` : `${houseKind(h.floors, "uz")} loyihasi`;
+  const noName = h.name ? "" : ` № ${h.code}`;
+  if (caption) return `${name ? `${name} — ${lowerFirst(caption)}` : caption}, ${kind}${noName}`;
+  const base = `${name ? `${name} — ` : ""}${kind}${noName}`;
   if (!n) return base;
-  return locale === "ru" ? `${base} — фото ${n}` : `${base} — ${n}-rasm`;
+  return ru ? `${base} — фото ${n}` : `${base} — ${n}-rasm`;
+}
+
+/** Floor-plan alt text: "Afsona — 1-qavat rejasi (chizma), 2 qavatli uy loyihasi". */
+export function planAlt(h: Pick<HouseSummary, "name" | "code" | "floors">, locale: Locale, level: string): string {
+  const ru = locale === "ru";
+  const name = h.name ? (ru ? `«${h.name}»` : h.name) : ru ? `Проект № ${h.code}` : `Loyiha № ${h.code}`;
+  return ru
+    ? `${name} — план: ${lowerFirst(level)} (чертёж), проект ${houseKind(h.floors, "ru", "gen")}`
+    : `${name} — ${lowerFirst(level)} rejasi (chizma), ${houseKind(h.floors, "uz")} loyihasi`;
 }
 
 // ---------- JSON-LD ----------
 
 const ORG_ID = `${SITE_URL}/#organization`;
+
+/** A photo as schema.org ImageObject: its one address, what it shows, and that it is Castler's. */
+export function imageObjectLd(url: string, caption: string) {
+  return {
+    "@type": "ImageObject",
+    contentUrl: url,
+    url,
+    caption,
+    creditText: "Castler",
+    copyrightNotice: "© Castler",
+    creator: { "@type": "Organization", "@id": ORG_ID, name: "Castler" },
+  };
+}
 
 export function organizationLd(settings: SiteSettings, locale: Locale) {
   return {
@@ -368,7 +404,7 @@ export function itemListLd(locale: Locale, houses: HouseSummary[]) {
 export function productLd(
   h: HouseSummary,
   locale: Locale,
-  images: { url: string; focus: { x: number; y: number } }[],
+  images: { url: string; alt: string }[],
   description: string,
 ) {
   const label = (uz: string, ru: string) => (locale === "ru" ? ru : uz);
@@ -379,7 +415,8 @@ export function productLd(
     sku: String(h.code),
     category: label("Tayyor uy loyihasi", "Готовый проект дома"),
     description,
-    image: images.slice(0, 6).map((img) => socialImage(img, 1200, 900)),
+    // The same addresses as the page's <img src> and the sitemap — one picture, one URL.
+    image: images.slice(0, 8).map((img) => imageObjectLd(canonicalImageUrl(img.url), img.alt)),
     brand: { "@type": "Brand", name: "Castler" },
     additionalProperty: [
       { "@type": "PropertyValue", name: label("Umumiy maydon", "Общая площадь"), value: h.totalArea, unitCode: "MTK" },

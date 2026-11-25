@@ -6,7 +6,8 @@ import { useId, useState } from "react";
 import { formatNumber } from "@/lib/format";
 import type { Floor } from "@/lib/houses";
 
-export function FloorPlans({ floors }: { floors: Floor[] }) {
+/** `alts`: one per floor, e.g. "Afsona — 1-qavat rejasi (chizma), 2 qavatli uy loyihasi". */
+export function FloorPlans({ floors, alts = [] }: { floors: Floor[]; alts?: string[] }) {
   const t = useTranslations("house");
   const id = useId();
   const [selected, setSelected] = useState(() => Math.max(0, floors.findIndex((floor) => floor.level === "ground")));
@@ -37,7 +38,7 @@ export function FloorPlans({ floors }: { floors: Floor[] }) {
         </header>
         {floor.plan && (
           <a href={floor.plan.url} target="_blank" rel="noopener" className="relative block h-[clamp(190px,40vw,420px)] cursor-zoom-in bg-paper">
-            <Image src={floor.plan.url} alt={t("planAlt", { level: floor.label })} fill
+            <Image src={floor.plan.url} alt={alts[selected] ?? t("planAlt", { level: floor.label })} fill
               sizes="(min-width: 1000px) 650px, calc(100vw - 72px)" className="object-contain p-3" />
           </a>
         )}

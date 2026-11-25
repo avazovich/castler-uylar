@@ -1,6 +1,7 @@
 import { articles, articlePath } from "./content/blog";
 import { CALC_SLUG } from "./lib/browse";
 import { MATERIAL_KINDS, MATERIAL_SLUG } from "./content/materials";
+import { PHOTOS_SLUG } from "./content/photos";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -37,7 +38,13 @@ const nextConfig: NextConfig = {
         permanent: true,
       })),
     );
-    return [...blog, ...calculator, ...materials];
+    // The photos-and-plans page: the other language's slug → this language's.
+    const photos = (["uz", "ru"] as const).map((locale) => ({
+      source: `/${locale}/${PHOTOS_SLUG[locale === "uz" ? "ru" : "uz"]}`,
+      destination: `/${locale}/${PHOTOS_SLUG[locale]}`,
+      permanent: true,
+    }));
+    return [...blog, ...calculator, ...materials, ...photos];
   },
   images: {
     // Photos live on Sanity's CDN, which resizes on its own — see

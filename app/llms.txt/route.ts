@@ -1,5 +1,6 @@
 import { calcPath } from "@/lib/browse";
 import { MATERIAL_KINDS, MATERIAL_PAGE, materialPath } from "@/content/materials";
+import { PHOTOS_TEXT, photosPath } from "@/content/photos";
 import { liveCollections } from "@/lib/collections";
 import { formatNumber, formatUsd } from "@/lib/format";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
@@ -86,6 +87,7 @@ export async function GET() {
     `- [Uy qurish narxi kalkulyatori](${absoluteUrl(`/uz${calcPath("uz")}`)}): 8 ta savol (yer, maydon, qavatlar, uslub, devor, tom, bosqich, qo'shimchalar) — poydevordan pardozgacha har bir material va usta haqi Namangan narxlarida, so'm va dollarda; yerga eng mos tayyor loyihalarni ham ko'rsatadi. Bepul.`,
     `- [Калькулятор стоимости строительства дома](${absoluteUrl(`/ru${calcPath("ru")}`)}): 8 вопросов — каждый материал и работа мастеров по ценам Намангана, в сумах и долларах; подбирает готовые проекты под участок. Бесплатно.`,
     ...MATERIAL_KINDS.flatMap((kind) => (["uz", "ru"] as const).map((l) => `- [${MATERIAL_PAGE[kind].h1[l]}](${absoluteUrl(`/${l}${materialPath(kind, l)}`)}): ${MATERIAL_PAGE[kind].description[l]}`)),
+    ...(["uz", "ru"] as const).map((l) => `- [${PHOTOS_TEXT.h1[l]}](${absoluteUrl(`/${l}${photosPath(l)}`)}): ${PHOTOS_TEXT.subtitle[l]}`),
     "",
     ...(settings.included.length ? ["## Loyihaga nimalar kiradi / Что входит в проект", "", ...settings.included.map((x) => `- ${x}`), ""] : []),
     "## Ko'p so'raladigan savollar / Частые вопросы",

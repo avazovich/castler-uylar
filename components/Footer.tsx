@@ -1,6 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/routing";
+import { PHOTOS_TEXT, photosPath } from "@/content/photos";
 import { collectionHref, liveCollections } from "@/lib/collections";
 import { telHref } from "@/lib/format";
 import { getHouses, getSettings, toSummary } from "@/lib/houses";
@@ -47,6 +48,7 @@ export async function Footer() {
           <p className={heading}>{nav("brand")}</p>
           <Link href="/" className={link}>{nav("home")}</Link>
           <Link href="/loyihalar" className={link}>{nav("catalog")}</Link>
+          <Link href={photosPath(locale)} className={link}>{PHOTOS_TEXT.nav[locale]}</Link>
           <Link href="/#jarayon" className={link}>{nav("how")}</Link>
           <Link href="/#aloqa" className={link}>{nav("contact")}</Link>
         </nav>

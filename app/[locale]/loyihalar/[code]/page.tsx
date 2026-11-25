@@ -16,7 +16,7 @@ import { PageHeader, SectionTitle } from "@/components/PageHeader";
 import { routing, type Locale } from "@/i18n/routing";
 import { formatNumber, formatUsd, telHref } from "@/lib/format";
 import { getHouse, getHouses, getSettings, toSummary, type House } from "@/lib/houses";
-import { pageMetadata, breadcrumbLd, faqLd, houseAlt, houseDescription, houseFaq, houseKind, houseMetaTitle, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd } from "@/lib/seo";
+import { pageMetadata, breadcrumbLd, faqLd, houseAlt, planAlt, houseDescription, houseFaq, houseKind, houseMetaTitle, houseSlug, houseSummary, houseTitle, houseUrlPath, productLd } from "@/lib/seo";
 import { STYLES } from "@/lib/vocab";
 
 export const revalidate = 60;
@@ -89,7 +89,9 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
   const title = house.name ?? common("projectNo", { code: house.code });
   const summary = toSummary(house);
   const images = [house.cover, ...house.gallery];
-  const alts = images.map((_, i) => houseAlt(house, locale, i + 1));
+  // What each photo shows ("kechki fasad va basseyn") when it has a caption, else its number.
+  const alts = images.map((img, i) => houseAlt(house, locale, i + 1, img.caption));
+  const planAlts = house.floorPlans.map((f) => planAlt(house, locale, f.label));
   const kind = `${house.style ? `${STYLES[house.style][locale]} · ` : ""}${t("kindLine", { kind: houseKind(house.floors, locale, "gen") })}`;
   const similar = similarTo(house, all);
   const roomsTotal = Math.round(house.floorPlans.reduce((s, f) => s + f.total, 0) * 10) / 10;
@@ -125,7 +127,9 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
           ]),
           faqLd(faq),
           // No product data for sample houses: their prices aren't real.
-          ...(house.isSample ? [] : [productLd(summary, locale, images, house.description ?? houseDescription(summary, locale))]),
+          ...(house.isSample
+            ? []
+            : [productLd(summary, locale, images.map((img, i) => ({ url: img.url, alt: alts[i] })), house.description ?? houseDescription(summary, locale))]),
         ]}
       />
       <PageHeader
@@ -224,7 +228,7 @@ export default async function HousePage({ params }: { params: Promise<{ locale: 
                 <SectionTitle title={t("plansTitle")} />
                 {roomsTotal > 0 && <p className="text-ink-soft">{t("plansTotal", { value: fmt(roomsTotal) })}</p>}
               </div>
-              <FloorPlans floors={house.floorPlans} />
+              <FloorPlans floors={house.floorPlans} alts={planAlts} />
             </section>
           )}
 
